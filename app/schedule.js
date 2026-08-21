@@ -269,47 +269,34 @@ export function getTodaySchedule() {
 export function getCurrentScheduleItem() {
   const day = getCurrentDay();
   const schedule = weeklySchedule[day] || [];
+
   const currentMinutes = getMinskMinutes();
 
-  for (let i = 0; i < schedule.length; i++) {
-    const current = schedule[i];
-
-    const [hours, minutes] = current.time
+  for (const item of schedule) {
+    const [hours, minutes] = item.time
       .split(":")
       .map(Number);
 
-    const startMinutes =
+    const itemMinutes =
       hours * 60 + minutes;
 
-    // 00:00 в расписании означает
-    // начало следующего календарного дня.
-    if (startMinutes === 0) {
+    // 00:00 — начало нового дня
+    if (itemMinutes === 0) {
+      if (currentMinutes < 5) {
+        return item;
+      }
+
       continue;
     }
 
-    let endMinutes = 24 * 60;
-
-    if (i + 1 < schedule.length) {
-      const next = schedule[i + 1];
-
-      const [nextHours, nextMinutes] =
-        next.time.split(":").map(Number);
-
-      const nextMinutesTotal =
-        nextHours * 60 + nextMinutes;
-
-      // Если следующее сообщение в 00:00,
-      // текущее действует до полуночи.
-      if (nextMinutesTotal !== 0) {
-        endMinutes = nextMinutesTotal;
-      }
-    }
+    // Сообщение показывается только 5 минут
+    const endMinutes = itemMinutes + 5;
 
     if (
-      currentMinutes >= startMinutes &&
+      currentMinutes >= itemMinutes &&
       currentMinutes < endMinutes
     ) {
-      return current;
+      return item;
     }
   }
 
