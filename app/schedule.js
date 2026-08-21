@@ -280,18 +280,35 @@ export function getCurrentScheduleItem() {
       .split(":")
       .map(Number);
 
-    const startMinutes = hours * 60 + minutes;
+    const startMinutes =
+      hours * 60 + minutes;
+
+    // Если это сообщение стоит на 00:00,
+    // оно относится к началу текущего дня.
+    if (startMinutes === 0) {
+      if (currentMinutes < 1) {
+        return current;
+      }
+
+      continue;
+    }
 
     const next = schedule[i + 1];
 
     let endMinutes = 24 * 60;
 
     if (next) {
-      const [nextHours, nextMinutes] = next.time
-        .split(":")
-        .map(Number);
+      const [nextHours, nextMinutes] =
+        next.time.split(":").map(Number);
 
-      endMinutes = nextHours * 60 + nextMinutes;
+      endMinutes =
+        nextHours * 60 + nextMinutes;
+
+      // Следующее сообщение в 00:00
+      // означает конец текущего дня.
+      if (endMinutes === 0) {
+        endMinutes = 24 * 60;
+      }
     }
 
     if (
