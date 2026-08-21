@@ -261,14 +261,19 @@ export function getTodaySchedule() {
 // АКТУАЛЬНОЕ СООБЩЕНИЕ ПО МИНСКОМУ ВРЕМЕНИ
 // ==========================================
 
+// ==========================================
+// АКТУАЛЬНОЕ СООБЩЕНИЕ
+// ТОЛЬКО ИЗ СЕГОДНЯШНЕГО РАСПИСАНИЯ
+// ==========================================
+
 export function getCurrentScheduleItem() {
-  const schedule = getTodaySchedule();
+  const day = getCurrentDay();
+
+  const schedule = weeklySchedule[day] || [];
 
   const currentMinutes = getMinskMinutes();
 
-  let currentItem = null;
-
-  for (const item of schedule) {
+  const availableItems = schedule.filter((item) => {
     const [hours, minutes] = item.time
       .split(":")
       .map(Number);
@@ -276,10 +281,12 @@ export function getCurrentScheduleItem() {
     const itemMinutes =
       hours * 60 + minutes;
 
-    if (itemMinutes <= currentMinutes) {
-      currentItem = item;
-    }
+    return itemMinutes <= currentMinutes;
+  });
+
+  if (availableItems.length === 0) {
+    return null;
   }
 
-  return currentItem;
+  return availableItems[availableItems.length - 1];
 }
