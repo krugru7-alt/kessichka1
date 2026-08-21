@@ -361,9 +361,27 @@ useEffect(() => {
 
         </div>
 
-        <p className="signature">
-          Обсидик ❤️
-        </p>
+        {!pushEnabled && (
+  <button
+    className="push-button"
+    onClick={enablePushNotifications}
+    disabled={pushLoading}
+  >
+    {pushLoading
+      ? "Подключаю уведомления..."
+      : "🔔 Получать приветы от Обсидика ❤️"}
+  </button>
+)}
+
+{pushEnabled && (
+  <div className="push-enabled">
+    🔔 Уведомления подключены ❤️
+  </div>
+)}
+
+<p className="signature">
+  Обсидик ❤️
+</p>
 
       </section>
     </main>
