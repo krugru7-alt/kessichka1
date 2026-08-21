@@ -6,18 +6,36 @@ import "./globals.css";
 const dailyMessages = [
   "У тебя сегодня всё получится. А если нет - ничего страшного, я всё равно рядом. ❤️",
 
-  "Сегодня просто напоминание: я скучаю  😌",
+  "Сегодня просто напоминание: я скучаю 😌",
 
   "Пусть сегодня у тебя будет хотя бы один момент, когда ты поймаешь себя на мысли: «А ведь день неплохой». 🌷",
 
   "Ты уже проснулась - значит, день официально начался. Теперь осталось сделать его немного приятнее. ☀️",
 
-  "Сегодня никаких больших требований. Просто не забывай что кое-кто далеко очень хочет видеть тебя счастливой. ❤️",
+  "Сегодня никаких больших требований. Просто не забывай, что кое-кто далеко очень хочет видеть тебя счастливой. ❤️",
 
   "Маленькое утреннее напоминание: ты прекрасна. Всё, я сказал. 😌",
 
   "Пусть сегодня всё складывается чуть легче, чем ты ожидаешь. А если день будет вредничать - будем вредничать вместе с ним. ❤️",
 ];
+
+function getTimeOfDay() {
+  const hour = new Date().getHours();
+
+  if (hour >= 6 && hour < 12) {
+    return "morning";
+  }
+
+  if (hour >= 12 && hour < 18) {
+    return "day";
+  }
+
+  if (hour >= 18 && hour < 22) {
+    return "evening";
+  }
+
+  return "night";
+}
 
 function weatherText(code) {
   if (code === 0) return "Ясно всё гуд ☀️";
@@ -56,6 +74,8 @@ function getWeatherAdvice(weather) {
 export default function Home() {
   const [weather, setWeather] = useState(null);
 
+  const timeOfDay = getTimeOfDay();
+
   const today = new Date();
   const message =
     dailyMessages[
@@ -74,21 +94,29 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="kessichka-page">
+    <main className={`kessichka-page ${timeOfDay}`}>
       <section className="kessichka-card">
 
-        <div className="kessichka-sun">☀️</div>
+        <div className="kessichka-sun">
+          {timeOfDay === "morning" && "🌅"}
+          {timeOfDay === "day" && "☀️"}
+          {timeOfDay === "evening" && "🌆"}
+          {timeOfDay === "night" && "🌙"}
+        </div>
 
         <p className="kessichka-label">
           Для Кэссички
         </p>
 
         <h1 className="kessichka-title">
-          Доброе утро, Любовь моя ❤️
+          {timeOfDay === "morning" && "Доброе утро, Любовь моя ❤️"}
+          {timeOfDay === "day" && "Хорошего дня, Любовь моя ❤️"}
+          {timeOfDay === "evening" && "Добрый вечер, Любовь моя ❤️"}
+          {timeOfDay === "night" && "Спокойной ночи, Любовь моя ❤️"}
         </h1>
 
         <p className="kessichka-text">
-          Я далеко, и не могу пока лично следить за тобой
+          Я далеко, и не могу пока лично следить за тобой,
           но могу хотя бы иногда напоминать о простых вещах и заботиться о бусе:
           поешь, не мёрзни, отдыхай и иногда улыбайся.
         </p>
@@ -155,7 +183,7 @@ export default function Home() {
         </div>
 
         <p className="signature">
-           Обсидик ❤️
+          Обсидик ❤️
         </p>
 
       </section>
