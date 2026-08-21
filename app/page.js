@@ -37,22 +37,14 @@ function getTimeOfDay() {
   return "night";
 }
 
-function getWeatherType(code: number) {
-  if (code === 0) {
-    return "clear";
-  }
+function getWeatherType(code) {
+  if (code === 0) return "clear";
 
-  if ([1, 2, 3].includes(code)) {
-    return "cloudy";
-  }
+  if ([1, 2, 3].includes(code)) return "cloudy";
 
-  if ([45, 48].includes(code)) {
-    return "fog";
-  }
+  if ([45, 48].includes(code)) return "fog";
 
-  if ([51, 53, 55, 56, 57].includes(code)) {
-    return "drizzle";
-  }
+  if ([51, 53, 55, 56, 57].includes(code)) return "drizzle";
 
   if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
     return "rain";
@@ -69,7 +61,7 @@ function getWeatherType(code: number) {
   return "cloudy";
 }
 
-function weatherText(code: number) {
+function weatherText(code) {
   if (code === 0) return "Ясно всё гуд ☀️";
   if ([1, 2, 3].includes(code)) return "Облачно вайбик 🌤️";
   if ([45, 48].includes(code)) return "Туман сайлентхилл 🌫️";
@@ -83,10 +75,7 @@ function weatherText(code: number) {
   return "Погода сегодня загадочная 🌥️";
 }
 
-function getWeatherAdvice(weather: {
-  temperature: number;
-  rainChance: number;
-}) {
+function getWeatherAdvice(weather) {
   if (weather.temperature < 0) {
     return "Сегодня холодно - пожалуйста, оденься потеплее 🧣";
   }
@@ -107,17 +96,7 @@ function getWeatherAdvice(weather: {
 }
 
 export default function Home() {
-  const [weather, setWeather] = useState<{
-    temperature: number;
-    feelsLike: number;
-    wind: number;
-    weatherCode: number;
-    max: number;
-    min: number;
-    rainChance: number;
-    city: string;
-    error?: boolean;
-  } | null>(null);
+  const [weather, setWeather] = useState(null);
 
   const timeOfDay = getTimeOfDay();
 
@@ -146,7 +125,7 @@ export default function Home() {
     fetch("/api/weather")
       .then((response) => response.json())
       .then((data) => setWeather(data))
-      .catch(() => setWeather({ error: true } as any));
+      .catch(() => setWeather({ error: true }));
   }, []);
 
   return (
