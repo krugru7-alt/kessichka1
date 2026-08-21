@@ -240,16 +240,19 @@ export default function Home() {
       alert(
         "Уведомления подключены ❤️"
       );
-    } catch (error) {
-      console.error(
-        "Ошибка подключения уведомлений:",
-        error
-      );
+   } catch (error) {
+  console.error(
+    "Ошибка подключения уведомлений:",
+    error
+  );
 
-      alert(
-        "Не получилось подключить уведомления.\n\n" +
-          error.message
-      );
+  alert(
+    "ОШИБКА PUSH:\n\n" +
+      String(error?.name || "UnknownError") +
+      "\n\n" +
+      String(error?.message || error)
+  );
+}
     } finally {
       setPushLoading(false);
     }
