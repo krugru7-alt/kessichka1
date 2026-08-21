@@ -11,7 +11,7 @@ body {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: #05070a;
+  background: #09070a;
   color: #fff;
 }
 
@@ -19,9 +19,9 @@ button {
   font: inherit;
 }
 
-/* =====================================================
-   ОСНОВНАЯ СТРАНИЦА
-===================================================== */
+/* =========================
+   ОСНОВНОЙ ФОН
+========================= */
 
 .kessichka-page {
   position: relative;
@@ -37,724 +37,252 @@ button {
 
   overflow: hidden;
 
-  background: #05070a;
+  background: #09070a;
 
   transition:
-    background 2s ease,
-    color 1s ease;
+    background 1.5s ease,
+    background-color 1.5s ease;
 }
 
-/* =====================================================
-   ВАЖНО
-   Все погодные эффекты находятся ЗА карточкой
-===================================================== */
+/* =========================
+   ВРЕМЯ СУТОК
+========================= */
 
-.kessichka-card {
-  position: relative;
-  z-index: 10;
-}
+/* УТРО */
 
-/* =====================================================
-   ПОГОДА — ЯСНО
-===================================================== */
-
-.kessichka-page.morning-clear {
+.kessichka-page.morning {
   background:
-    radial-gradient(
-      circle at 25% 8%,
-      rgba(255, 225, 160, 0.45),
-      transparent 32%
-    ),
     linear-gradient(
       145deg,
-      #183047 0%,
-      #496f8d 45%,
-      #111820 100%
+      #33202b 0%,
+      #8a5366 48%,
+      #181116 100%
     );
 }
 
-.kessichka-page.day-clear {
+/* ДЕНЬ */
+
+.kessichka-page.day {
   background:
-    radial-gradient(
-      circle at 25% 8%,
-      rgba(255, 240, 190, 0.55),
-      transparent 30%
-    ),
     linear-gradient(
       145deg,
-      #3f7194 0%,
-      #79a8c4 48%,
-      #253846 100%
-    );
-}
-
-.kessichka-page.evening-clear {
-  background:
-    radial-gradient(
-      circle at 75% 12%,
-      rgba(255, 180, 100, 0.60),
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at 30% 70%,
-      rgba(230, 110, 100, 0.30),
-      transparent 35%
-    ),
-    linear-gradient(
-      145deg,
-      #27334d 0%,
-      #a45455 55%,
-      #170e19 100%
-    );
-}
-
-.kessichka-page.night-clear {
-  background:
-    radial-gradient(
-      circle at 75% 15%,
-      rgba(190, 215, 255, 0.20),
-      transparent 25%
-    ),
-    linear-gradient(
-      145deg,
-      #07101e 0%,
-      #101d32 50%,
-      #020407 100%
-    );
-}
-
-/* =====================================================
-   ОБЛАЧНО
-===================================================== */
-
-.kessichka-page.morning-cloudy,
-.kessichka-page.day-cloudy {
-  background:
-    radial-gradient(
-      circle at 30% 10%,
-      rgba(220, 230, 235, 0.28),
-      transparent 32%
-    ),
-    linear-gradient(
-      145deg,
-      #53616c 0%,
-      #77848d 48%,
-      #20272c 100%
-    );
-}
-
-.kessichka-page.evening-cloudy {
-  background:
-    radial-gradient(
-      circle at 70% 15%,
-      rgba(190, 170, 180, 0.20),
-      transparent 30%
-    ),
-    linear-gradient(
-      145deg,
-      #303942 0%,
-      #4c4b55 50%,
+      #292c36 0%,
+      #515764 48%,
       #111318 100%
     );
 }
 
-.kessichka-page.night-cloudy {
+/* ВЕЧЕР */
+
+.kessichka-page.evening {
   background:
-    radial-gradient(
-      circle at 70% 15%,
-      rgba(160, 180, 200, 0.12),
-      transparent 28%
-    ),
     linear-gradient(
       145deg,
-      #101820 0%,
-      #202a32 50%,
-      #030506 100%
+      #281820 0%,
+      #58333f 45%,
+      #0d0b0f 100%
     );
 }
 
-/* =====================================================
-   ТУМАН
-===================================================== */
+/* НОЧЬ */
 
-.kessichka-page.morning-fog,
-.kessichka-page.day-fog {
+.kessichka-page.night {
+  background:
+    linear-gradient(
+      145deg,
+      #08090f 0%,
+      #171a28 50%,
+      #030407 100%
+    );
+}
+
+/* =========================
+   РЕАЛЬНАЯ ПОГОДА
+========================= */
+
+/* ЯСНО */
+
+.kessichka-page.clear {
   background:
     radial-gradient(
-      circle at 50% 15%,
-      rgba(245, 248, 248, 0.40),
+      circle at 50% 0%,
+      rgba(255, 221, 130, 0.48),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 15% 70%,
+      rgba(255, 170, 120, 0.20),
       transparent 38%
     ),
     linear-gradient(
       145deg,
-      #647078,
-      #a3abad,
-      #363d40
+      #49333b 0%,
+      #8a5b61 45%,
+      #171116 100%
     );
 }
 
-.kessichka-page.evening-fog {
+/* ОБЛАЧНО */
+
+.kessichka-page.cloudy {
   background:
     radial-gradient(
-      circle at 50% 20%,
-      rgba(220, 210, 210, 0.25),
+      circle at 15% 10%,
+      rgba(190, 200, 215, 0.30),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(115, 130, 150, 0.24),
+      transparent 40%
+    ),
+    linear-gradient(
+      145deg,
+      #262a34 0%,
+      #515967 48%,
+      #101217 100%
+    );
+}
+
+/* ТУМАН */
+
+.kessichka-page.fog {
+  background:
+    radial-gradient(
+      circle at 50% 25%,
+      rgba(220, 225, 230, 0.38),
+      transparent 45%
+    ),
+    linear-gradient(
+      145deg,
+      #383b40 0%,
+      #70757a 50%,
+      #16181b 100%
+    );
+}
+
+/* МЕЛКИЙ ДОЖДЬ */
+
+.kessichka-page.drizzle {
+  background:
+    radial-gradient(
+      circle at 25% 15%,
+      rgba(120, 165, 205, 0.28),
       transparent 35%
     ),
     linear-gradient(
       145deg,
-      #45494d,
-      #67666a,
-      #18191b
+      #202a35 0%,
+      #405566 50%,
+      #090d12 100%
     );
 }
 
-.kessichka-page.night-fog {
+/* ДОЖДЬ */
+
+.kessichka-page.rain {
   background:
     radial-gradient(
-      circle at 50% 20%,
-      rgba(190, 205, 210, 0.15),
-      transparent 32%
+      circle at 75% 15%,
+      rgba(75, 135, 190, 0.34),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 15% 80%,
+      rgba(50, 90, 130, 0.28),
+      transparent 40%
     ),
     linear-gradient(
       145deg,
-      #1b2226,
-      #30373a,
-      #060708
+      #101923 0%,
+      #29445a 50%,
+      #06090d 100%
     );
 }
 
-/* =====================================================
-   МЕЛКИЙ ДОЖДЬ
-===================================================== */
+/* СНЕГ */
 
-.kessichka-page.morning-drizzle,
-.kessichka-page.day-drizzle {
+.kessichka-page.snow {
   background:
     radial-gradient(
-      circle at 60% 15%,
-      rgba(180, 210, 225, 0.22),
-      transparent 30%
+      circle at 50% 5%,
+      rgba(240, 246, 255, 0.45),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(180, 200, 220, 0.20),
+      transparent 40%
     ),
     linear-gradient(
       145deg,
-      #344b5b,
-      #587181,
-      #10171c
+      #343d48 0%,
+      #71808d 50%,
+      #11151a 100%
     );
 }
 
-.kessichka-page.evening-drizzle {
+/* ГРОЗА */
+
+.kessichka-page.storm {
   background:
     radial-gradient(
       circle at 70% 20%,
-      rgba(130, 155, 175, 0.18),
-      transparent 30%
+      rgba(125, 105, 180, 0.35),
+      transparent 35%
     ),
-    linear-gradient(
-      145deg,
-      #26343e,
-      #394954,
-      #0b0e11
-    );
-}
-
-.kessichka-page.night-drizzle {
-  background:
-    linear-gradient(
-      145deg,
-      #0b131a,
-      #18242d,
-      #020304
-    );
-}
-
-/* =====================================================
-   ДОЖДЬ
-===================================================== */
-
-.kessichka-page.morning-rain,
-.kessichka-page.day-rain {
-  background:
     radial-gradient(
-      circle at 30% 15%,
-      rgba(180, 210, 225, 0.16),
-      transparent 30%
+      circle at 20% 80%,
+      rgba(70, 65, 110, 0.25),
+      transparent 40%
     ),
     linear-gradient(
       145deg,
-      #273c4b,
-      #405b6b,
-      #0b1116
+      #11101b 0%,
+      #302d45 50%,
+      #050509 100%
     );
 }
 
-.kessichka-page.evening-rain {
-  background:
-    radial-gradient(
-      circle at 70% 15%,
-      rgba(130, 160, 180, 0.16),
-      transparent 30%
-    ),
-    linear-gradient(
-      145deg,
-      #17252e,
-      #293b46,
-      #06090b
-    );
-}
-
-.kessichka-page.night-rain {
-  background:
-    radial-gradient(
-      circle at 75% 20%,
-      rgba(100, 140, 170, 0.12),
-      transparent 30%
-    ),
-    linear-gradient(
-      145deg,
-      #070f15,
-      #101d26,
-      #010203
-    );
-}
-
-/* =====================================================
-   СНЕГ
-===================================================== */
-
-.kessichka-page.morning-snow,
-.kessichka-page.day-snow {
-  background:
-    radial-gradient(
-      circle at 25% 10%,
-      rgba(255, 255, 255, 0.65),
-      transparent 32%
-    ),
-    linear-gradient(
-      145deg,
-      #9fb6c5,
-      #d7e1e5,
-      #52636d
-    );
-}
-
-.kessichka-page.evening-snow {
-  background:
-    radial-gradient(
-      circle at 70% 15%,
-      rgba(255, 240, 225, 0.35),
-      transparent 30%
-    ),
-    linear-gradient(
-      145deg,
-      #526675,
-      #8297a3,
-      #202a31
-    );
-}
-
-.kessichka-page.night-snow {
-  background:
-    radial-gradient(
-      circle at 70% 15%,
-      rgba(225, 240, 255, 0.22),
-      transparent 28%
-    ),
-    linear-gradient(
-      145deg,
-      #172633,
-      #293d4c,
-      #05080b
-    );
-}
-
-/* =====================================================
-   ГРОЗА
-===================================================== */
-
-.kessichka-page.morning-storm,
-.kessichka-page.day-storm {
-  background:
-    radial-gradient(
-      circle at 70% 15%,
-      rgba(160, 150, 190, 0.20),
-      transparent 30%
-    ),
-    linear-gradient(
-      145deg,
-      #1b1b28,
-      #343447,
-      #050506
-    );
-}
-
-.kessichka-page.evening-storm {
-  background:
-    radial-gradient(
-      circle at 70% 15%,
-      rgba(180, 150, 210, 0.20),
-      transparent 30%
-    ),
-    linear-gradient(
-      145deg,
-      #151522,
-      #29283c,
-      #030304
-    );
-}
-
-.kessichka-page.night-storm {
-  background:
-    radial-gradient(
-      circle at 70% 15%,
-      rgba(120, 110, 180, 0.15),
-      transparent 28%
-    ),
-    linear-gradient(
-      145deg,
-      #070710,
-      #111122,
-      #000001
-    );
-}
-
-/* =====================================================
+/* =========================
    КАРТОЧКА
-===================================================== */
+========================= */
 
 .kessichka-card {
+  position: relative;
+  z-index: 10;
+
   width: 100%;
   max-width: 540px;
 
   padding: 38px 26px;
 
-  border: 1px solid rgba(255, 105, 150, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.16);
 
   border-radius: 32px;
 
   background:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.075),
-      rgba(255, 255, 255, 0.025)
+      rgba(255, 255, 255, 0.11),
+      rgba(255, 255, 255, 0.035)
     );
 
   box-shadow:
     0 30px 100px rgba(0, 0, 0, 0.55),
-    0 0 80px rgba(255, 30, 100, 0.08);
+    0 0 80px rgba(255, 255, 255, 0.05);
 
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
 
   text-align: center;
-
-  transition:
-    background 1.5s ease,
-    box-shadow 1.5s ease,
-    border-color 1.5s ease;
 }
 
-/* =====================================================
-   ПОГОДНЫЕ ЭФФЕКТЫ
-===================================================== */
-
-.weather-effect {
-  position: absolute;
-
-  inset: 0;
-
-  z-index: 2;
-
-  pointer-events: none;
-
-  overflow: hidden;
-}
-
-/* =====================================================
-   ДОЖДЬ
-===================================================== */
-
-.rain-effect {
-  opacity: 0.45;
-}
-
-.rain-drop {
-  position: absolute;
-
-  top: -40px;
-
-  width: 1px;
-  height: 35px;
-
-  background: rgba(210, 235, 255, 0.55);
-
-  transform: rotate(15deg);
-
-  animation: rainFall linear infinite;
-}
-
-@keyframes rainFall {
-  from {
-    transform:
-      translate3d(0, -50px, 0)
-      rotate(15deg);
-  }
-
-  to {
-    transform:
-      translate3d(-80px, 110vh, 0)
-      rotate(15deg);
-  }
-}
-
-/* =====================================================
-   СНЕГ
-===================================================== */
-
-.snow-effect {
-  opacity: 0.75;
-}
-
-.snow-flake {
-  position: absolute;
-
-  top: -30px;
-
-  color: rgba(255, 255, 255, 0.75);
-
-  font-size: 12px;
-
-  animation:
-    snowFall linear infinite,
-    snowSway ease-in-out infinite;
-}
-
-@keyframes snowFall {
-  from {
-    transform: translateY(-40px);
-  }
-
-  to {
-    transform: translateY(110vh);
-  }
-}
-
-@keyframes snowSway {
-  0%,
-  100% {
-    margin-left: -12px;
-  }
-
-  50% {
-    margin-left: 12px;
-  }
-}
-
-/* =====================================================
-   ТУМАН
-===================================================== */
-
-.fog-effect {
-  opacity: 0.30;
-
-  filter: blur(30px);
-}
-
-.fog-effect span {
-  position: absolute;
-
-  width: 70%;
-  height: 35%;
-
-  border-radius: 50%;
-
-  background:
-    rgba(235, 240, 242, 0.25);
-
-  animation: fogMove 12s ease-in-out infinite;
-}
-
-.fog-effect span:nth-child(1) {
-  left: -20%;
-  top: 20%;
-}
-
-.fog-effect span:nth-child(2) {
-  right: -20%;
-  top: 45%;
-
-  animation-delay: -4s;
-}
-
-.fog-effect span:nth-child(3) {
-  left: 15%;
-  bottom: -10%;
-
-  animation-delay: -8s;
-}
-
-@keyframes fogMove {
-  0%,
-  100% {
-    transform: translateX(-30px);
-  }
-
-  50% {
-    transform: translateX(40px);
-  }
-}
-
-/* =====================================================
-   ГРОЗА
-===================================================== */
-
-.storm-effect {
-  background: transparent;
-
-  animation: stormFlash 7s infinite;
-}
-
-.storm-effect span {
-  position: absolute;
-
-  top: 12%;
-  right: 25%;
-
-  width: 3px;
-  height: 70%;
-
-  opacity: 0;
-
-  background:
-    linear-gradient(
-      to bottom,
-      transparent,
-      rgba(220, 220, 255, 0.9),
-      transparent
-    );
-
-  transform:
-    rotate(12deg)
-    skewX(-20deg);
-
-  filter:
-    drop-shadow(
-      0 0 15px
-      rgba(210, 210, 255, 0.8)
-    );
-}
-
-@keyframes stormFlash {
-  0%,
-  86%,
-  100% {
-    background: transparent;
-  }
-
-  87% {
-    background:
-      rgba(220, 225, 255, 0.10);
-  }
-
-  88% {
-    background: transparent;
-  }
-
-  91% {
-    background:
-      rgba(220, 225, 255, 0.06);
-  }
-}
-
-/* =====================================================
-   ЗВЁЗДЫ
-===================================================== */
-
-.stars-effect {
-  opacity: 0.7;
-}
-
-.stars-effect span {
-  position: absolute;
-
-  width: 2px;
-  height: 2px;
-
-  border-radius: 50%;
-
-  background: #fff;
-
-  box-shadow:
-    0 0 6px
-    rgba(255, 255, 255, 0.9);
-
-  animation: starBlink 3s ease-in-out infinite;
-}
-
-@keyframes starBlink {
-  0%,
-  100% {
-    opacity: 0.25;
-    transform: scale(0.8);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.5);
-  }
-}
-
-/* =====================================================
-   СОЛНЕЧНОЕ СВЕЧЕНИЕ
-===================================================== */
-
-.sun-effect {
-  opacity: 0.7;
-}
-
-.sun-effect span {
-  position: absolute;
-
-  top: -20%;
-  left: 10%;
-
-  width: 420px;
-  height: 420px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(255, 230, 160, 0.18),
-      rgba(255, 220, 150, 0.06),
-      transparent 70%
-    );
-
-  animation: sunPulse 5s ease-in-out infinite;
-}
-
-@keyframes sunPulse {
-  0%,
-  100% {
-    transform: scale(0.95);
-    opacity: 0.7;
-  }
-
-  50% {
-    transform: scale(1.08);
-    opacity: 1;
-  }
-}
-
-/* =====================================================
-   ИКОНКА ВРЕМЕНИ
-===================================================== */
+/* =========================
+   ИКОНКА
+========================= */
 
 .kessichka-sun {
-  position: relative;
-  z-index: 12;
-
   font-size: 48px;
 
   margin-bottom: 12px;
@@ -762,38 +290,32 @@ button {
   filter:
     drop-shadow(
       0 0 18px
-      rgba(255, 255, 255, 0.35)
+      rgba(255, 255, 255, 0.30)
     );
 
-  transition:
-    transform 0.8s ease,
-    filter 0.8s ease;
+  animation:
+    weatherIconFloat 4s ease-in-out infinite;
 }
 
-.kessichka-page.morning .kessichka-sun {
-  animation: morningGlow 3s ease-in-out infinite;
+@keyframes weatherIconFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
-.kessichka-page.day .kessichka-sun {
-  animation: dayGlow 4s ease-in-out infinite;
-}
-
-.kessichka-page.evening .kessichka-sun {
-  animation: eveningFloat 5s ease-in-out infinite;
-}
-
-.kessichka-page.night .kessichka-sun {
-  animation: nightFloat 6s ease-in-out infinite;
-}
-
-/* =====================================================
+/* =========================
    LABEL
-===================================================== */
+========================= */
 
 .kessichka-label {
   margin: 0 0 10px;
 
-  color: #ff7fa8;
+  color: #ff8eaf;
 
   font-size: 11px;
   font-weight: 700;
@@ -803,9 +325,9 @@ button {
   text-transform: uppercase;
 }
 
-/* =====================================================
+/* =========================
    ЗАГОЛОВОК
-===================================================== */
+========================= */
 
 .kessichka-title {
   margin: 0 0 20px;
@@ -818,29 +340,28 @@ button {
 
   text-shadow:
     0 4px 30px
-    rgba(255, 50, 100, 0.20);
+    rgba(255, 255, 255, 0.12);
 }
 
-/* =====================================================
+/* =========================
    ОСНОВНОЙ ТЕКСТ
-===================================================== */
+========================= */
 
 .kessichka-text {
   max-width: 440px;
 
   margin: 0 auto 25px;
 
-  color:
-    rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.75);
 
   font-size: 16px;
 
   line-height: 1.7;
 }
 
-/* =====================================================
+/* =========================
    СООБЩЕНИЕ
-===================================================== */
+========================= */
 
 .daily-message {
   margin: 0 0 18px;
@@ -862,9 +383,9 @@ button {
 
   box-shadow:
     inset 0 1px 0
-      rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.04),
     0 15px 40px
-      rgba(0, 0, 0, 0.18);
+    rgba(0, 0, 0, 0.18);
 }
 
 .daily-message-label {
@@ -883,17 +404,16 @@ button {
 .daily-message p {
   margin: 0;
 
-  color:
-    rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.92);
 
   font-size: 16px;
 
   line-height: 1.65;
 }
 
-/* =====================================================
+/* =========================
    ПОГОДА
-===================================================== */
+========================= */
 
 .weather-card {
   padding: 22px;
@@ -901,19 +421,15 @@ button {
   border-radius: 24px;
 
   background:
-    rgba(255, 255, 255, 0.055);
+    rgba(255, 255, 255, 0.075);
 
   border:
     1px solid
-    rgba(255, 255, 255, 0.08);
+    rgba(255, 255, 255, 0.12);
 
   box-shadow:
     inset 0 1px 0
-      rgba(255, 255, 255, 0.035);
-
-  position: relative;
-
-  z-index: 12;
+    rgba(255, 255, 255, 0.05);
 }
 
 .weather-icon {
@@ -969,7 +485,7 @@ button {
   margin: 8px 0 0;
 
   color:
-    rgba(255, 255, 255, 0.52);
+    rgba(255, 255, 255, 0.55);
 
   font-size: 13px;
 }
@@ -982,11 +498,11 @@ button {
   border-radius: 15px;
 
   background:
-    rgba(255, 105, 150, 0.10);
+    rgba(255, 55, 105, 0.09);
 
   border:
     1px solid
-    rgba(255, 105, 150, 0.16);
+    rgba(255, 90, 135, 0.12);
 
   color: #ff9bb8;
 
@@ -995,9 +511,9 @@ button {
   line-height: 1.5;
 }
 
-/* =====================================================
+/* =========================
    ПОДПИСЬ
-===================================================== */
+========================= */
 
 .signature {
   margin: 25px 0 0;
@@ -1010,59 +526,224 @@ button {
   letter-spacing: 0.4px;
 }
 
-/* =====================================================
-   АНИМАЦИИ
-===================================================== */
+/* =========================
+   ПОГОДНЫЕ ЭФФЕКТЫ
+========================= */
 
-@keyframes morningGlow {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
+.weather-effect {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  overflow: hidden;
+}
+
+/* =========================
+   ДОЖДЬ
+========================= */
+
+.rain-drop {
+  position: absolute;
+
+  top: -30px;
+
+  width: 1px;
+  height: 22px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      rgba(210, 230, 255, 0.75)
+    );
+
+  transform: rotate(15deg);
+
+  animation:
+    rainFall linear infinite;
+}
+
+@keyframes rainFall {
+  from {
+    transform:
+      translate3d(0, -40px, 0)
+      rotate(15deg);
   }
 
-  50% {
-    transform: translateY(-5px) scale(1.04);
+  to {
+    transform:
+      translate3d(-80px, 110vh, 0)
+      rotate(15deg);
   }
 }
 
-@keyframes dayGlow {
+/* =========================
+   СНЕГ
+========================= */
+
+.snow-flake {
+  position: absolute;
+
+  top: -30px;
+
+  color: rgba(255, 255, 255, 0.8);
+
+  animation:
+    snowFall linear infinite;
+}
+
+@keyframes snowFall {
+  0% {
+    transform:
+      translateY(-30px)
+      translateX(0)
+      rotate(0deg);
+  }
+
+  50% {
+    transform:
+      translateY(50vh)
+      translateX(25px)
+      rotate(180deg);
+  }
+
+  100% {
+    transform:
+      translateY(110vh)
+      translateX(-20px)
+      rotate(360deg);
+  }
+}
+
+/* =========================
+   ТУМАН
+========================= */
+
+.fog-effect span {
+  position: absolute;
+
+  width: 140%;
+  height: 35%;
+
+  left: -20%;
+
+  border-radius: 50%;
+
+  background:
+    rgba(230, 235, 240, 0.08);
+
+  filter: blur(35px);
+
+  animation:
+    fogMove 12s ease-in-out infinite;
+}
+
+.fog-effect span:nth-child(1) {
+  top: 20%;
+}
+
+.fog-effect span:nth-child(2) {
+  top: 45%;
+
+  animation-delay: -4s;
+}
+
+.fog-effect span:nth-child(3) {
+  top: 70%;
+
+  animation-delay: -8s;
+}
+
+@keyframes fogMove {
+  0%,
+  100% {
+    transform: translateX(-5%);
+  }
+
+  50% {
+    transform: translateX(5%);
+  }
+}
+
+/* =========================
+   ЗВЁЗДЫ
+========================= */
+
+.stars-effect span {
+  position: absolute;
+
+  width: 2px;
+  height: 2px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.75);
+
+  box-shadow:
+    0 0 7px
+    rgba(255, 255, 255, 0.8);
+
+  animation:
+    starTwinkle 3s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+  }
+}
+
+/* =========================
+   СОЛНЦЕ
+========================= */
+
+.sun-effect span {
+  position: absolute;
+
+  width: 300px;
+  height: 300px;
+
+  top: -150px;
+  right: -80px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 220, 130, 0.12);
+
+  filter: blur(20px);
+
+  animation:
+    sunPulse 5s ease-in-out infinite;
+}
+
+@keyframes sunPulse {
   0%,
   100% {
     transform: scale(1);
+    opacity: 0.7;
   }
 
   50% {
-    transform: scale(1.06);
-  }
-}
-
-@keyframes eveningFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-@keyframes nightFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.85;
-  }
-
-  50% {
-    transform: translateY(-5px);
+    transform: scale(1.15);
     opacity: 1;
   }
 }
 
-/* =====================================================
+/* =========================
    МОБИЛЬНЫЕ
-===================================================== */
+========================= */
 
 @media (max-width: 480px) {
   .kessichka-page {
@@ -1093,28 +774,5 @@ button {
 
   .weather-card {
     padding: 19px;
-  }
-
-  .sun-effect span {
-    width: 300px;
-    height: 300px;
-  }
-
-  .rain-drop {
-    height: 28px;
-  }
-}
-
-/* =====================================================
-   ЕСЛИ ПОЛЬЗОВАТЕЛЬ ОТКЛЮЧИЛ АНИМАЦИИ
-===================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
   }
 }
