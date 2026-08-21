@@ -16,37 +16,18 @@ const dailyMessages = [
 function getTimeOfDay() {
   const hour = new Date().getHours();
 
-  if (hour >= 6 && hour < 12) {
-    return "morning";
-  }
-
-  if (hour >= 12 && hour < 18) {
-    return "day";
-  }
-
-  if (hour >= 18 && hour < 22) {
-    return "evening";
-  }
+  if (hour >= 6 && hour < 12) return "morning";
+  if (hour >= 12 && hour < 18) return "day";
+  if (hour >= 18 && hour < 22) return "evening";
 
   return "night";
 }
 
 function getWeatherType(code) {
-  if (code === 0) {
-    return "clear";
-  }
-
-  if ([1, 2, 3].includes(code)) {
-    return "cloudy";
-  }
-
-  if ([45, 48].includes(code)) {
-    return "fog";
-  }
-
-  if ([51, 53, 55, 56, 57].includes(code)) {
-    return "drizzle";
-  }
+  if (code === 0) return "clear";
+  if ([1, 2, 3].includes(code)) return "cloudy";
+  if ([45, 48].includes(code)) return "fog";
+  if ([51, 53, 55, 56, 57].includes(code)) return "drizzle";
 
   if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
     return "rain";
@@ -56,9 +37,7 @@ function getWeatherType(code) {
     return "snow";
   }
 
-  if ([95, 96, 99].includes(code)) {
-    return "storm";
-  }
+  if ([95, 96, 99].includes(code)) return "storm";
 
   return "cloudy";
 }
@@ -244,14 +223,16 @@ export default function Home() {
         setWeather(data);
 
         if (!data.error) {
-          setWeatherType(
-            getWeatherType(data.weatherCode)
-          );
+          // ВРЕМЕННО ДЛЯ ПРОВЕРКИ ЭФФЕКТА ДОЖДЯ
+          setWeatherType("rain");
         }
       })
       .catch(() => {
-        setWeather({ error: true });
-        setWeatherType("cloudy");
+        setWeather({
+          error: true,
+        });
+
+        setWeatherType("rain");
       });
   }, []);
 
