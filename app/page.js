@@ -25,6 +25,38 @@ const dailyMessages = [
   "Пусть сегодня всё складывается чуть легче, чем ты ожидаешь. А если день будет вредничать - будем вредничать вместе с ним. ❤️",
 ];
 
+// ==========================================
+// VAPID PUBLIC KEY
+// ==========================================
+
+function urlBase64ToUint8Array(base64String) {
+  const padding =
+    "=".repeat(
+      (4 - (base64String.length % 4)) % 4
+    );
+
+  const base64 =
+    (base64String + padding)
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+
+  const outputArray =
+    new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] =
+      rawData.charCodeAt(i);
+  }
+
+  return outputArray;
+}
+
+// ==========================================
+// ВРЕМЯ СУТОК
+// ==========================================
+
 function getTimeOfDay() {
   const hour = Number(
     new Intl.DateTimeFormat("en-US", {
@@ -49,16 +81,28 @@ function getTimeOfDay() {
   return "night";
 }
 
+// ==========================================
+// ПОГОДА
+// ==========================================
+
 function weatherText(code) {
   if (code === 0) return "Ясно всё гуд ☀️";
-  if ([1, 2, 3].includes(code)) return "Облачно вайбик 🌤️";
-  if ([45, 48].includes(code)) return "Туман сайлентхилл 🌫️";
-  if ([51, 53, 55, 56, 57].includes(code)) return "Морось фе 🌦️";
-  if ([61, 63, 65, 66, 67].includes(code)) return "Дождь +вайб 🌧️";
-  if ([71, 73, 75, 77].includes(code)) return "Снег вайбик ❄️";
-  if ([80, 81, 82].includes(code)) return "Ливень любимое 🌧️";
-  if ([85, 86].includes(code)) return "Снегопад ❄️";
-  if ([95, 96, 99].includes(code)) return "Гроза ⛈️";
+  if ([1, 2, 3].includes(code))
+    return "Облачно вайбик 🌤️";
+  if ([45, 48].includes(code))
+    return "Туман сайлентхилл 🌫️";
+  if ([51, 53, 55, 56, 57].includes(code))
+    return "Морось фе 🌦️";
+  if ([61, 63, 65, 66, 67].includes(code))
+    return "Дождь +вайб 🌧️";
+  if ([71, 73, 75, 77].includes(code))
+    return "Снег вайбик ❄️";
+  if ([80, 81, 82].includes(code))
+    return "Ливень любимое 🌧️";
+  if ([85, 86].includes(code))
+    return "Снегопад ❄️";
+  if ([95, 96, 99].includes(code))
+    return "Гроза ⛈️";
 
   return "Погода сегодня загадочная 🌥️";
 }
@@ -97,6 +141,7 @@ export default function Home() {
     try {
       setPushLoading(true);
 
+      // Проверяем поддержку уведомлений
       if (!("Notification" in window)) {
         alert(
           "Этот браузер не поддерживает уведомления."
@@ -104,6 +149,7 @@ export default function Home() {
         return;
       }
 
+      // Проверяем Service Worker
       if (!("serviceWorker" in navigator)) {
         alert(
           "Этот браузер не поддерживает Push-уведомления."
@@ -111,6 +157,7 @@ export default function Home() {
         return;
       }
 
+      // Получаем разрешение
       const permission =
         await Notification.requestPermission();
 
@@ -121,6 +168,7 @@ export default function Home() {
         return;
       }
 
+      // Ждём Service Worker
       const registration =
         await navigator.serviceWorker.ready;
 
@@ -131,11 +179,11 @@ export default function Home() {
         return;
       }
 
-      const existingSubscription =
+      // Проверяем существующую подписку
+      let subscription =
         await registration.pushManager.getSubscription();
 
-      let subscription = existingSubscription;
-
+      // Если подписки нет — создаём
       if (!subscription) {
         const publicKey =
           process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
@@ -146,27 +194,40 @@ export default function Home() {
           );
         }
 
+        // Преобразуем VAPID Public Key
+        const applicationServerKey =
+          urlBase64ToUint8Array(
+            publicKey
+          );
+
         subscription =
           await registration.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: publicKey,
+            applicationServerKey:
+              applicationServerKey,
           });
       }
 
-      const response = await fetch(
-        "/api/subscribe",
-        {
+      // Отправляем подписку на сервер
+      const response =
+        await fetch("/api/subscribe", {
           method: "POST",
+
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
-          body: JSON.stringify(subscription),
-        }
-      );
+
+          body: JSON.stringify(
+            subscription
+          ),
+        });
 
       if (!response.ok) {
         const data =
-          await response.json().catch(() => null);
+          await response
+            .json()
+            .catch(() => null);
 
         throw new Error(
           data?.error ||
@@ -320,10 +381,10 @@ export default function Home() {
         <p className="kessichka-text">
           Я далеко, и не могу пока лично
           следить за тобой, но могу хотя бы
-          иногда напоминать о простых вещах
-          и заботиться о бусе:
-          поешь, не мёрзни, отдыхай
-          и иногда улыбайся.
+          иногда напоминать о простых вещах и
+          заботиться о бусе:
+          поешь, не мёрзни, отдыхай и иногда
+          улыбайся.
         </p>
 
         {/* =====================================
@@ -374,7 +435,9 @@ export default function Home() {
             Маленькое сообщение для тебя
           </div>
 
-          <p>{message}</p>
+          <p>
+            {message}
+          </p>
 
         </div>
 
@@ -403,57 +466,59 @@ export default function Home() {
           {weather?.error && (
             <p className="weather-text">
               Не смог посмотреть погоду,
-              но ты всё равно оденься
-              по погоде 😌
+              но ты всё равно оденься по погоде 😌
             </p>
           )}
 
-          {weather && !weather.error && (
-            <>
-              <p className="weather-text">
-                {weatherText(
-                  weather.weatherCode
-                )}
-              </p>
+          {weather &&
+            !weather.error && (
+              <>
+                <p className="weather-text">
+                  {weatherText(
+                    weather.weatherCode
+                  )}
+                </p>
 
-              <div className="temperature">
-                {Math.round(
-                  weather.temperature
-                )}
-                °
-              </div>
+                <div className="temperature">
+                  {Math.round(
+                    weather.temperature
+                  )}
+                  °
+                </div>
 
-              <p className="weather-feels">
-                Ощущается как{" "}
-                {Math.round(
-                  weather.feelsLike
-                )}
-                °
-              </p>
+                <p className="weather-feels">
+                  Ощущается как{" "}
+                  {Math.round(
+                    weather.feelsLike
+                  )}
+                  °
+                </p>
 
-              <p className="weather-text">
-                Сегодня от{" "}
-                {Math.round(weather.min)}
-                ° до{" "}
-                {Math.round(weather.max)}
-                °C
-              </p>
+                <p className="weather-text">
+                  Сегодня от{" "}
+                  {Math.round(weather.min)}
+                  ° до{" "}
+                  {Math.round(weather.max)}
+                  °C
+                </p>
 
-              <p className="weather-text">
-                Вероятность дождя:{" "}
-                {weather.rainChance}%
-              </p>
+                <p className="weather-text">
+                  Вероятность дождя:{" "}
+                  {weather.rainChance}%
+                </p>
 
-              <div className="weather-advice">
-                {getWeatherAdvice(weather)}
-              </div>
-            </>
-          )}
+                <div className="weather-advice">
+                  {getWeatherAdvice(
+                    weather
+                  )}
+                </div>
+              </>
+            )}
 
         </div>
 
         {/* =====================================
-            PUSH
+            PUSH УВЕДОМЛЕНИЯ
         ===================================== */}
 
         {!pushEnabled && (
