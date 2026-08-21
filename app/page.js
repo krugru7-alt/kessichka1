@@ -89,8 +89,12 @@ export default function Home() {
 const [pushLoading, setPushLoading] = useState(false);
 
 async function enablePushNotifications() {
-  try {
-    setPushLoading(true);
+  const permission = await Notification.requestPermission();
+
+if (permission !== "granted") {
+  alert("Разрешение на уведомления не получено");
+  return;
+}
 
     if (!("Notification" in window)) {
       alert("Этот браузер не поддерживает уведомления.");
