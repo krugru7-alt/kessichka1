@@ -11,7 +11,7 @@ body {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: #09070a;
+  background: #05070a;
   color: #fff;
 }
 
@@ -20,7 +20,7 @@ button {
 }
 
 /* =========================
-   ОСНОВНОЙ ФОН
+   ОСНОВНАЯ СТРАНИЦА
 ========================= */
 
 .kessichka-page {
@@ -35,106 +35,382 @@ button {
 
   overflow: hidden;
 
-  background: #09070a;
+  background: #05070a;
 
   transition:
-    background 1.2s ease,
-    color 0.8s ease;
+    background 2s ease,
+    color 1s ease;
 }
 
 /* =========================
-   УТРО
+   ЯСНАЯ ПОГОДА
 ========================= */
 
-.kessichka-page.morning {
+/* Утро */
+
+.kessichka-page.morning-clear {
   background:
     radial-gradient(
-      circle at 20% 10%,
-      rgba(255, 105, 150, 0.32),
+      circle at 25% 8%,
+      rgba(255, 225, 160, 0.45),
       transparent 32%
-    ),
-    radial-gradient(
-      circle at 85% 80%,
-      rgba(255, 45, 100, 0.18),
-      transparent 35%
     ),
     linear-gradient(
       145deg,
-      #160b12 0%,
-      #2b111e 50%,
-      #0b080a 100%
+      #183047 0%,
+      #496f8d 45%,
+      #111820 100%
     );
 }
 
-/* =========================
-   ДЕНЬ
-========================= */
+/* День */
 
-.kessichka-page.day {
+.kessichka-page.day-clear {
   background:
     radial-gradient(
-      circle at 15% 15%,
-      rgba(255, 70, 120, 0.25),
+      circle at 25% 8%,
+      rgba(255, 240, 190, 0.55),
       transparent 30%
     ),
-    radial-gradient(
-      circle at 85% 75%,
-      rgba(255, 140, 180, 0.18),
-      transparent 35%
-    ),
     linear-gradient(
       145deg,
-      #16090f 0%,
-      #300d1b 50%,
-      #0c080a 100%
+      #3f7194 0%,
+      #79a8c4 48%,
+      #253846 100%
     );
 }
 
-/* =========================
-   ВЕЧЕР
-========================= */
+/* Вечер */
 
-.kessichka-page.evening {
+.kessichka-page.evening-clear {
   background:
     radial-gradient(
-      circle at 80% 15%,
-      rgba(220, 25, 80, 0.30),
+      circle at 75% 12%,
+      rgba(255, 180, 100, 0.60),
       transparent 32%
     ),
     radial-gradient(
-      circle at 15% 80%,
-      rgba(150, 20, 70, 0.20),
+      circle at 30% 70%,
+      rgba(230, 110, 100, 0.30),
       transparent 35%
     ),
     linear-gradient(
       145deg,
-      #10070c 0%,
-      #260914 50%,
-      #070609 100%
+      #27334d 0%,
+      #a45455 55%,
+      #170e19 100%
+    );
+}
+
+/* Ночь */
+
+.kessichka-page.night-clear {
+  background:
+    radial-gradient(
+      circle at 75% 15%,
+      rgba(190, 215, 255, 0.20),
+      transparent 25%
+    ),
+    linear-gradient(
+      145deg,
+      #07101e 0%,
+      #101d32 50%,
+      #020407 100%
     );
 }
 
 /* =========================
-   НОЧЬ
+   ОБЛАЧНО
 ========================= */
 
-.kessichka-page.night {
+.kessichka-page.morning-cloudy,
+.kessichka-page.day-cloudy {
+  background:
+    radial-gradient(
+      circle at 30% 10%,
+      rgba(220, 230, 235, 0.28),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      #53616c 0%,
+      #77848d 48%,
+      #20272c 100%
+    );
+}
+
+.kessichka-page.evening-cloudy {
+  background:
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(190, 170, 180, 0.20),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #303942 0%,
+      #4c4b55 50%,
+      #111318 100%
+    );
+}
+
+.kessichka-page.night-cloudy {
+  background:
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(160, 180, 200, 0.12),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      #101820 0%,
+      #202a32 50%,
+      #030506 100%
+    );
+}
+
+/* =========================
+   ТУМАН
+========================= */
+
+.kessichka-page.morning-fog,
+.kessichka-page.day-fog {
+  background:
+    radial-gradient(
+      circle at 50% 15%,
+      rgba(245, 248, 248, 0.40),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      #647078 0%,
+      #a3abad 50%,
+      #363d40 100%
+    );
+}
+
+.kessichka-page.evening-fog {
+  background:
+    radial-gradient(
+      circle at 50% 20%,
+      rgba(220, 210, 210, 0.25),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #45494d,
+      #67666a,
+      #18191b
+    );
+}
+
+.kessichka-page.night-fog {
+  background:
+    radial-gradient(
+      circle at 50% 20%,
+      rgba(190, 205, 210, 0.15),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      #1b2226,
+      #30373a,
+      #060708
+    );
+}
+
+/* =========================
+   МЕЛКИЙ ДОЖДЬ
+========================= */
+
+.kessichka-page.morning-drizzle,
+.kessichka-page.day-drizzle {
+  background:
+    radial-gradient(
+      circle at 60% 15%,
+      rgba(180, 210, 225, 0.22),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #344b5b,
+      #587181,
+      #10171c
+    );
+}
+
+.kessichka-page.evening-drizzle {
+  background:
+    radial-gradient(
+      circle at 70% 20%,
+      rgba(130, 155, 175, 0.18),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #26343e,
+      #394954,
+      #0b0e11
+    );
+}
+
+.kessichka-page.night-drizzle {
+  background:
+    linear-gradient(
+      145deg,
+      #0b131a,
+      #18242d,
+      #020304
+    );
+}
+
+/* =========================
+   ДОЖДЬ
+========================= */
+
+.kessichka-page.morning-rain,
+.kessichka-page.day-rain {
+  background:
+    radial-gradient(
+      circle at 30% 15%,
+      rgba(180, 210, 225, 0.16),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #273c4b,
+      #405b6b,
+      #0b1116
+    );
+}
+
+.kessichka-page.evening-rain {
+  background:
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(130, 160, 180, 0.16),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #17252e,
+      #293b46,
+      #06090b
+    );
+}
+
+.kessichka-page.night-rain {
   background:
     radial-gradient(
       circle at 75% 20%,
-      rgba(150, 15, 65, 0.26),
+      rgba(100, 140, 170, 0.12),
       transparent 30%
-    ),
-    radial-gradient(
-      circle at 20% 80%,
-      rgba(255, 20, 80, 0.11),
-      transparent 35%
     ),
     linear-gradient(
       145deg,
-      #060507 0%,
-      #100509 50%,
-      #030304 100%
+      #070f15,
+      #101d26,
+      #010203
+    );
+}
+
+/* =========================
+   СНЕГ
+========================= */
+
+.kessichka-page.morning-snow,
+.kessichka-page.day-snow {
+  background:
+    radial-gradient(
+      circle at 25% 10%,
+      rgba(255, 255, 255, 0.65),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      #9fb6c5,
+      #d7e1e5,
+      #52636d
+    );
+}
+
+.kessichka-page.evening-snow {
+  background:
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(255, 240, 225, 0.35),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #526675,
+      #8297a3,
+      #202a31
+    );
+}
+
+.kessichka-page.night-snow {
+  background:
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(225, 240, 255, 0.22),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      #172633,
+      #293d4c,
+      #05080b
+    );
+}
+
+/* =========================
+   ГРОЗА
+========================= */
+
+.kessichka-page.morning-storm,
+.kessichka-page.day-storm {
+  background:
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(160, 150, 190, 0.20),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #1b1b28,
+      #343447,
+      #050506
+    );
+}
+
+.kessichka-page.evening-storm {
+  background:
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(180, 150, 210, 0.20),
+      transparent 30%
+    ),
+    linear-gradient(
+      145deg,
+      #151522,
+      #29283c,
+      #030304
+    );
+}
+
+.kessichka-page.night-storm {
+  background:
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(120, 110, 180, 0.15),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      #070710,
+      #111122,
+      #000001
     );
 }
 
@@ -169,9 +445,9 @@ button {
   text-align: center;
 
   transition:
-    background 1s ease,
-    box-shadow 1s ease,
-    border-color 1s ease;
+    background 1.5s ease,
+    box-shadow 1.5s ease,
+    border-color 1.5s ease;
 }
 
 /* =========================
@@ -186,7 +462,7 @@ button {
   filter:
     drop-shadow(
       0 0 18px
-      rgba(255, 120, 150, 0.35)
+      rgba(255, 255, 255, 0.35)
     );
 
   transition:
@@ -194,7 +470,9 @@ button {
     filter 0.8s ease;
 }
 
-/* Небольшое движение иконки */
+/* =========================
+   АНИМАЦИЯ ИКОНКИ
+========================= */
 
 .kessichka-page.morning .kessichka-sun {
   animation: morningGlow 3s ease-in-out infinite;
@@ -245,9 +523,6 @@ button {
   text-shadow:
     0 4px 30px
     rgba(255, 50, 100, 0.20);
-
-  transition:
-    text-shadow 1s ease;
 }
 
 /* =========================
@@ -292,10 +567,6 @@ button {
       rgba(255, 255, 255, 0.04),
     0 15px 40px
       rgba(0, 0, 0, 0.18);
-
-  transition:
-    background 1s ease,
-    border-color 1s ease;
 }
 
 .daily-message-label {
@@ -340,10 +611,6 @@ button {
   box-shadow:
     inset 0 1px 0
       rgba(255, 255, 255, 0.035);
-
-  transition:
-    background 1s ease,
-    border-color 1s ease;
 }
 
 .weather-icon {
@@ -354,7 +621,7 @@ button {
   filter:
     drop-shadow(
       0 0 15px
-      rgba(255, 150, 170, 0.25)
+      rgba(255, 255, 255, 0.25)
     );
 }
 
@@ -372,7 +639,7 @@ button {
   margin: 8px 0 0;
 
   color:
-    rgba(255, 255, 255, 0.58);
+    rgba(255, 255, 255, 0.62);
 
   font-size: 14px;
 
@@ -392,7 +659,7 @@ button {
 
   text-shadow:
     0 0 30px
-    rgba(255, 90, 130, 0.25);
+    rgba(255, 255, 255, 0.20);
 }
 
 .weather-feels {
@@ -412,11 +679,11 @@ button {
   border-radius: 15px;
 
   background:
-    rgba(255, 55, 105, 0.09);
+    rgba(255, 105, 150, 0.10);
 
   border:
     1px solid
-    rgba(255, 90, 135, 0.12);
+    rgba(255, 105, 150, 0.16);
 
   color: #ff9bb8;
 
@@ -448,20 +715,10 @@ button {
   0%,
   100% {
     transform: translateY(0) scale(1);
-    filter:
-      drop-shadow(
-        0 0 15px
-        rgba(255, 120, 150, 0.25)
-      );
   }
 
   50% {
     transform: translateY(-5px) scale(1.04);
-    filter:
-      drop-shadow(
-        0 0 28px
-        rgba(255, 120, 150, 0.55)
-      );
   }
 }
 
@@ -507,15 +764,12 @@ button {
 @media (max-width: 480px) {
   .kessichka-page {
     padding: 14px;
-
     align-items: flex-start;
-
     padding-top: 24px;
   }
 
   .kessichka-card {
     padding: 32px 19px;
-
     border-radius: 27px;
   }
 
