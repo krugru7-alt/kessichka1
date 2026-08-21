@@ -86,76 +86,117 @@ function getWeatherAdvice(weather) {
 export default function Home() {
   const [weather, setWeather] = useState(null);
   const [pushEnabled, setPushEnabled] = useState(false);
-const [pushLoading, setPushLoading] = useState(false);
-
-async function enablePushNotifications() {
-  const permission = await Notification.requestPermission();
-
-if (permission !== "granted") {
-  alert("Разрешение на уведомления не получено");
-  return;
-}
-
-    if (!("Notification" in window)) {
-      alert("Этот браузер не поддерживает уведомления.");
-      return;
-    }
-
-    if (!("serviceWorker" in navigator)) {
-      alert("Этот браузер не поддерживает Service Worker.");
-      return;
-    }
-
-    const permission =
-      await Notification.requestPermission();
-
-    if (permission !== "granted") {
-      alert("Разрешение на уведомления не получено.");
-      return;
-    }
-
-  const subscription =
-  await registration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey:
-      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-  });
-
-const response = await fetch("/api/subscribe", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(subscription),
-});
-
-if (!response.ok) {
-  throw new Error(
-    "Не удалось сохранить Push-подписку"
-  );
-}
-
-setPushEnabled(true);
-
-alert("Уведомления подключены ❤️");
-
-    alert("Уведомления подключены ❤️");
-  } catch (error) {
-    console.error(
-      "Ошибка подключения уведомлений:",
-      error
-    );
-
-    alert(
-      "Не получилось подключить уведомления 😔"
-    );
-  } finally {
-    setPushLoading(false);
-  }
-}
-
-  // Обновляем время каждую минуту
+  const [pushLoading, setPushLoading] = useState(false);
   const [now, setNow] = useState(new Date());
+
+  // ==========================================
+  // PUSH УВЕДОМЛЕНИЯ
+  // ==========================================
+
+  async function enablePushNotifications() {
+    try {
+      setPushLoading(true);
+
+      if (!("Notification" in window)) {
+        alert(
+          "Этот браузер не поддерживает уведомления."
+        );
+        return;
+      }
+
+      if (!("serviceWorker" in navigator)) {
+        alert(
+          "Этот браузер не поддерживает Push-уведомления."
+        );
+        return;
+      }
+
+      const permission =
+        await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        alert(
+          "Разрешение на уведомления не получено."
+        );
+        return;
+      }
+
+      const registration =
+        await navigator.serviceWorker.ready;
+
+      if (!registration.pushManager) {
+        alert(
+          "Push-уведомления недоступны в этом браузере."
+        );
+        return;
+      }
+
+      const existingSubscription =
+        await registration.pushManager.getSubscription();
+
+      let subscription = existingSubscription;
+
+      if (!subscription) {
+        const publicKey =
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+
+        if (!publicKey) {
+          throw new Error(
+            "NEXT_PUBLIC_VAPID_PUBLIC_KEY не найден."
+          );
+        }
+
+        subscription =
+          await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: publicKey,
+          });
+      }
+
+      const response = await fetch(
+        "/api/subscribe",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(subscription),
+        }
+      );
+
+      if (!response.ok) {
+        const data =
+          await response.json().catch(() => null);
+
+        throw new Error(
+          data?.error ||
+            "Не удалось сохранить Push-подписку."
+        );
+      }
+
+      setPushEnabled(true);
+
+      alert(
+        "Уведомления подключены ❤️"
+      );
+    } catch (error) {
+      console.error(
+        "Ошибка подключения уведомлений:",
+        error
+      );
+
+      alert(
+        "Не получилось подключить уведомления.\n\n" +
+          error.message
+      );
+    } finally {
+      setPushLoading(false);
+    }
+  }
+
+  // ==========================================
+  // ОБНОВЛЯЕМ ВРЕМЯ КАЖДУЮ МИНУТУ
+  // ==========================================
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -165,59 +206,90 @@ alert("Уведомления подключены ❤️");
     return () => clearInterval(timer);
   }, []);
 
+  // ==========================================
+  // ПОГОДА
+  // ==========================================
+
+  useEffect(() => {
+    fetch("/api/weather")
+      .then((response) => response.json())
+      .then((data) => setWeather(data))
+      .catch(() =>
+        setWeather({ error: true })
+      );
+  }, []);
+
+  // ==========================================
+  // SERVICE WORKER
+  // ==========================================
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then(() => {
+          console.log(
+            "Kessichka Service Worker зарегистрирован ❤️"
+          );
+        })
+        .catch((error) => {
+          console.error(
+            "Ошибка регистрации Service Worker:",
+            error
+          );
+        });
+    }
+  }, []);
+
+  // ==========================================
+  // ВРЕМЯ И РАСПИСАНИЕ
+  // ==========================================
+
   const timeOfDay = getTimeOfDay();
 
-  const currentSchedule = getCurrentScheduleItem();
-const currentDay = getCurrentDay();
+  const currentSchedule =
+    getCurrentScheduleItem();
 
-const minskTime = new Intl.DateTimeFormat("ru-RU", {
-  timeZone: "Europe/Minsk",
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-  hourCycle: "h23",
-}).format(new Date());
-  
+  const currentDay = getCurrentDay();
+
+  const minskTime =
+    new Intl.DateTimeFormat("ru-RU", {
+      timeZone: "Europe/Minsk",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+    }).format(now);
+
+  // ==========================================
+  // СООБЩЕНИЕ ДНЯ
+  // ==========================================
+
   const today = new Date();
 
   const message =
     dailyMessages[
       Math.floor(
-        (new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          today.getDate()
-        ) -
-          new Date(2026, 0, 1)) /
+        (
+          new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+          ) -
+          new Date(2026, 0, 1)
+        ) /
           86400000
       ) % dailyMessages.length
     ];
 
-  useEffect(() => {
-  fetch("/api/weather")
-    .then((response) => response.json())
-    .then((data) => setWeather(data))
-    .catch(() => setWeather({ error: true }));
-}, []);
-
-useEffect(() => {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then(() => {
-        console.log("Kessichka Service Worker зарегистрирован ❤️");
-      })
-      .catch((error) => {
-        console.error(
-          "Ошибка регистрации Service Worker:",
-          error
-        );
-      });
-  }
-}, []);
+  // ==========================================
+  // РЕНДЕР
+  // ==========================================
 
   return (
-    <main className={`kessichka-page ${timeOfDay}`}>
+    <main
+      className={`kessichka-page ${timeOfDay}`}
+    >
       <section className="kessichka-card">
 
         <div className="kessichka-sun">
@@ -246,48 +318,51 @@ useEffect(() => {
         </h1>
 
         <p className="kessichka-text">
-          Я далеко, и не могу пока лично следить за тобой,
-          но могу хотя бы иногда напоминать о простых вещах и заботиться о бусе:
-          поешь, не мёрзни, отдыхай и иногда улыбайся.
+          Я далеко, и не могу пока лично
+          следить за тобой, но могу хотя бы
+          иногда напоминать о простых вещах
+          и заботиться о бусе:
+          поешь, не мёрзни, отдыхай
+          и иногда улыбайся.
         </p>
 
         {/* =====================================
             РАСПИСАНИЕ
         ===================================== */}
 
-    {currentSchedule && (
-  <div className="daily-message">
+        {currentSchedule && (
+          <div className="daily-message">
 
-    <div
-      style={{
-        fontSize: "12px",
-        opacity: 0.5,
-        marginBottom: "8px",
-      }}
-    >
-      Сейчас по Минску: {minskTime}
-    </div>
+            <div
+              style={{
+                fontSize: "12px",
+                opacity: 0.5,
+                marginBottom: "8px",
+              }}
+            >
+              Сейчас по Минску: {minskTime}
+            </div>
 
-    <div className="daily-message-label">
-      {dayNames[currentDay]} • {currentSchedule.time}
-    </div>
+            <div className="daily-message-label">
+              {dayNames[currentDay]} •{" "}
+              {currentSchedule.time}
+            </div>
 
-    <p
-      style={{
-        fontWeight: 700,
-        marginBottom: "8px",
-      }}
-    >
-      {currentSchedule.title}
-    </p>
+            <p
+              style={{
+                fontWeight: 700,
+                marginBottom: "8px",
+              }}
+            >
+              {currentSchedule.title}
+            </p>
 
-    <p>
-      {currentSchedule.text}
-    </p>
+            <p>
+              {currentSchedule.text}
+            </p>
 
-  </div>
-)}
-
+          </div>
+        )}
 
         {/* =====================================
             СООБЩЕНИЕ ДНЯ
@@ -310,7 +385,9 @@ useEffect(() => {
         <div className="weather-card">
 
           <div className="weather-icon">
-            {weather?.error ? "🌥️" : "🌤️"}
+            {weather?.error
+              ? "🌥️"
+              : "🌤️"}
           </div>
 
           <h2 className="weather-title">
@@ -326,30 +403,40 @@ useEffect(() => {
           {weather?.error && (
             <p className="weather-text">
               Не смог посмотреть погоду,
-              но ты всё равно оденься по погоде 😌
+              но ты всё равно оденься
+              по погоде 😌
             </p>
           )}
 
           {weather && !weather.error && (
             <>
               <p className="weather-text">
-                {weatherText(weather.weatherCode)}
+                {weatherText(
+                  weather.weatherCode
+                )}
               </p>
 
               <div className="temperature">
-                {Math.round(weather.temperature)}°
+                {Math.round(
+                  weather.temperature
+                )}
+                °
               </div>
 
               <p className="weather-feels">
                 Ощущается как{" "}
-                {Math.round(weather.feelsLike)}°
+                {Math.round(
+                  weather.feelsLike
+                )}
+                °
               </p>
 
               <p className="weather-text">
                 Сегодня от{" "}
-                {Math.round(weather.min)}°
-                {" "}до{" "}
-                {Math.round(weather.max)}°C
+                {Math.round(weather.min)}
+                ° до{" "}
+                {Math.round(weather.max)}
+                °C
               </p>
 
               <p className="weather-text">
@@ -365,27 +452,33 @@ useEffect(() => {
 
         </div>
 
+        {/* =====================================
+            PUSH
+        ===================================== */}
+
         {!pushEnabled && (
-  <button
-    className="push-button"
-    onClick={enablePushNotifications}
-    disabled={pushLoading}
-  >
-    {pushLoading
-      ? "Подключаю уведомления..."
-      : "🔔 Получать приветы от Обсидика ❤️"}
-  </button>
-)}
+          <button
+            className="push-button"
+            onClick={
+              enablePushNotifications
+            }
+            disabled={pushLoading}
+          >
+            {pushLoading
+              ? "Подключаю уведомления..."
+              : "🔔 Получать приветы от Обсидика ❤️"}
+          </button>
+        )}
 
-{pushEnabled && (
-  <div className="push-enabled">
-    🔔 Уведомления подключены ❤️
-  </div>
-)}
+        {pushEnabled && (
+          <div className="push-enabled">
+            🔔 Уведомления подключены ❤️
+          </div>
+        )}
 
-<p className="signature">
-  Обсидик ❤️
-</p>
+        <p className="signature">
+          Обсидик ❤️
+        </p>
 
       </section>
     </main>
