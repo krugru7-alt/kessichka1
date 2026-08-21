@@ -100,8 +100,16 @@ export default function Home() {
   const timeOfDay = getTimeOfDay();
 
   const currentSchedule = getCurrentScheduleItem();
-  const currentDay = getCurrentDay();
+const currentDay = getCurrentDay();
 
+const minskTime = new Intl.DateTimeFormat("ru-RU", {
+  timeZone: "Europe/Minsk",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+}).format(new Date());
+  
   const today = new Date();
 
   const message =
@@ -163,28 +171,39 @@ export default function Home() {
             РАСПИСАНИЕ
         ===================================== */}
 
-        {currentSchedule && (
-          <div className="daily-message">
+    {currentSchedule && (
+  <div className="daily-message">
 
-            <div className="daily-message-label">
-              {dayNames[currentDay]} • {currentSchedule.time}
-            </div>
+    <div
+      style={{
+        fontSize: "12px",
+        opacity: 0.5,
+        marginBottom: "8px",
+      }}
+    >
+      Сейчас по Минску: {minskTime}
+    </div>
 
-            <p
-              style={{
-                fontWeight: 700,
-                marginBottom: "8px",
-              }}
-            >
-              {currentSchedule.title}
-            </p>
+    <div className="daily-message-label">
+      {dayNames[currentDay]} • {currentSchedule.time}
+    </div>
 
-            <p>
-              {currentSchedule.text}
-            </p>
+    <p
+      style={{
+        fontWeight: 700,
+        marginBottom: "8px",
+      }}
+    >
+      {currentSchedule.title}
+    </p>
 
-          </div>
-        )}
+    <p>
+      {currentSchedule.text}
+    </p>
+
+  </div>
+)}
+
 
         {/* =====================================
             СООБЩЕНИЕ ДНЯ
