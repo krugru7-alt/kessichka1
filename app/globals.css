@@ -11,8 +11,8 @@ body {
 
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background: #fff7fa;
-  color: #302831;
+  background: #09070a;
+  color: #fff;
 }
 
 button {
@@ -21,97 +21,253 @@ button {
 
 .kessichka-page {
   min-height: 100vh;
-  padding: 24px;
+  min-height: 100svh;
+  padding: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+
   background:
-    radial-gradient(circle at 15% 10%, rgba(255, 214, 226, 0.8), transparent 30%),
-    radial-gradient(circle at 90% 85%, rgba(220, 208, 255, 0.7), transparent 32%),
-    linear-gradient(145deg, #fff8fb 0%, #f8f4ff 100%);
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(255, 52, 111, 0.25),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(220, 20, 70, 0.22),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(255, 0, 80, 0.07),
+      transparent 45%
+    ),
+    #09070a;
 }
 
 .kessichka-card {
   width: 100%;
-  max-width: 520px;
-  padding: 42px 28px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  max-width: 540px;
+  padding: 38px 26px;
+
+  border: 1px solid rgba(255, 105, 150, 0.18);
   border-radius: 32px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 24px 80px rgba(92, 65, 92, 0.14);
-  backdrop-filter: blur(18px);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  box-shadow:
+    0 30px 100px rgba(0, 0, 0, 0.55),
+    0 0 80px rgba(255, 30, 100, 0.08);
+
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+
   text-align: center;
 }
 
 .kessichka-sun {
-  font-size: 52px;
+  font-size: 48px;
   margin-bottom: 12px;
+
+  filter: drop-shadow(0 0 18px rgba(255, 120, 150, 0.35));
 }
 
 .kessichka-label {
-  margin: 0 0 8px;
-  color: #a16d87;
-  font-size: 12px;
+  margin: 0 0 10px;
+
+  color: #ff7fa8;
+
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   text-transform: uppercase;
 }
 
 .kessichka-title {
   margin: 0 0 20px;
-  font-size: clamp(30px, 8vw, 42px);
-  line-height: 1.1;
-  color: #332933;
+
+  color: #fff;
+
+  font-size: clamp(30px, 8vw, 43px);
+  line-height: 1.12;
+
+  text-shadow: 0 4px 30px rgba(255, 50, 100, 0.2);
 }
 
 .kessichka-text {
-  margin: 0 auto 28px;
-  max-width: 430px;
-  color: #625762;
-  font-size: 17px;
+  margin: 0 auto 25px;
+  max-width: 440px;
+
+  color: rgba(255, 255, 255, 0.72);
+
+  font-size: 16px;
   line-height: 1.7;
 }
 
+/* Сообщение дня */
+
+.daily-message {
+  margin: 0 0 18px;
+  padding: 21px 20px;
+
+  border-radius: 23px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 50, 105, 0.15),
+      rgba(255, 255, 255, 0.035)
+    );
+
+  border: 1px solid rgba(255, 105, 150, 0.18);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 15px 40px rgba(0, 0, 0, 0.18);
+}
+
+.daily-message-label {
+  margin-bottom: 10px;
+
+  color: #ff86aa;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.daily-message p {
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.9);
+
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* Погода */
+
 .weather-card {
-  padding: 20px;
+  padding: 22px;
+
   border-radius: 24px;
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 8px 30px rgba(90, 60, 90, 0.07);
+
+  background: rgba(255, 255, 255, 0.055);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
 .weather-icon {
   font-size: 34px;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
+
+  filter: drop-shadow(0 0 15px rgba(255, 150, 170, 0.25));
 }
 
 .weather-title {
   margin: 0;
+
+  color: #fff;
+
   font-size: 16px;
+  font-weight: 600;
 }
 
 .weather-text {
   margin: 8px 0 0;
-  color: #8a7d88;
+
+  color: rgba(255, 255, 255, 0.58);
+
   font-size: 14px;
+  line-height: 1.5;
 }
 
-.signature {
-  margin-top: 28px;
-  color: #a16d87;
-  font-size: 14px;
+.temperature {
+  margin-top: 8px;
+
+  color: #fff;
+
+  font-size: 48px;
+  font-weight: 300;
+  line-height: 1;
+
+  text-shadow: 0 0 30px rgba(255, 90, 130, 0.25);
 }
+
+.weather-feels {
+  margin: 8px 0 0;
+
+  color: rgba(255, 255, 255, 0.52);
+
+  font-size: 13px;
+}
+
+.weather-advice {
+  margin-top: 17px;
+  padding: 12px 14px;
+
+  border-radius: 15px;
+
+  background: rgba(255, 55, 105, 0.09);
+
+  border: 1px solid rgba(255, 90, 135, 0.12);
+
+  color: #ff9bb8;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Подпись */
+
+.signature {
+  margin: 25px 0 0;
+
+  color: rgba(255, 130, 165, 0.8);
+
+  font-size: 14px;
+
+  letter-spacing: 0.4px;
+}
+
+/* Android / маленькие экраны */
 
 @media (max-width: 480px) {
   .kessichka-page {
-    padding: 16px;
+    padding: 14px;
+    align-items: flex-start;
+    padding-top: 24px;
   }
 
   .kessichka-card {
-    padding: 36px 22px;
-    border-radius: 28px;
+    padding: 32px 19px;
+    border-radius: 27px;
+  }
+
+  .kessichka-title {
+    font-size: 32px;
   }
 
   .kessichka-text {
-    font-size: 16px;
+    font-size: 15px;
+  }
+
+  .daily-message {
+    padding: 19px 17px;
+  }
+
+  .weather-card {
+    padding: 19px;
   }
 }
