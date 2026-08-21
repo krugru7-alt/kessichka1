@@ -37,12 +37,12 @@ export default function Home() {
         </p>
 
         <h1 className="kessichka-title">
-          Доброе утро ❤️
+          Доброе утро, любовь моя ❤️
         </h1>
 
         <p className="kessichka-text">
-          Пока я далеко,
-          Мы будем напоминать тебе о простых вещах и заботиться о бусе:
+          Я далеко, и не могу пока лично следить за тобой
+          Но могу напоминать о простых вещах и заботиться о бусе:
           поешь, не мёрзни, отдыхай и иногда улыбайся.
         </p>
 
@@ -74,18 +74,28 @@ export default function Home() {
               </p>
 
               <p className="weather-text">
-                Сейчас {Math.round(weather.temperature)}°C,
-                ощущается как {Math.round(weather.feelsLike)}°C
-              </p>
+  Сейчас {Math.round(weather.temperature)}°C,
+  ощущается как {Math.round(weather.feelsLike)}°C
+</p>
 
-              <p className="weather-text">
-                Сегодня от {Math.round(weather.min)}° до{" "}
-                {Math.round(weather.max)}°C
-              </p>
+<p className="weather-text">
+  Сегодня от {Math.round(weather.min)}° до{" "}
+  {Math.round(weather.max)}°C
+</p>
 
-              <p className="weather-text">
-                Вероятность дождя: {weather.rainChance}%
-              </p>
+<p className="weather-text">
+  Вероятность дождя: {weather.rainChance}%
+</p>
+
+<p className="weather-text">
+  {weather.temperature < 10
+    ? "Сегодня прохладно, оденься потеплее 🧥"
+    : weather.rainChance >= 50
+    ? "Берем зонтик ☔"
+    : weather.temperature >= 25
+    ? "Сегодня тепло  ☀️"
+    : "Погода вроде хорошая. Хорошего  дня родная 🌷"}
+</p>
             </>
           )}
         </div>
