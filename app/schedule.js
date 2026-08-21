@@ -195,7 +195,7 @@ export function getMinskDateParts() {
   const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: TIME_ZONE,
     weekday: "long",
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
     hourCycle: "h23",
   });
