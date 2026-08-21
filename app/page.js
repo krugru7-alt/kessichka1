@@ -16,18 +16,37 @@ const dailyMessages = [
 function getTimeOfDay() {
   const hour = new Date().getHours();
 
-  if (hour >= 6 && hour < 12) return "morning";
-  if (hour >= 12 && hour < 18) return "day";
-  if (hour >= 18 && hour < 22) return "evening";
+  if (hour >= 6 && hour < 12) {
+    return "morning";
+  }
+
+  if (hour >= 12 && hour < 18) {
+    return "day";
+  }
+
+  if (hour >= 18 && hour < 22) {
+    return "evening";
+  }
 
   return "night";
 }
 
 function getWeatherType(code) {
-  if (code === 0) return "clear";
-  if ([1, 2, 3].includes(code)) return "cloudy";
-  if ([45, 48].includes(code)) return "fog";
-  if ([51, 53, 55, 56, 57].includes(code)) return "drizzle";
+  if (code === 0) {
+    return "clear";
+  }
+
+  if ([1, 2, 3].includes(code)) {
+    return "cloudy";
+  }
+
+  if ([45, 48].includes(code)) {
+    return "fog";
+  }
+
+  if ([51, 53, 55, 56, 57].includes(code)) {
+    return "drizzle";
+  }
 
   if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
     return "rain";
@@ -37,21 +56,47 @@ function getWeatherType(code) {
     return "snow";
   }
 
-  if ([95, 96, 99].includes(code)) return "storm";
+  if ([95, 96, 99].includes(code)) {
+    return "storm";
+  }
 
   return "cloudy";
 }
 
 function weatherText(code) {
   if (code === 0) return "Ясно всё гуд ☀️";
-  if ([1, 2, 3].includes(code)) return "Облачно вайбик 🌤️";
-  if ([45, 48].includes(code)) return "Туман сайлентхилл 🌫️";
-  if ([51, 53, 55, 56, 57].includes(code)) return "Морось фе 🌦️";
-  if ([61, 63, 65, 66, 67].includes(code)) return "Дождь +вайб 🌧️";
-  if ([71, 73, 75, 77].includes(code)) return "Снег вайбик ❄️";
-  if ([80, 81, 82].includes(code)) return "Ливень любимое 🌧️";
-  if ([85, 86].includes(code)) return "Снегопад ❄️";
-  if ([95, 96, 99].includes(code)) return "Гроза ⛈️";
+
+  if ([1, 2, 3].includes(code)) {
+    return "Облачно вайбик 🌤️";
+  }
+
+  if ([45, 48].includes(code)) {
+    return "Туман сайлентхилл 🌫️";
+  }
+
+  if ([51, 53, 55, 56, 57].includes(code)) {
+    return "Морось фе 🌦️";
+  }
+
+  if ([61, 63, 65, 66, 67].includes(code)) {
+    return "Дождь +вайб 🌧️";
+  }
+
+  if ([71, 73, 75, 77].includes(code)) {
+    return "Снег вайбик ❄️";
+  }
+
+  if ([80, 81, 82].includes(code)) {
+    return "Ливень любимое 🌧️";
+  }
+
+  if ([85, 86].includes(code)) {
+    return "Снегопад ❄️";
+  }
+
+  if ([95, 96, 99].includes(code)) {
+    return "Гроза ⛈️";
+  }
 
   return "Погода сегодня загадочная 🌥️";
 }
@@ -79,15 +124,15 @@ function getWeatherAdvice(weather) {
 function WeatherEffects({ type, time }) {
   if (type === "rain" || type === "drizzle") {
     return (
-      <div className="weather-effect rain-effect" aria-hidden="true">
-        {Array.from({ length: 35 }).map((_, index) => (
+      <div className="weather-effect rain-effect">
+        {Array.from({ length: 45 }).map((_, index) => (
           <span
             key={index}
             className="rain-drop"
             style={{
-              left: `${(index * 29) % 100}%`,
-              animationDelay: `${(index * 0.17) % 2}s`,
-              animationDuration: `${0.7 + (index % 5) * 0.12}s`,
+              left: `${(index * 23) % 100}%`,
+              animationDelay: `${(index * 0.13) % 2}s`,
+              animationDuration: `${0.55 + (index % 5) * 0.12}s`,
             }}
           />
         ))}
@@ -97,15 +142,16 @@ function WeatherEffects({ type, time }) {
 
   if (type === "snow") {
     return (
-      <div className="weather-effect snow-effect" aria-hidden="true">
-        {Array.from({ length: 28 }).map((_, index) => (
+      <div className="weather-effect snow-effect">
+        {Array.from({ length: 35 }).map((_, index) => (
           <span
             key={index}
             className="snow-flake"
             style={{
-              left: `${(index * 37) % 100}%`,
-              animationDelay: `${(index * 0.31) % 5}s`,
+              left: `${(index * 31) % 100}%`,
+              animationDelay: `${(index * 0.23) % 5}s`,
               animationDuration: `${4 + (index % 5)}s`,
+              fontSize: `${8 + (index % 5) * 3}px`,
             }}
           >
             ❄
@@ -117,7 +163,7 @@ function WeatherEffects({ type, time }) {
 
   if (type === "fog") {
     return (
-      <div className="weather-effect fog-effect" aria-hidden="true">
+      <div className="weather-effect fog-effect">
         <span />
         <span />
         <span />
@@ -127,7 +173,7 @@ function WeatherEffects({ type, time }) {
 
   if (type === "storm") {
     return (
-      <div className="weather-effect storm-effect" aria-hidden="true">
+      <div className="weather-effect storm-effect">
         <span />
       </div>
     );
@@ -135,14 +181,14 @@ function WeatherEffects({ type, time }) {
 
   if (time === "night") {
     return (
-      <div className="weather-effect stars-effect" aria-hidden="true">
-        {Array.from({ length: 25 }).map((_, index) => (
+      <div className="weather-effect stars-effect">
+        {Array.from({ length: 35 }).map((_, index) => (
           <span
             key={index}
             style={{
-              left: `${(index * 41) % 100}%`,
-              top: `${(index * 23) % 65}%`,
-              animationDelay: `${(index * 0.27) % 3}s`,
+              left: `${(index * 37) % 100}%`,
+              top: `${(index * 19) % 75}%`,
+              animationDelay: `${(index * 0.21) % 3}s`,
             }}
           />
         ))}
@@ -152,7 +198,7 @@ function WeatherEffects({ type, time }) {
 
   if (type === "clear") {
     return (
-      <div className="weather-effect sun-effect" aria-hidden="true">
+      <div className="weather-effect sun-effect">
         <span />
       </div>
     );
@@ -166,36 +212,54 @@ export default function Home() {
 
   const timeOfDay = getTimeOfDay();
 
-  const weatherType = weather
-    ? getWeatherType(weather.weatherCode)
-    : "cloudy";
-
-  const atmosphere = `${timeOfDay}-${weatherType}`;
-
   const today = new Date();
 
   const message =
     dailyMessages[
       Math.floor(
-        (new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          today.getDate()
-        ).getTime() -
-          new Date(2026, 0, 1).getTime()) /
-          86400000
+        (
+          new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+          ).getTime() -
+          new Date(2026, 0, 1).getTime()
+        ) / 86400000
       ) % dailyMessages.length
     ];
 
   useEffect(() => {
-    fetch("/api/weather")
-      .then((response) => response.json())
-      .then((data) => setWeather(data))
-      .catch(() => setWeather({ error: true }));
+    fetch("/api/weather", {
+      cache: "no-store",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Weather request failed");
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        setWeather(data);
+      })
+      .catch(() => {
+        setWeather({
+          error: true,
+        });
+      });
   }, []);
 
+  const weatherType =
+    weather && !weather.error
+      ? getWeatherType(weather.weatherCode)
+      : "cloudy";
+
+  const atmosphere = `${timeOfDay}-${weatherType}`;
+
   return (
-    <main className={`kessichka-page ${timeOfDay} ${atmosphere}`}>
+    <main
+      className={`kessichka-page ${timeOfDay} ${atmosphere}`}
+    >
       <WeatherEffects
         type={weatherType}
         time={timeOfDay}
@@ -246,25 +310,44 @@ export default function Home() {
         <div className="weather-card">
 
           <div className="weather-icon">
-            {!weather
-              ? "🌤️"
-              : weather.error
-              ? "🌥️"
-              : weatherType === "clear"
-              ? "☀️"
-              : weatherType === "cloudy"
-              ? "🌤️"
-              : weatherType === "fog"
-              ? "🌫️"
-              : weatherType === "drizzle"
-              ? "🌦️"
-              : weatherType === "rain"
-              ? "🌧️"
-              : weatherType === "snow"
-              ? "❄️"
-              : weatherType === "storm"
-              ? "⛈️"
-              : "🌥️"}
+            {!weather && "🌤️"}
+
+            {weather?.error && "🌥️"}
+
+            {weather &&
+              !weather.error &&
+              weatherType === "clear" &&
+              "☀️"}
+
+            {weather &&
+              !weather.error &&
+              weatherType === "cloudy" &&
+              "🌤️"}
+
+            {weather &&
+              !weather.error &&
+              weatherType === "fog" &&
+              "🌫️"}
+
+            {weather &&
+              !weather.error &&
+              weatherType === "drizzle" &&
+              "🌦️"}
+
+            {weather &&
+              !weather.error &&
+              weatherType === "rain" &&
+              "🌧️"}
+
+            {weather &&
+              !weather.error &&
+              weatherType === "snow" &&
+              "❄️"}
+
+            {weather &&
+              !weather.error &&
+              weatherType === "storm" &&
+              "⛈️"}
           </div>
 
           <h2 className="weather-title">
@@ -295,16 +378,19 @@ export default function Home() {
               </div>
 
               <p className="weather-feels">
-                Ощущается как {Math.round(weather.feelsLike)}°
+                Ощущается как{" "}
+                {Math.round(weather.feelsLike)}°
               </p>
 
               <p className="weather-text">
-                Сегодня от {Math.round(weather.min)}° до{" "}
-                {Math.round(weather.max)}°C
+                Сегодня от {Math.round(weather.min)}°
+                {" "}
+                до {Math.round(weather.max)}°C
               </p>
 
               <p className="weather-text">
-                Вероятность дождя: {weather.rainChance}%
+                Вероятность дождя:{" "}
+                {weather.rainChance}%
               </p>
 
               <div className="weather-advice">
