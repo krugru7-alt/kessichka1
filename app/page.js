@@ -110,21 +110,30 @@ async function enablePushNotifications() {
       return;
     }
 
-    const registration =
-      await navigator.serviceWorker.ready;
+  const subscription =
+  await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey:
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+  });
 
-    const subscription =
-      await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-       applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-      });
+const response = await fetch("/api/subscribe", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(subscription),
+});
 
-    console.log(
-      "Push subscription:",
-      JSON.stringify(subscription)
-    );
+if (!response.ok) {
+  throw new Error(
+    "Не удалось сохранить Push-подписку"
+  );
+}
 
-    setPushEnabled(true);
+setPushEnabled(true);
+
+alert("Уведомления подключены ❤️");
 
     alert("Уведомления подключены ❤️");
   } catch (error) {
