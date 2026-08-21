@@ -85,6 +85,61 @@ function getWeatherAdvice(weather) {
 
 export default function Home() {
   const [weather, setWeather] = useState(null);
+  const [pushEnabled, setPushEnabled] = useState(false);
+const [pushLoading, setPushLoading] = useState(false);
+
+async function enablePushNotifications() {
+  try {
+    setPushLoading(true);
+
+    if (!("Notification" in window)) {
+      alert("Этот браузер не поддерживает уведомления.");
+      return;
+    }
+
+    if (!("serviceWorker" in navigator)) {
+      alert("Этот браузер не поддерживает Service Worker.");
+      return;
+    }
+
+    const permission =
+      await Notification.requestPermission();
+
+    if (permission !== "granted") {
+      alert("Разрешение на уведомления не получено.");
+      return;
+    }
+
+    const registration =
+      await navigator.serviceWorker.ready;
+
+    const subscription =
+      await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: "ТУТ_БУДЕТ_VAPID_PUBLIC_KEY",
+      });
+
+    console.log(
+      "Push subscription:",
+      JSON.stringify(subscription)
+    );
+
+    setPushEnabled(true);
+
+    alert("Уведомления подключены ❤️");
+  } catch (error) {
+    console.error(
+      "Ошибка подключения уведомлений:",
+      error
+    );
+
+    alert(
+      "Не получилось подключить уведомления 😔"
+    );
+  } finally {
+    setPushLoading(false);
+  }
+}
 
   // Обновляем время каждую минуту
   const [now, setNow] = useState(new Date());
