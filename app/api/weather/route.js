@@ -20,25 +20,12 @@ export async function GET() {
 
     return Response.json({
       city: "Минск",
-
-      temperature:
-        weather.current.temperature_2m,
-
-      feelsLike:
-        weather.current.apparent_temperature,
-
-      wind:
-        weather.current.wind_speed_10m,
-
-      weatherCode:
-        weather.current.weather_code,
-
-      max:
-        weather.daily.temperature_2m_max[0],
-
-      min:
-        weather.daily.temperature_2m_min[0],
-
+      temperature: weather.current.temperature_2m,
+      feelsLike: weather.current.apparent_temperature,
+      wind: weather.current.wind_speed_10m,
+      weatherCode: weather.current.weather_code,
+      max: weather.daily.temperature_2m_max[0],
+      min: weather.daily.temperature_2m_min[0],
       rainChance:
         weather.daily.precipitation_probability_max[0],
     });
