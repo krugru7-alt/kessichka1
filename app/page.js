@@ -209,6 +209,7 @@ function WeatherEffects({ type, time }) {
 
 export default function Home() {
   const [weather, setWeather] = useState(null);
+  const [weatherType, setWeatherType] = useState("cloudy");
 
   const timeOfDay = getTimeOfDay();
 
@@ -229,7 +230,7 @@ export default function Home() {
     ];
 
   useEffect(() => {
-    fetch("/api/weather", {
+    fetch("/api/weather?time=" + Date.now(), {
       cache: "no-store",
     })
       .then((response) => {
@@ -241,24 +242,25 @@ export default function Home() {
       })
       .then((data) => {
         setWeather(data);
+
+        if (!data.error) {
+          setWeatherType(
+            getWeatherType(data.weatherCode)
+          );
+        }
       })
       .catch(() => {
-        setWeather({
-          error: true,
-        });
+        setWeather({ error: true });
+        setWeatherType("cloudy");
       });
   }, []);
 
-  const weatherType =
-    weather && !weather.error
-      ? getWeatherType(weather.weatherCode)
-      : "cloudy";
-
-  const atmosphere = `${timeOfDay}-${weatherType}`;
+  const pageClass =
+    `${timeOfDay}-${weatherType}`;
 
   return (
     <main
-      className={`kessichka-page ${timeOfDay} ${atmosphere}`}
+      className={`kessichka-page ${timeOfDay} ${weatherType} ${pageClass}`}
     >
       <WeatherEffects
         type={weatherType}
@@ -268,10 +270,13 @@ export default function Home() {
       <section className="kessichka-card">
 
         <div className="kessichka-sun">
-          {timeOfDay === "morning" && "🌅"}
-          {timeOfDay === "day" && "☀️"}
-          {timeOfDay === "evening" && "🌆"}
-          {timeOfDay === "night" && "🌙"}
+          {weatherType === "clear" && "☀️"}
+          {weatherType === "cloudy" && "☁️"}
+          {weatherType === "fog" && "🌫️"}
+          {weatherType === "drizzle" && "🌦️"}
+          {weatherType === "rain" && "🌧️"}
+          {weatherType === "snow" && "❄️"}
+          {weatherType === "storm" && "⛈️"}
         </div>
 
         <p className="kessichka-label">
@@ -294,9 +299,9 @@ export default function Home() {
 
         <p className="kessichka-text">
           Я далеко, и не могу пока лично следить за тобой,
-          но могу хотя бы иногда напоминать о простых вещах и
-          заботиться о бусе: поешь, не мёрзни, отдыхай и иногда
-          улыбайся.
+          но могу хотя бы иногда напоминать о простых вещах
+          и заботиться о бусе: поешь, не мёрзни, отдыхай
+          и иногда улыбайся.
         </p>
 
         <div className="daily-message">
@@ -310,44 +315,13 @@ export default function Home() {
         <div className="weather-card">
 
           <div className="weather-icon">
-            {!weather && "🌤️"}
-
-            {weather?.error && "🌥️"}
-
-            {weather &&
-              !weather.error &&
-              weatherType === "clear" &&
-              "☀️"}
-
-            {weather &&
-              !weather.error &&
-              weatherType === "cloudy" &&
-              "🌤️"}
-
-            {weather &&
-              !weather.error &&
-              weatherType === "fog" &&
-              "🌫️"}
-
-            {weather &&
-              !weather.error &&
-              weatherType === "drizzle" &&
-              "🌦️"}
-
-            {weather &&
-              !weather.error &&
-              weatherType === "rain" &&
-              "🌧️"}
-
-            {weather &&
-              !weather.error &&
-              weatherType === "snow" &&
-              "❄️"}
-
-            {weather &&
-              !weather.error &&
-              weatherType === "storm" &&
-              "⛈️"}
+            {weatherType === "clear" && "☀️"}
+            {weatherType === "cloudy" && "☁️"}
+            {weatherType === "fog" && "🌫️"}
+            {weatherType === "drizzle" && "🌦️"}
+            {weatherType === "rain" && "🌧️"}
+            {weatherType === "snow" && "❄️"}
+            {weatherType === "storm" && "⛈️"}
           </div>
 
           <h2 className="weather-title">
@@ -362,8 +336,8 @@ export default function Home() {
 
           {weather?.error && (
             <p className="weather-text">
-              Не смог посмотреть погоду, но ты всё равно
-              оденься по погоде 😌
+              Не смог посмотреть погоду,
+              но ты всё равно оденься по погоде 😌
             </p>
           )}
 
@@ -383,9 +357,11 @@ export default function Home() {
               </p>
 
               <p className="weather-text">
-                Сегодня от {Math.round(weather.min)}°
+                Сегодня от{" "}
+                {Math.round(weather.min)}°
                 {" "}
-                до {Math.round(weather.max)}°C
+                до{" "}
+                {Math.round(weather.max)}°C
               </p>
 
               <p className="weather-text">
