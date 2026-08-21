@@ -5,45 +5,28 @@ import "./globals.css";
 
 const dailyMessages = [
   "У тебя сегодня всё получится. А если нет - ничего страшного, я всё равно рядом. ❤️",
-
   "Сегодня просто напоминание: я скучаю 😌",
-
   "Пусть сегодня у тебя будет хотя бы один момент, когда ты поймаешь себя на мысли: «А ведь день неплохой». 🌷",
-
   "Ты уже проснулась - значит, день официально начался. Теперь осталось сделать его немного приятнее. ☀️",
-
   "Сегодня никаких больших требований. Просто не забывай, что кое-кто далеко очень хочет видеть тебя счастливой. ❤️",
-
   "Маленькое утреннее напоминание: ты прекрасна. Всё, я сказал. 😌",
-
   "Пусть сегодня всё складывается чуть легче, чем ты ожидаешь. А если день будет вредничать - будем вредничать вместе с ним. ❤️",
 ];
 
 function getTimeOfDay() {
   const hour = new Date().getHours();
 
-  if (hour >= 6 && hour < 12) {
-    return "morning";
-  }
-
-  if (hour >= 12 && hour < 18) {
-    return "day";
-  }
-
-  if (hour >= 18 && hour < 22) {
-    return "evening";
-  }
+  if (hour >= 6 && hour < 12) return "morning";
+  if (hour >= 12 && hour < 18) return "day";
+  if (hour >= 18 && hour < 22) return "evening";
 
   return "night";
 }
 
 function getWeatherType(code) {
   if (code === 0) return "clear";
-
   if ([1, 2, 3].includes(code)) return "cloudy";
-
   if ([45, 48].includes(code)) return "fog";
-
   if ([51, 53, 55, 56, 57].includes(code)) return "drizzle";
 
   if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
@@ -54,9 +37,7 @@ function getWeatherType(code) {
     return "snow";
   }
 
-  if ([95, 96, 99].includes(code)) {
-    return "storm";
-  }
+  if ([95, 96, 99].includes(code)) return "storm";
 
   return "cloudy";
 }
@@ -95,6 +76,91 @@ function getWeatherAdvice(weather) {
   return "Погода вроде хорошая. Хорошего тебе дня 🌷";
 }
 
+function WeatherEffects({ type, time }) {
+  if (type === "rain" || type === "drizzle") {
+    return (
+      <div className="weather-effect rain-effect" aria-hidden="true">
+        {Array.from({ length: 35 }).map((_, index) => (
+          <span
+            key={index}
+            className="rain-drop"
+            style={{
+              left: `${(index * 29) % 100}%`,
+              animationDelay: `${(index * 0.17) % 2}s`,
+              animationDuration: `${0.7 + (index % 5) * 0.12}s`,
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  if (type === "snow") {
+    return (
+      <div className="weather-effect snow-effect" aria-hidden="true">
+        {Array.from({ length: 28 }).map((_, index) => (
+          <span
+            key={index}
+            className="snow-flake"
+            style={{
+              left: `${(index * 37) % 100}%`,
+              animationDelay: `${(index * 0.31) % 5}s`,
+              animationDuration: `${4 + (index % 5)}s`,
+            }}
+          >
+            ❄
+          </span>
+        ))}
+      </div>
+    );
+  }
+
+  if (type === "fog") {
+    return (
+      <div className="weather-effect fog-effect" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+    );
+  }
+
+  if (type === "storm") {
+    return (
+      <div className="weather-effect storm-effect" aria-hidden="true">
+        <span />
+      </div>
+    );
+  }
+
+  if (time === "night") {
+    return (
+      <div className="weather-effect stars-effect" aria-hidden="true">
+        {Array.from({ length: 25 }).map((_, index) => (
+          <span
+            key={index}
+            style={{
+              left: `${(index * 41) % 100}%`,
+              top: `${(index * 23) % 65}%`,
+              animationDelay: `${(index * 0.27) % 3}s`,
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  if (type === "clear") {
+    return (
+      <div className="weather-effect sun-effect" aria-hidden="true">
+        <span />
+      </div>
+    );
+  }
+
+  return null;
+}
+
 export default function Home() {
   const [weather, setWeather] = useState(null);
 
@@ -130,6 +196,11 @@ export default function Home() {
 
   return (
     <main className={`kessichka-page ${timeOfDay} ${atmosphere}`}>
+      <WeatherEffects
+        type={weatherType}
+        time={timeOfDay}
+      />
+
       <section className="kessichka-card">
 
         <div className="kessichka-sun">
