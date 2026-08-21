@@ -273,23 +273,34 @@ export function getCurrentScheduleItem() {
 
   const currentMinutes = getMinskMinutes();
 
-  const availableItems = schedule
-    .map((item) => {
-      const [hours, minutes] = item.time
+  for (let i = 0; i < schedule.length; i++) {
+    const current = schedule[i];
+
+    const [hours, minutes] = current.time
+      .split(":")
+      .map(Number);
+
+    const startMinutes = hours * 60 + minutes;
+
+    const next = schedule[i + 1];
+
+    let endMinutes = 24 * 60;
+
+    if (next) {
+      const [nextHours, nextMinutes] = next.time
         .split(":")
         .map(Number);
 
-      return {
-        ...item,
-        minutes: hours * 60 + minutes,
-      };
-    })
-    .filter((item) => item.minutes <= currentMinutes)
-    .sort((a, b) => a.minutes - b.minutes);
+      endMinutes = nextHours * 60 + nextMinutes;
+    }
 
-  if (availableItems.length === 0) {
-    return null;
+    if (
+      currentMinutes >= startMinutes &&
+      currentMinutes < endMinutes
+    ) {
+      return current;
+    }
   }
 
-  return availableItems[availableItems.length - 1];
+  return null;
 }
