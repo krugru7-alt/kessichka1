@@ -1,4 +1,4 @@
-import { sql } from "@vercel/postgres";
+import { neon } from "@neondatabase/serverless";
 
 export async function POST(request) {
   try {
@@ -15,6 +15,22 @@ export async function POST(request) {
       );
     }
 
+    if (!process.env.DATABASE_URL) {
+      console.error("DATABASE_URL не найден");
+
+      return Response.json(
+        {
+          error: "DATABASE_URL не настроен в Vercel",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    const sql = neon(process.env.DATABASE_URL);
+
+    // Создаём таблицу, если её ещё нет
     await sql`
       CREATE TABLE IF NOT EXISTS push_subscriptions (
         id SERIAL PRIMARY KEY,
@@ -25,16 +41,22 @@ export async function POST(request) {
       )
     `;
 
+    // Сохраняем подписку
     await sql`
       INSERT INTO push_subscriptions
         (endpoint, subscription)
       VALUES
-        (${subscription.endpoint}, ${JSON.stringify(subscription)})
+        (
+          ${subscription.endpoint},
+          ${JSON.stringify(subscription)}
+        )
       ON CONFLICT (endpoint)
       DO UPDATE SET
         subscription = EXCLUDED.subscription,
         updated_at = NOW()
     `;
+
+    console.log("Push-подписка сохранена ❤️");
 
     return Response.json({
       success: true,
@@ -45,7 +67,9 @@ export async function POST(request) {
 
     return Response.json(
       {
-        error: "Не удалось сохранить подписку",
+        error:
+          error?.message ||
+          "Не удалось сохранить подписку",
       },
       {
         status: 500,
