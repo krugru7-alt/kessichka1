@@ -126,11 +126,27 @@ const minskTime = new Intl.DateTimeFormat("ru-RU", {
     ];
 
   useEffect(() => {
-    fetch("/api/weather")
-      .then((response) => response.json())
-      .then((data) => setWeather(data))
-      .catch(() => setWeather({ error: true }));
-  }, []);
+  fetch("/api/weather")
+    .then((response) => response.json())
+    .then((data) => setWeather(data))
+    .catch(() => setWeather({ error: true }));
+}, []);
+
+useEffect(() => {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then(() => {
+        console.log("Kessichka Service Worker зарегистрирован ❤️");
+      })
+      .catch((error) => {
+        console.error(
+          "Ошибка регистрации Service Worker:",
+          error
+        );
+      });
+  }
+}, []);
 
   return (
     <main className={`kessichka-page ${timeOfDay}`}>
