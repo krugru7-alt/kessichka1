@@ -37,7 +37,39 @@ function getTimeOfDay() {
   return "night";
 }
 
-function weatherText(code) {
+function getWeatherType(code: number) {
+  if (code === 0) {
+    return "clear";
+  }
+
+  if ([1, 2, 3].includes(code)) {
+    return "cloudy";
+  }
+
+  if ([45, 48].includes(code)) {
+    return "fog";
+  }
+
+  if ([51, 53, 55, 56, 57].includes(code)) {
+    return "drizzle";
+  }
+
+  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) {
+    return "rain";
+  }
+
+  if ([71, 73, 75, 77, 85, 86].includes(code)) {
+    return "snow";
+  }
+
+  if ([95, 96, 99].includes(code)) {
+    return "storm";
+  }
+
+  return "cloudy";
+}
+
+function weatherText(code: number) {
   if (code === 0) return "Ясно всё гуд ☀️";
   if ([1, 2, 3].includes(code)) return "Облачно вайбик 🌤️";
   if ([45, 48].includes(code)) return "Туман сайлентхилл 🌫️";
@@ -51,7 +83,10 @@ function weatherText(code) {
   return "Погода сегодня загадочная 🌥️";
 }
 
-function getWeatherAdvice(weather) {
+function getWeatherAdvice(weather: {
+  temperature: number;
+  rainChance: number;
+}) {
   if (weather.temperature < 0) {
     return "Сегодня холодно - пожалуйста, оденься потеплее 🧣";
   }
@@ -72,16 +107,37 @@ function getWeatherAdvice(weather) {
 }
 
 export default function Home() {
-  const [weather, setWeather] = useState(null);
+  const [weather, setWeather] = useState<{
+    temperature: number;
+    feelsLike: number;
+    wind: number;
+    weatherCode: number;
+    max: number;
+    min: number;
+    rainChance: number;
+    city: string;
+    error?: boolean;
+  } | null>(null);
 
   const timeOfDay = getTimeOfDay();
 
+  const weatherType = weather
+    ? getWeatherType(weather.weatherCode)
+    : "cloudy";
+
+  const atmosphere = `${timeOfDay}-${weatherType}`;
+
   const today = new Date();
+
   const message =
     dailyMessages[
       Math.floor(
-        (new Date(today.getFullYear(), today.getMonth(), today.getDate()) -
-          new Date(2026, 0, 1)) /
+        (new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate()
+        ).getTime() -
+          new Date(2026, 0, 1).getTime()) /
           86400000
       ) % dailyMessages.length
     ];
@@ -90,11 +146,11 @@ export default function Home() {
     fetch("/api/weather")
       .then((response) => response.json())
       .then((data) => setWeather(data))
-      .catch(() => setWeather({ error: true }));
+      .catch(() => setWeather({ error: true } as any));
   }, []);
 
   return (
-    <main className={`kessichka-page ${timeOfDay}`}>
+    <main className={`kessichka-page ${timeOfDay} ${atmosphere}`}>
       <section className="kessichka-card">
 
         <div className="kessichka-sun">
@@ -109,16 +165,24 @@ export default function Home() {
         </p>
 
         <h1 className="kessichka-title">
-          {timeOfDay === "morning" && "Доброе утро, Любовь моя ❤️"}
-          {timeOfDay === "day" && "Хорошего дня, Любовь моя ❤️"}
-          {timeOfDay === "evening" && "Добрый вечер, Любовь моя ❤️"}
-          {timeOfDay === "night" && "Спокойной ночи, Любовь моя ❤️"}
+          {timeOfDay === "morning" &&
+            "Доброе утро, Любовь моя ❤️"}
+
+          {timeOfDay === "day" &&
+            "Хорошего дня, Любовь моя ❤️"}
+
+          {timeOfDay === "evening" &&
+            "Добрый вечер, Любовь моя ❤️"}
+
+          {timeOfDay === "night" &&
+            "Спокойной ночи, Любовь моя ❤️"}
         </h1>
 
         <p className="kessichka-text">
           Я далеко, и не могу пока лично следить за тобой,
-          но могу хотя бы иногда напоминать о простых вещах и заботиться о бусе:
-          поешь, не мёрзни, отдыхай и иногда улыбайся.
+          но могу хотя бы иногда напоминать о простых вещах и
+          заботиться о бусе: поешь, не мёрзни, отдыхай и иногда
+          улыбайся.
         </p>
 
         <div className="daily-message">
@@ -132,7 +196,25 @@ export default function Home() {
         <div className="weather-card">
 
           <div className="weather-icon">
-            {weather?.error ? "🌥️" : "🌤️"}
+            {!weather
+              ? "🌤️"
+              : weather.error
+              ? "🌥️"
+              : weatherType === "clear"
+              ? "☀️"
+              : weatherType === "cloudy"
+              ? "🌤️"
+              : weatherType === "fog"
+              ? "🌫️"
+              : weatherType === "drizzle"
+              ? "🌦️"
+              : weatherType === "rain"
+              ? "🌧️"
+              : weatherType === "snow"
+              ? "❄️"
+              : weatherType === "storm"
+              ? "⛈️"
+              : "🌥️"}
           </div>
 
           <h2 className="weather-title">
@@ -147,7 +229,8 @@ export default function Home() {
 
           {weather?.error && (
             <p className="weather-text">
-              Не смог посмотреть погоду, но ты всё равно оденься по погоде 😌
+              Не смог посмотреть погоду, но ты всё равно
+              оденься по погоде 😌
             </p>
           )}
 
