@@ -273,16 +273,19 @@ export function getCurrentScheduleItem() {
 
   const currentMinutes = getMinskMinutes();
 
-  const availableItems = schedule.filter((item) => {
-    const [hours, minutes] = item.time
-      .split(":")
-      .map(Number);
+  const availableItems = schedule
+    .map((item) => {
+      const [hours, minutes] = item.time
+        .split(":")
+        .map(Number);
 
-    const itemMinutes =
-      hours * 60 + minutes;
-
-    return itemMinutes <= currentMinutes;
-  });
+      return {
+        ...item,
+        minutes: hours * 60 + minutes,
+      };
+    })
+    .filter((item) => item.minutes <= currentMinutes)
+    .sort((a, b) => a.minutes - b.minutes);
 
   if (availableItems.length === 0) {
     return null;
