@@ -141,7 +141,6 @@ export default function Home() {
     try {
       setPushLoading(true);
 
-      // Проверяем поддержку уведомлений
       if (!("Notification" in window)) {
         alert(
           "Этот браузер не поддерживает уведомления."
@@ -149,7 +148,6 @@ export default function Home() {
         return;
       }
 
-      // Проверяем Service Worker
       if (!("serviceWorker" in navigator)) {
         alert(
           "Этот браузер не поддерживает Push-уведомления."
@@ -157,7 +155,6 @@ export default function Home() {
         return;
       }
 
-      // Получаем разрешение
       const permission =
         await Notification.requestPermission();
 
@@ -168,7 +165,6 @@ export default function Home() {
         return;
       }
 
-      // Ждём Service Worker
       const registration =
         await navigator.serviceWorker.ready;
 
@@ -179,11 +175,9 @@ export default function Home() {
         return;
       }
 
-      // Проверяем существующую подписку
       let subscription =
         await registration.pushManager.getSubscription();
 
-      // Если подписки нет — создаём
       if (!subscription) {
         const publicKey =
           process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
@@ -194,30 +188,23 @@ export default function Home() {
           );
         }
 
-        // Преобразуем VAPID Public Key
         const applicationServerKey =
-          urlBase64ToUint8Array(
-            publicKey
-          );
+          urlBase64ToUint8Array(publicKey);
 
         subscription =
           await registration.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey:
-              applicationServerKey,
+            applicationServerKey,
           });
       }
 
-      // Отправляем подписку на сервер
       const response =
         await fetch("/api/subscribe", {
           method: "POST",
-
           headers: {
             "Content-Type":
               "application/json",
           },
-
           body: JSON.stringify(
             subscription
           ),
@@ -240,19 +227,24 @@ export default function Home() {
       alert(
         "Уведомления подключены ❤️"
       );
-   } catch (error) {
-  console.error(
-    "Ошибка подключения уведомлений:",
-    error
-  );
+    } catch (error) {
+      console.error(
+        "Ошибка подключения уведомлений:",
+        error
+      );
 
-  alert(
-    "ОШИБКА PUSH:\n\n" +
-      String(error?.name || "UnknownError") +
-      "\n\n" +
-      String(error?.message || error)
-  );
-}
+      alert(
+        "ОШИБКА PUSH:\n\n" +
+          String(
+            error?.name ||
+              "UnknownError"
+          ) +
+          "\n\n" +
+          String(
+            error?.message ||
+              error
+          )
+      );
     } finally {
       setPushLoading(false);
     }
@@ -384,10 +376,10 @@ export default function Home() {
         <p className="kessichka-text">
           Я далеко, и не могу пока лично
           следить за тобой, но могу хотя бы
-          иногда напоминать о простых вещах и
-          заботиться о бусе:
-          поешь, не мёрзни, отдыхай и иногда
-          улыбайся.
+          иногда напоминать о простых вещах
+          и заботиться о бусе:
+          поешь, не мёрзни, отдыхай
+          и иногда улыбайся.
         </p>
 
         {/* =====================================
@@ -469,7 +461,8 @@ export default function Home() {
           {weather?.error && (
             <p className="weather-text">
               Не смог посмотреть погоду,
-              но ты всё равно оденься по погоде 😌
+              но ты всё равно оденься
+              по погоде 😌
             </p>
           )}
 
@@ -521,7 +514,7 @@ export default function Home() {
         </div>
 
         {/* =====================================
-            PUSH УВЕДОМЛЕНИЯ
+            PUSH
         ===================================== */}
 
         {!pushEnabled && (
