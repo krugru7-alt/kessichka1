@@ -317,36 +317,39 @@ export default function Home() {
   // ДРАКОША ХОДИТ ТУДА-СЮДА
   // ==========================================
 
-  useEffect(() => {
-    let waitTimer;
-    let walkTimer;
+ useEffect(() => {
+  let waitTimer;
+  let walkTimer;
 
-    function scheduleMove() {
-      // сидит на месте случайно от 15 до 30 секунд
-      const delay =
-        Math.floor(Math.random() * 15000) +
-        15000;
+  function scheduleMove() {
+    const delay =
+      Math.floor(Math.random() * 15000) + 15000;
 
-      waitTimer = setTimeout(() => {
-        // начинает топать
-        setDrakoshaWalking(true);
+    waitTimer = setTimeout(() => {
+      // Начинает перебирать лапками
+      setDrakoshaWalking(true);
 
-        // через 2.4 секунды оказывается
-        // в противоположном углу
-        walkTimer = setTimeout(() => {
-          setDrakoshaSide((current) =>
-            current === "right"
-              ? "left"
-              : "right"
-          );
+      // И СРАЗУ начинает двигаться
+      setDrakoshaSide((current) =>
+        current === "right" ? "left" : "right"
+      );
 
-          setDrakoshaWalking(false);
+      // Через 2.8 сек дошёл и снова сидит
+      walkTimer = setTimeout(() => {
+        setDrakoshaWalking(false);
 
-          // потом снова ждёт
-          scheduleMove();
-        }, 2400);
-      }, delay);
-    }
+        scheduleMove();
+      }, 2800);
+    }, delay);
+  }
+
+  scheduleMove();
+
+  return () => {
+    clearTimeout(waitTimer);
+    clearTimeout(walkTimer);
+  };
+}, []);
 
     scheduleMove();
 
