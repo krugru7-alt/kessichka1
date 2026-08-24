@@ -1,1009 +1,347 @@
-* {
-  box-sizing: border-box;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-}
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #09070a;
-  color: #fff;
-}
-
-button {
-  font: inherit;
-}
-
 /* =========================
-   ОСНОВНОЙ ФОН
+   ПЛАВАЮЩИЙ ДРАКОША
 ========================= */
 
-.kessichka-page {
-  position: relative;
+.drakosha-floating {
+  position: fixed;
 
-  min-height: 100vh;
-  min-height: 100svh;
+  right: 10px;
+  bottom: 8px;
 
-  padding: 22px;
+  z-index: 900;
 
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-
-  overflow: hidden;
-
-  background: #09070a;
-
-  transition:
-    background 1.5s ease,
-    background-color 1.5s ease;
-}
-
-/* =========================
-   ВРЕМЯ СУТОК
-========================= */
-
-/* УТРО */
-
-.kessichka-page.morning {
-  background:
-    linear-gradient(
-      145deg,
-      #33202b 0%,
-      #8a5366 48%,
-      #181116 100%
-    );
-}
-
-/* ДЕНЬ */
-
-.kessichka-page.day {
-  background:
-    linear-gradient(
-      145deg,
-      #292c36 0%,
-      #515764 48%,
-      #111318 100%
-    );
-}
-
-/* ВЕЧЕР */
-
-.kessichka-page.evening {
-  background:
-    linear-gradient(
-      145deg,
-      #281820 0%,
-      #58333f 45%,
-      #0d0b0f 100%
-    );
-}
-
-/* НОЧЬ */
-
-.kessichka-page.night {
-  background:
-    linear-gradient(
-      145deg,
-      #08090f 0%,
-      #171a28 50%,
-      #030407 100%
-    );
-}
-
-/* =========================
-   РЕАЛЬНАЯ ПОГОДА
-========================= */
-
-/* ЯСНО */
-
-.kessichka-page.clear {
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(255, 221, 130, 0.48),
-      transparent 38%
-    ),
-    radial-gradient(
-      circle at 15% 70%,
-      rgba(255, 170, 120, 0.20),
-      transparent 38%
-    ),
-    linear-gradient(
-      145deg,
-      #49333b 0%,
-      #8a5b61 45%,
-      #171116 100%
-    );
-}
-
-/* ОБЛАЧНО */
-
-.kessichka-page.cloudy {
-  background:
-    radial-gradient(
-      circle at 15% 10%,
-      rgba(190, 200, 215, 0.30),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 85% 75%,
-      rgba(115, 130, 150, 0.24),
-      transparent 40%
-    ),
-    linear-gradient(
-      145deg,
-      #262a34 0%,
-      #515967 48%,
-      #101217 100%
-    );
-}
-
-/* ТУМАН */
-
-.kessichka-page.fog {
-  background:
-    radial-gradient(
-      circle at 50% 25%,
-      rgba(220, 225, 230, 0.38),
-      transparent 45%
-    ),
-    linear-gradient(
-      145deg,
-      #383b40 0%,
-      #70757a 50%,
-      #16181b 100%
-    );
-}
-
-/* МЕЛКИЙ ДОЖДЬ */
-
-.kessichka-page.drizzle {
-  background:
-    radial-gradient(
-      circle at 25% 15%,
-      rgba(120, 165, 205, 0.28),
-      transparent 35%
-    ),
-    linear-gradient(
-      145deg,
-      #202a35 0%,
-      #405566 50%,
-      #090d12 100%
-    );
-}
-
-/* ДОЖДЬ */
-
-.kessichka-page.rain {
-  background:
-    radial-gradient(
-      circle at 75% 15%,
-      rgba(75, 135, 190, 0.34),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 15% 80%,
-      rgba(50, 90, 130, 0.28),
-      transparent 40%
-    ),
-    linear-gradient(
-      145deg,
-      #101923 0%,
-      #29445a 50%,
-      #06090d 100%
-    );
-}
-
-/* СНЕГ */
-
-.kessichka-page.snow {
-  background:
-    radial-gradient(
-      circle at 50% 5%,
-      rgba(240, 246, 255, 0.45),
-      transparent 38%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(180, 200, 220, 0.20),
-      transparent 40%
-    ),
-    linear-gradient(
-      145deg,
-      #343d48 0%,
-      #71808d 50%,
-      #11151a 100%
-    );
-}
-
-/* ГРОЗА */
-
-.kessichka-page.storm {
-  background:
-    radial-gradient(
-      circle at 70% 20%,
-      rgba(125, 105, 180, 0.35),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 20% 80%,
-      rgba(70, 65, 110, 0.25),
-      transparent 40%
-    ),
-    linear-gradient(
-      145deg,
-      #11101b 0%,
-      #302d45 50%,
-      #050509 100%
-    );
-}
-
-/* =========================
-   КАРТОЧКА
-========================= */
-
-.kessichka-card {
-  position: relative;
-  z-index: 10;
-
-  width: 100%;
-  max-width: 540px;
-
-  padding: 38px 26px;
-
-  border: 1px solid rgba(255, 255, 255, 0.16);
-
-  border-radius: 32px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.11),
-      rgba(255, 255, 255, 0.035)
-    );
-
-  box-shadow:
-    0 30px 100px rgba(0, 0, 0, 0.55),
-    0 0 80px rgba(255, 255, 255, 0.05);
-
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-
-  text-align: center;
-}
-
-/* =========================
-   ИКОНКА
-========================= */
-
-.kessichka-sun {
-  font-size: 48px;
-
-  margin-bottom: 12px;
-
-  filter:
-    drop-shadow(
-      0 0 18px
-      rgba(255, 255, 255, 0.30)
-    );
 
   animation:
-    weatherIconFloat 4s ease-in-out infinite;
+    drakoshaFloat 3s
+    ease-in-out infinite;
 }
 
-@keyframes weatherIconFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-/* =========================
-   LABEL
-========================= */
-
-.kessichka-label {
-  margin: 0 0 10px;
-
-  color: #ff8eaf;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  letter-spacing: 4px;
-
-  text-transform: uppercase;
-}
-
-/* =========================
-   ЗАГОЛОВОК
-========================= */
-
-.kessichka-title {
-  margin: 0 0 20px;
-
-  color: #fff;
-
-  font-size: clamp(30px, 8vw, 43px);
-
-  line-height: 1.12;
-
-  text-shadow:
-    0 4px 30px
-    rgba(255, 255, 255, 0.12);
-}
-
-/* =========================
-   ОСНОВНОЙ ТЕКСТ
-========================= */
-
-.kessichka-text {
-  max-width: 440px;
-
-  margin: 0 auto 25px;
-
-  color: rgba(255, 255, 255, 0.75);
-
-  font-size: 16px;
-
-  line-height: 1.7;
-}
-
-/* =========================
-   СООБЩЕНИЕ
-========================= */
-
-.daily-message {
-  margin: 0 0 18px;
-
-  padding: 21px 20px;
-
-  border-radius: 23px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 50, 105, 0.15),
-      rgba(255, 255, 255, 0.035)
-    );
-
-  border:
-    1px solid
-    rgba(255, 105, 150, 0.18);
-
-  box-shadow:
-    inset 0 1px 0
-    rgba(255, 255, 255, 0.04),
-    0 15px 40px
-    rgba(0, 0, 0, 0.18);
-}
-
-.daily-message-label {
-  margin-bottom: 10px;
-
-  color: #ff86aa;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  letter-spacing: 1.8px;
-
-  text-transform: uppercase;
-}
-
-.daily-message p {
+.drakosha-button {
   margin: 0;
+  padding: 0;
 
-  color: rgba(255, 255, 255, 0.92);
+  border: 0;
 
-  font-size: 16px;
+  background: transparent;
 
-  line-height: 1.65;
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* =========================
-   ПОГОДА
-========================= */
+.drakosha-image {
+  display: block;
 
-.weather-card {
-  padding: 22px;
+  width: 125px;
+  height: auto;
 
-  border-radius: 24px;
-
-  background:
-    rgba(255, 255, 255, 0.075);
-
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.12);
-
-  box-shadow:
-    inset 0 1px 0
-    rgba(255, 255, 255, 0.05);
-}
-
-.weather-icon {
-  font-size: 34px;
-
-  margin-bottom: 5px;
+  user-select: none;
+  -webkit-user-drag: none;
 
   filter:
     drop-shadow(
-      0 0 15px
-      rgba(255, 255, 255, 0.25)
+      0 14px 22px
+      rgba(95, 95, 210, 0.35)
+    );
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+
+.drakosha-button:hover .drakosha-image {
+  transform: scale(1.06);
+
+  filter:
+    drop-shadow(
+      0 18px 28px
+      rgba(120, 110, 230, 0.45)
     );
 }
 
-.weather-title {
-  margin: 0;
-
-  color: #fff;
-
-  font-size: 16px;
-
-  font-weight: 600;
+.drakosha-button:active .drakosha-image {
+  transform: scale(0.88);
 }
 
-.weather-text {
-  margin: 8px 0 0;
 
-  color:
-    rgba(255, 255, 255, 0.62);
+/* =========================
+   ОБЛАЧКО ДРАКОШИ
+========================= */
 
-  font-size: 14px;
+.drakosha-bubble {
+  position: relative;
 
-  line-height: 1.5;
-}
+  margin-bottom: -6px;
 
-.temperature {
-  margin-top: 8px;
-
-  color: #fff;
-
-  font-size: 48px;
-
-  font-weight: 300;
-
-  line-height: 1;
-
-  text-shadow:
-    0 0 30px
-    rgba(255, 255, 255, 0.20);
-}
-
-.weather-feels {
-  margin: 8px 0 0;
-
-  color:
-    rgba(255, 255, 255, 0.55);
-
-  font-size: 13px;
-}
-
-.weather-advice {
-  margin-top: 17px;
-
-  padding: 12px 14px;
+  padding: 7px 11px;
 
   border-radius: 15px;
 
   background:
-    rgba(255, 55, 105, 0.09);
+    rgba(255, 255, 255, 0.92);
 
-  border:
-    1px solid
-    rgba(255, 90, 135, 0.12);
+  color: #655d91;
 
-  color: #ff9bb8;
-
-  font-size: 13px;
-
-  line-height: 1.5;
-}
-
-/* =========================
-   ПОДПИСЬ
-========================= */
-
-.signature {
-  margin: 25px 0 0;
-
-  color:
-    rgba(255, 130, 165, 0.8);
-
-  font-size: 14px;
-
-  letter-spacing: 0.4px;
-}
-
-/* =========================
-   ПОГОДНЫЕ ЭФФЕКТЫ
-========================= */
-
-.weather-effect {
-  position: fixed;
-
-  inset: 0;
-
-  z-index: 1;
-
-  pointer-events: none;
-
-  overflow: hidden;
-}
-
-/* =========================
-   ДОЖДЬ
-========================= */
-
-.rain-drop {
-  position: absolute;
-
-  top: -30px;
-
-  width: 1px;
-  height: 22px;
-
-  background:
-    linear-gradient(
-      to bottom,
-      transparent,
-      rgba(210, 230, 255, 0.75)
-    );
-
-  transform: rotate(15deg);
-
-  animation:
-    rainFall linear infinite;
-}
-
-@keyframes rainFall {
-  from {
-    transform:
-      translate3d(0, -40px, 0)
-      rotate(15deg);
-  }
-
-  to {
-    transform:
-      translate3d(-80px, 110vh, 0)
-      rotate(15deg);
-  }
-}
-
-/* =========================
-   СНЕГ
-========================= */
-
-.snow-flake {
-  position: absolute;
-
-  top: -30px;
-
-  color: rgba(255, 255, 255, 0.8);
-
-  animation:
-    snowFall linear infinite;
-}
-
-@keyframes snowFall {
-  0% {
-    transform:
-      translateY(-30px)
-      translateX(0)
-      rotate(0deg);
-  }
-
-  50% {
-    transform:
-      translateY(50vh)
-      translateX(25px)
-      rotate(180deg);
-  }
-
-  100% {
-    transform:
-      translateY(110vh)
-      translateX(-20px)
-      rotate(360deg);
-  }
-}
-
-/* =========================
-   ТУМАН
-========================= */
-
-.fog-effect span {
-  position: absolute;
-
-  width: 140%;
-  height: 35%;
-
-  left: -20%;
-
-  border-radius: 50%;
-
-  background:
-    rgba(230, 235, 240, 0.08);
-
-  filter: blur(35px);
-
-  animation:
-    fogMove 12s ease-in-out infinite;
-}
-
-.fog-effect span:nth-child(1) {
-  top: 20%;
-}
-
-.fog-effect span:nth-child(2) {
-  top: 45%;
-
-  animation-delay: -4s;
-}
-
-.fog-effect span:nth-child(3) {
-  top: 70%;
-
-  animation-delay: -8s;
-}
-
-@keyframes fogMove {
-  0%,
-  100% {
-    transform: translateX(-5%);
-  }
-
-  50% {
-    transform: translateX(5%);
-  }
-}
-
-/* =========================
-   ЗВЁЗДЫ
-========================= */
-
-.stars-effect span {
-  position: absolute;
-
-  width: 2px;
-  height: 2px;
-
-  border-radius: 50%;
-
-  background: rgba(255, 255, 255, 0.75);
-
-  box-shadow:
-    0 0 7px
-    rgba(255, 255, 255, 0.8);
-
-  animation:
-    starTwinkle 3s ease-in-out infinite;
-}
-
-@keyframes starTwinkle {
-  0%,
-  100% {
-    opacity: 0.25;
-    transform: scale(0.7);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.5);
-  }
-}
-
-/* =========================
-   СОЛНЦЕ
-========================= */
-
-.sun-effect span {
-  position: absolute;
-
-  width: 300px;
-  height: 300px;
-
-  top: -150px;
-  right: -80px;
-
-  border-radius: 50%;
-
-  background:
-    rgba(255, 220, 130, 0.12);
-
-  filter: blur(20px);
-
-  animation:
-    sunPulse 5s ease-in-out infinite;
-}
-
-@keyframes sunPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-
-  50% {
-    transform: scale(1.15);
-    opacity: 1;
-  }
-}
-
-/* =========================
-   МОБИЛЬНЫЕ
-========================= */
-
-@media (max-width: 480px) {
-  .kessichka-page {
-    padding: 14px;
-
-    align-items: flex-start;
-
-    padding-top: 24px;
-  }
-
-  .kessichka-card {
-    padding: 32px 19px;
-
-    border-radius: 27px;
-  }
-
-  .kessichka-title {
-    font-size: 32px;
-  }
-
-  .kessichka-text {
-    font-size: 15px;
-  }
-
-  .daily-message {
-    padding: 19px 17px;
-  }
-
-  .weather-card {
-    padding: 19px;
-  }
-}
-/* =========================
-   PUSH УВЕДОМЛЕНИЯ
-========================= */
-
-.push-button {
-  width: 100%;
-  margin-top: 22px;
-  padding: 15px 18px;
-
-  border: 1px solid rgba(255, 105, 150, 0.35);
-  border-radius: 17px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 45, 100, 0.22),
-      rgba(255, 255, 255, 0.06)
-    );
-
-  color: #fff;
-
-  font-size: 14px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  box-shadow:
-    0 10px 30px rgba(255, 30, 90, 0.12);
-
-  transition:
-    transform 0.2s ease,
-    background 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.push-button:hover {
-  transform: translateY(-2px);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 45, 100, 0.32),
-      rgba(255, 255, 255, 0.08)
-    );
-
-  box-shadow:
-    0 14px 35px rgba(255, 30, 90, 0.2);
-}
-
-.push-button:active {
-  transform: scale(0.98);
-}
-
-.push-button:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-
-.push-enabled {
-  margin-top: 22px;
-
-  padding: 13px 16px;
-
-  border-radius: 16px;
-
-  background:
-    rgba(255, 80, 130, 0.08);
-
-  border:
-    1px solid
-    rgba(255, 105, 150, 0.15);
-
-  color: rgba(255, 180, 200, 0.9);
-
-  font-size: 13px;
-}
-/* =========================
-   ДРАКОША
-========================= */
-
-.drakosha-card {
-  margin-top: 22px;
-  padding: 20px;
-
-  border-radius: 24px;
-
-  background:
-    rgba(255, 255, 255, 0.05);
-
-  border:
-    1px solid rgba(180, 170, 255, 0.14);
-
-  text-align: center;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-.drakosha-label {
-  margin: 0 0 10px;
-
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
 
-  letter-spacing: 1.2px;
+  white-space: nowrap;
 
-  color: rgba(200, 190, 255, 0.9);
+  box-shadow:
+    0 6px 20px
+    rgba(0, 0, 0, 0.15);
 
-  text-transform: uppercase;
+  animation:
+    drakoshaBubble 2s
+    ease-in-out infinite;
 }
 
-.drakosha-image {
-  width: 170px;
-  max-width: 70%;
+.drakosha-bubble::after {
+  content: "";
 
-  display: block;
+  position: absolute;
 
-  margin: 0 auto;
+  right: 21px;
+  bottom: -6px;
 
-  cursor: pointer;
+  width: 12px;
+  height: 12px;
 
-  filter:
-    drop-shadow(
-      0 18px 30px rgba(90, 90, 180, 0.25)
-    );
+  background:
+    rgba(255, 255, 255, 0.92);
 
-  transition:
-    transform 0.25s ease;
+  transform: rotate(45deg);
 }
 
-.drakosha-image:active {
-  transform: scale(0.94);
-}
 
-.drakosha-text {
-  margin: 8px 0 0;
-
-  font-size: 13px;
-
-  color: rgba(255, 255, 255, 0.55);
-}
 /* =========================
-   ЧМОК ОТ ДРАКОШИ
+   ДРАКОША ПАРИТ
+========================= */
+
+@keyframes drakoshaFloat {
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      rotate(-1deg);
+  }
+
+  50% {
+    transform:
+      translateY(-8px)
+      rotate(1deg);
+  }
+}
+
+@keyframes drakoshaBubble {
+  0%,
+  100% {
+    opacity: 0.78;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+
+/* =========================
+   ЧМОК НА ВЕСЬ ЭКРАН
 ========================= */
 
 .kiss-overlay {
   position: fixed;
+
   inset: 0;
 
-  z-index: 9999;
+  z-index: 99999;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  background:
-    radial-gradient(
-      circle,
-      rgba(255, 80, 140, 0.35),
-      rgba(20, 5, 15, 0.95)
-    );
-
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  animation: kissFade 1.5s ease forwards;
+  overflow: hidden;
 
   pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255, 95, 160, 0.42),
+      rgba(25, 5, 17, 0.96)
+    );
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  animation:
+    kissOverlay 1.5s
+    ease forwards;
 }
 
 .kiss-mark {
-  font-size: clamp(100px, 35vw, 220px);
+  font-size:
+    clamp(110px, 34vw, 230px);
 
-  animation: kissPop 0.55s ease-out;
+  line-height: 1;
+
+  filter:
+    drop-shadow(
+      0 0 35px
+      rgba(255, 80, 145, 0.7)
+    );
+
+  animation:
+    kissPop 0.55s
+    cubic-bezier(
+      0.2,
+      1.4,
+      0.5,
+      1
+    );
 }
 
 .kiss-title {
-  margin-top: -10px;
+  margin-top: -12px;
 
-  font-size: clamp(50px, 18vw, 110px);
+  color: #fff;
+
+  font-size:
+    clamp(55px, 17vw, 110px);
+
   font-weight: 900;
 
-  color: white;
+  letter-spacing: -3px;
 
   text-shadow:
-    0 0 30px rgba(255, 50, 120, 0.8);
+    0 0 35px
+    rgba(255, 70, 135, 0.85);
 
-  animation: kissPop 0.65s ease-out;
+  animation:
+    kissPop 0.68s
+    cubic-bezier(
+      0.2,
+      1.4,
+      0.5,
+      1
+    );
 }
 
 .kiss-subtitle {
-  margin-top: 10px;
+  margin-top: 8px;
 
-  font-size: 18px;
+  color:
+    rgba(255, 225, 238, 0.95);
 
-  color: rgba(255, 220, 235, 0.95);
+  font-size:
+    clamp(15px, 4vw, 20px);
+
+  font-weight: 600;
+
+  animation:
+    kissSubtitle 0.8s
+    ease-out;
 }
 
-.kiss-hearts {
+
+/* =========================
+   ЛЕТАЮЩИЕ СЕРДЕЧКИ
+========================= */
+
+.kiss-heart {
   position: absolute;
 
-  top: 12%;
+  font-size:
+    clamp(24px, 7vw, 45px);
 
-  font-size: 28px;
-
-  letter-spacing: 12px;
-
-  animation: heartsFloat 1.4s ease-in-out;
+  animation:
+    kissHeart 1.35s
+    ease-out forwards;
 }
+
+.heart-1 {
+  left: 12%;
+  top: 60%;
+}
+
+.heart-2 {
+  left: 25%;
+  top: 25%;
+  animation-delay: 0.08s;
+}
+
+.heart-3 {
+  right: 20%;
+  top: 30%;
+  animation-delay: 0.15s;
+}
+
+.heart-4 {
+  right: 10%;
+  top: 65%;
+  animation-delay: 0.05s;
+}
+
+.heart-5 {
+  left: 47%;
+  top: 12%;
+  animation-delay: 0.2s;
+}
+
+
+/* =========================
+   АНИМАЦИИ ЧМОКА
+========================= */
 
 @keyframes kissPop {
   0% {
-    transform: scale(0.2) rotate(-10deg);
     opacity: 0;
+
+    transform:
+      scale(0.15)
+      rotate(-12deg);
   }
 
-  70% {
-    transform: scale(1.15) rotate(3deg);
+  65% {
     opacity: 1;
+
+    transform:
+      scale(1.17)
+      rotate(4deg);
   }
 
   100% {
-    transform: scale(1);
+    opacity: 1;
+
+    transform:
+      scale(1)
+      rotate(0);
   }
 }
 
-@keyframes kissFade {
+@keyframes kissSubtitle {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+}
+
+@keyframes kissOverlay {
   0% {
     opacity: 0;
   }
@@ -1012,7 +350,7 @@ button {
     opacity: 1;
   }
 
-  80% {
+  78% {
     opacity: 1;
   }
 
@@ -1021,18 +359,47 @@ button {
   }
 }
 
-@keyframes heartsFloat {
+@keyframes kissHeart {
   0% {
-    transform: translateY(30px) scale(0.8);
     opacity: 0;
+
+    transform:
+      translateY(40px)
+      scale(0.4)
+      rotate(-15deg);
   }
 
-  30% {
+  25% {
     opacity: 1;
   }
 
   100% {
-    transform: translateY(-60px) scale(1.2);
     opacity: 0;
+
+    transform:
+      translateY(-100px)
+      scale(1.35)
+      rotate(15deg);
+  }
+}
+
+
+/* =========================
+   ДРАКОША НА ТЕЛЕФОНЕ
+========================= */
+
+@media (max-width: 480px) {
+  .drakosha-floating {
+    right: 3px;
+    bottom: 4px;
+  }
+
+  .drakosha-image {
+    width: 100px;
+  }
+
+  .drakosha-bubble {
+    padding: 5px 8px;
+    font-size: 10px;
   }
 }
