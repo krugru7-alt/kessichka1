@@ -576,11 +576,11 @@ export default function Home() {
     </div>
 
     <div className="kiss-title">
-      ЧМОК!
+      ТЬМОК!
     </div>
 
     <div className="kiss-subtitle">
-      поймала тьмок ❤️
+      словила буську ❤️
     </div>
   </div>
 )}
