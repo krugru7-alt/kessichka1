@@ -988,14 +988,8 @@ button {
 
 /* =========================
    ДРАКОША ХОДИТ ПО ЭКРАНУ
-   И ПЕРЕБИРАЕТ ЛАПКАМИ
+   ПОКАДРОВАЯ АНИМАЦИЯ ЛАПОК
 ========================= */
-
-/*
-  ВАЖНО:
-  старое оформление сайта выше не меняется.
-  Здесь только переопределяется движение Дракоши.
-*/
 
 .drakosha-floating {
   left: 8px !important;
@@ -1003,16 +997,10 @@ button {
 
   --drakosha-distance: calc(100vw - 145px);
 
+  animation: none;
+
   transition:
     transform 2.8s linear;
-
-  /*
-    Когда Дракоша просто сидит,
-    сохраняем его лёгкое парение.
-  */
-  animation:
-    drakoshaFloat 3s
-    ease-in-out infinite;
 }
 
 /* ЛЕВЫЙ УГОЛ */
@@ -1031,106 +1019,45 @@ button {
 }
 
 /* =========================
-   ВО ВРЕМЯ ХОДЬБЫ
+   КОГДА ДРАКОША СТОИТ
+========================= */
+
+.drakosha-floating:not(.walking)
+.drakosha-image {
+  animation:
+    drakoshaIdleImage 3s
+    ease-in-out infinite;
+}
+
+@keyframes drakoshaIdleImage {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+/* =========================
+   КОГДА ДРАКОША ИДЁТ
 ========================= */
 
 /*
-  Отключаем обычное парение контейнера,
-  чтобы оно не конфликтовало
-  с перемещением по экрану.
-*/
-
-.drakosha-floating.walking {
-  animation: none;
-}
-
-/*
-  Сам Дракоша покачивается вверх-вниз
-  и влево-вправо — получается эффект
-  "топ-топ" лапками.
+  Здесь специально НЕТ тряски.
+  Лапки двигаются сменой walk_1 — walk_4.
 */
 
 .drakosha-floating.walking
 .drakosha-image {
-  animation:
-    drakoshaTopTop
-    0.28s
-    ease-in-out
-    infinite;
+  animation: none;
+  transform: none;
 }
-
-/*
-  Облачко тоже слегка качается,
-  пока Дракоша идёт.
-*/
 
 .drakosha-floating.walking
 .drakosha-bubble {
-  animation:
-    drakoshaWalkingBubble
-    0.28s
-    ease-in-out
-    infinite;
-}
-
-/* =========================
-   ТОП-ТОП ЛАПКАМИ
-========================= */
-
-@keyframes drakoshaTopTop {
-  0% {
-    transform:
-      translateY(0)
-      rotate(-4deg)
-      scaleX(1);
-  }
-
-  25% {
-    transform:
-      translateY(-5px)
-      rotate(4deg)
-      scaleX(0.98);
-  }
-
-  50% {
-    transform:
-      translateY(0)
-      rotate(-4deg)
-      scaleX(1);
-  }
-
-  75% {
-    transform:
-      translateY(-5px)
-      rotate(4deg)
-      scaleX(0.98);
-  }
-
-  100% {
-    transform:
-      translateY(0)
-      rotate(-4deg)
-      scaleX(1);
-  }
-}
-
-/* =========================
-   ОБЛАЧКО ПРИ ХОДЬБЕ
-========================= */
-
-@keyframes drakoshaWalkingBubble {
-  0%,
-  100% {
-    transform:
-      translateY(0)
-      rotate(-2deg);
-  }
-
-  50% {
-    transform:
-      translateY(-4px)
-      rotate(2deg);
-  }
+  animation: none;
 }
 
 /* =========================
