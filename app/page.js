@@ -44,7 +44,7 @@ const redButtonPhrases = [
 
 
 const warmNotes = [
-  "Не забывай: где-то далеко есть человек, которому очень важно, как прошёл твой день. ❤️",
+  "Не забывай: есть человек, которому очень важно, как прошёл твой день. ❤️",
   "Сегодня ничего не обязано быть идеально. Главное — береги себя.",
   "Если день шумный, вот тебе маленький тихий уголок. 🌷",
   "Записка без повода: ты очень-очень ценная буська.",
@@ -87,7 +87,7 @@ const wallMessages = [
 ];
 
 const polaroidCaptions = [
-  "somewhere far away ❤️",
+  "маленькое место для тебя ❤️",
   "маленький хороший день",
   "дракоша был здесь",
   "для памяти",
@@ -97,7 +97,7 @@ const polaroidCaptions = [
 
 const roomDeskNotes = [
   "Я тут оставил тебе место, где можно просто побыть. Никаких дел. ❤️",
-  "Если день оказался громким — посиди здесь минутку. Я рядом мысленно.",
+  "Если день оказался громким — посиди здесь минутку. Я рядом. ❤️",
   "Напоминание со стола: поесть, выдохнуть и не требовать от себя невозможного.",
   "Эта записка ничего не просит. Просто тьмок и немного тепла. 💋",
   "Сегодня разрешается быть сонной буськой и всё равно быть прекрасной.",
@@ -106,12 +106,37 @@ const roomDeskNotes = [
 
 const roomObjects = [
   "🎧",
-  "🕯️",
   "🧸",
   "☕",
   "📎",
   "🎀",
   "🪩",
+];
+
+const ticketPrizes = [
+  "🎟️ Билет на вкусняшку без чувства вины",
+  "🎟️ Билет на 20 минут полного ничегонеделания",
+  "🎟️ Билет на один дополнительный тьмок 💋",
+  "🎟️ Билет на любимую песню погромче",
+  "🎟️ Билет на уютный вечер",
+  "🎟️ Билет на маленькую радость сегодня",
+];
+
+const drawerFinds = [
+  "🍬 конфета. Кто её сюда положил — неизвестно.",
+  "💌 крошечная записка: «ты буська».",
+  "🧦 подозрительный носок Дракоши.",
+  "🎀 ленточка. Просто красивая.",
+  "💗 запасное сердечко. На всякий случай.",
+  "🪙 монетка удачи. Сегодня твоя.",
+];
+
+const dragonStashFinds = [
+  "🐉 Дракоша спрятал здесь три тьмока и никому не признаётся.",
+  "🍪 Найдена половина печеньки. Вторая половина уже подозрительно исчезла.",
+  "🎮 Очень важная драконья штука. Назначение засекречено.",
+  "💎 Камушек, который Дракоша объявил сокровищем.",
+  "📎 Скрепка. Почему она в тайнике — вопросов больше, чем ответов.",
 ];
 
 function urlBase64ToUint8Array(base64String) {
@@ -282,10 +307,15 @@ export default function Home() {
   );
   const [lampOn, setLampOn] = useState(false);
   const [garlandMode, setGarlandMode] = useState(0);
-  const [threadMessage, setThreadMessage] = useState(
-    "расстояние большое. нить всё равно работает."
-  );
-  const [threadPulse, setThreadPulse] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerFind, setDrawerFind] = useState("пока закрыто");
+  const [mysteryBoxCount, setMysteryBoxCount] = useState(0);
+  const [mysteryBoxText, setMysteryBoxText] = useState("НЕ ТРОГАТЬ 👀");
+  const [ticketText, setTicketText] = useState("дёрни рычаг");
+  const [stashOpen, setStashOpen] = useState(false);
+  const [stashText, setStashText] = useState("тайник закрыт");
+  const [doorCount, setDoorCount] = useState(0);
+  const [doorText, setDoorText] = useState("куда собралась? 👀");
 
   // ==============================
   // PUSH
@@ -643,15 +673,44 @@ export default function Home() {
     }
   }
 
-  function touchThread() {
-    setThreadPulse(true);
-    setThreadMessage(
-      threadMessage.includes("долетел")
-        ? "расстояние большое. нить всё равно работает."
-        : "тьмок по ниточке успешно долетел ❤️"
-    );
+  function openDrawer() {
+    const find = drawerFinds[Math.floor(Math.random() * drawerFinds.length)];
+    setDrawerFind(find);
+    setDrawerOpen((current) => !current);
+  }
 
-    setTimeout(() => setThreadPulse(false), 900);
+  function touchMysteryBox() {
+    const next = mysteryBoxCount + 1;
+    setMysteryBoxCount(next);
+    const reactions = [
+      "Я же написал не трогать.",
+      "Коробка делает вид, что ничего не произошло.",
+      "Изнутри кто-то сказал: «эй».",
+      "🐉 Дракоша: ЭТО МОЁ.",
+      "💗 Ладно. Внутри было сердечко. Забирай.",
+    ];
+    setMysteryBoxText(reactions[Math.min(next - 1, reactions.length - 1)]);
+  }
+
+  function pullTicket() {
+    setTicketText(ticketPrizes[Math.floor(Math.random() * ticketPrizes.length)]);
+  }
+
+  function openStash() {
+    setStashOpen(true);
+    setStashText(dragonStashFinds[Math.floor(Math.random() * dragonStashFinds.length)]);
+  }
+
+  function touchDoor() {
+    const next = doorCount + 1;
+    setDoorCount(next);
+    const messages = [
+      "Куда собралась? 👀",
+      "Ну ладно... но ненадолго.",
+      "Дракоша сказал закрыть дверь, тепло уходит 🐉",
+      "Возвращайся потом ❤️",
+    ];
+    setDoorText(messages[Math.min(next - 1, messages.length - 1)]);
   }
 
   const timeOfDay =
@@ -1273,16 +1332,27 @@ export default function Home() {
         .nook-toy { position:absolute; right:95px; bottom:37px; font-size:23px; transform:rotate(-10deg); }
         .nook-diary { position:absolute; right:25px; top:70px; width:43%; margin:0; color:rgba(255,255,255,.72); font-size:12px; line-height:1.65; }
 
-        /* НИТЬ */
-        .room-thread {
-          width:90%; margin:90px auto 0; color:rgba(255,255,255,.6);
-        }
-        .thread-labels { display:flex; justify-content:space-between; font-size:11px; font-weight:700; }
-        .thread-line { position:relative; height:1px; margin:18px 8px 12px; background:linear-gradient(90deg,rgba(255,100,150,.2),rgba(255,145,190,.85),rgba(145,120,255,.75),rgba(255,100,150,.2)); box-shadow:0 0 20px rgba(255,100,160,.18); }
-        .thread-line::before,.thread-line::after { content:"";position:absolute;top:50%;width:8px;height:8px;border-radius:50%;background:#ff8eb0;box-shadow:0 0 14px rgba(255,100,160,.6);transform:translateY(-50%); }
-        .thread-line::before{left:-1px}.thread-line::after{right:-1px}
-        .thread-heart { position:absolute; left:50%; top:50%; padding:0 7px; background:#120b11; transform:translate(-50%,-50%); }
-        .thread-note { margin:0; text-align:center; font-size:11px; opacity:.45; }
+        /* ИНТЕРАКТИВНЫЕ ШТУКИ КОМНАТЫ */
+        .room-discovery-zone { width:min(94%,860px); margin:90px auto 0; display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+        .room-discovery { position:relative; min-height:190px; padding:22px; border:1px solid rgba(255,255,255,.08); border-radius:28px; background:rgba(255,255,255,.035); box-shadow:0 22px 60px rgba(0,0,0,.14); overflow:hidden; }
+        .room-discovery:nth-child(even){ transform:translateY(32px) rotate(.7deg); }
+        .room-discovery:nth-child(odd){ transform:rotate(-.6deg); }
+        .discovery-kicker{margin:0 0 8px;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;opacity:.38}
+        .discovery-title{margin:0 0 12px;font-size:18px;font-weight:800}
+        .discovery-text{min-height:42px;margin:0 0 15px;font-size:12px;line-height:1.6;opacity:.66}
+        .discovery-object{display:block;margin:8px auto 12px;font-size:52px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.22));transition:transform .2s ease}
+        .room-discovery:active .discovery-object{transform:scale(.92) rotate(-3deg)}
+        .discovery-button{border:0;border-radius:14px;padding:10px 14px;background:rgba(255,255,255,.09);color:#fff;font-weight:750;font-size:11px;cursor:pointer}
+        .drawer-open{animation:drawerPop .35s ease}
+        @keyframes drawerPop{0%{transform:translateY(12px);opacity:.3}100%{transform:translateY(0);opacity:1}}
+        .ticket-paper{margin:10px 0 0;padding:11px 12px;border-radius:8px;background:#f3e6d5;color:#493b38;font-size:11px;font-weight:700;transform:rotate(-1deg);box-shadow:0 8px 18px rgba(0,0,0,.18)}
+        .stash-door{font-size:45px}
+        .room-door-zone{width:min(72%,520px);margin:100px auto 20px;text-align:center}
+        .room-door{position:relative;width:145px;height:205px;margin:0 auto 16px;border-radius:72px 72px 12px 12px;background:linear-gradient(145deg,rgba(112,73,96,.82),rgba(53,35,54,.95));border:2px solid rgba(255,255,255,.08);box-shadow:inset 0 0 0 8px rgba(0,0,0,.12),0 22px 50px rgba(0,0,0,.25);cursor:pointer}
+        .room-door::after{content:"•";position:absolute;right:20px;top:105px;color:#f2c3a5;font-size:24px;text-shadow:0 0 10px rgba(255,200,160,.4)}
+        .door-sign{position:absolute;left:50%;top:48px;transform:translateX(-50%) rotate(-3deg);width:82px;padding:7px 5px;background:#ead8c9;color:#5a4448;font-size:9px;font-weight:800;border-radius:4px;box-shadow:0 5px 12px rgba(0,0,0,.2)}
+        .door-message{margin:0;font-size:12px;opacity:.6}
+        @media(max-width:650px){.room-discovery-zone{grid-template-columns:1fr;gap:18px}.room-discovery:nth-child(even),.room-discovery:nth-child(odd){transform:none}.room-discovery{min-height:165px}.room-door-zone{margin-top:70px}}
 
         /* НОЧНИК И ФИНАЛ */
         .room-lamp-zone {
@@ -1810,23 +1880,50 @@ export default function Home() {
           <p className="nook-reaction">{nookMessage}</p>
         </section>
 
-        {/* НИТЬ */}
-        <section className="room-thread">
-          <div className="thread-labels">
-            <span>Обсидик</span>
-            <span>Кэссичка</span>
+        {/* ИНТЕРАКТИВНЫЕ НАХОДКИ */}
+        <section className="room-discovery-zone">
+          <article className="room-discovery" onClick={openDrawer}>
+            <p className="discovery-kicker">стол • ящик №1</p>
+            <h3 className="discovery-title">Ящик стола</h3>
+            <span className="discovery-object">🗄️</span>
+            <p className={`discovery-text ${drawerOpen ? "drawer-open" : ""}`}>
+              {drawerOpen ? drawerFind : "Внутри что-то лежит. Каждый раз может попасться другое."}
+            </p>
+            <button className="discovery-button" type="button">{drawerOpen ? "закрыть ящик" : "выдвинуть ящик"}</button>
+          </article>
+
+          <article className="room-discovery" onClick={touchMysteryBox}>
+            <p className="discovery-kicker">под столом • подозрительно</p>
+            <h3 className="discovery-title">Коробка «не трогать»</h3>
+            <span className="discovery-object">📦</span>
+            <p className="discovery-text">{mysteryBoxText}</p>
+            <button className="discovery-button" type="button">всё равно потрогать</button>
+          </article>
+
+          <article className="room-discovery">
+            <p className="discovery-kicker">аппарат • один билетик</p>
+            <h3 className="discovery-title">Билетик на сегодня</h3>
+            <span className="discovery-object">🎟️</span>
+            <p className="discovery-text">Потяни рычаг — аппарат решит, что тебе сегодня официально положено.</p>
+            <button className="discovery-button" type="button" onClick={pullTicket}>дёрнуть рычаг</button>
+            {ticketText !== "дёрни рычаг" && <div className="ticket-paper">{ticketText}</div>}
+          </article>
+
+          <article className="room-discovery" onClick={openStash}>
+            <p className="discovery-kicker">за уголком Дракоши • секретно</p>
+            <h3 className="discovery-title">Тайник Дракоши</h3>
+            <span className="discovery-object stash-door">🕳️🐉</span>
+            <p className="discovery-text">{stashOpen ? stashText : "Он утверждает, что никакого тайника здесь нет. Очень убедительно."}</p>
+            <button className="discovery-button" type="button">{stashOpen ? "проверить ещё раз" : "заглянуть"}</button>
+          </article>
+        </section>
+
+        {/* ДВЕРЬ КОМНАТЫ */}
+        <section className="room-door-zone">
+          <div className="room-door" onClick={touchDoor}>
+            <div className="door-sign">КОМНАТА КЭССИЧКИ</div>
           </div>
-          <div className="thread-line">
-            <span
-              className={`thread-heart ${threadPulse ? "pulse" : ""}`}
-              onClick={touchThread}
-            >
-              ❤️
-            </span>
-          </div>
-          <p className="thread-note">
-            {threadMessage}
-          </p>
+          <p className="door-message">{doorText}</p>
         </section>
 
         {/* НОЧНИК */}
