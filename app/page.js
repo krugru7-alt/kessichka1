@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./globals.css";
 
 import {
@@ -197,6 +197,25 @@ export default function Home() {
 
   const [redButtonText, setRedButtonText] =
     useState("НЕ НАЖИМАТЬ");
+
+  // ==============================
+  // ЖИВЫЕ ЭФФЕКТЫ САЙТА
+  // ==============================
+
+  const [showPawTrail, setShowPawTrail] =
+    useState(false);
+
+  const [flyingHeart, setFlyingHeart] =
+    useState(null);
+
+  const [heartCaught, setHeartCaught] =
+    useState(false);
+
+  const [sparkles, setSparkles] =
+    useState([]);
+
+  const sparkleIdRef = useRef(0);
+  const lastSparkleRef = useRef(0);
 
   // ==============================
   // PUSH
@@ -439,6 +458,122 @@ export default function Home() {
   }, []);
 
   // ==============================
+  // СЛЕДЫ ДРАКОШИ
+  // ==============================
+
+  useEffect(() => {
+    let timer;
+    let hideTimer;
+
+    function schedulePaws() {
+      const delay =
+        Math.floor(Math.random() * 25000) +
+        25000;
+
+      timer = setTimeout(() => {
+        setShowPawTrail(true);
+
+        hideTimer = setTimeout(() => {
+          setShowPawTrail(false);
+          schedulePaws();
+        }, 6500);
+      }, delay);
+    }
+
+    schedulePaws();
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(hideTimer);
+    };
+  }, []);
+
+  // ==============================
+  // ЛЕТАЮЩЕЕ СЕРДЕЧКО
+  // ==============================
+
+  useEffect(() => {
+    let timer;
+    let hideTimer;
+
+    function scheduleHeart() {
+      const delay =
+        Math.floor(Math.random() * 30000) +
+        25000;
+
+      timer = setTimeout(() => {
+        setFlyingHeart(
+          Math.random() > 0.5
+            ? "left-to-right"
+            : "right-to-left"
+        );
+
+        hideTimer = setTimeout(() => {
+          setFlyingHeart(null);
+          scheduleHeart();
+        }, 8500);
+      }, delay);
+    }
+
+    scheduleHeart();
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(hideTimer);
+    };
+  }, []);
+
+  function catchFlyingHeart() {
+    setFlyingHeart(null);
+    setHeartCaught(true);
+
+    setTimeout(() => {
+      setHeartCaught(false);
+    }, 1200);
+  }
+
+  // ==============================
+  // ИСКОРКИ ОТ ПАЛЬЦА / МЫШКИ
+  // ==============================
+
+  function createSparkle(event) {
+    const time = Date.now();
+
+    if (time - lastSparkleRef.current < 90) {
+      return;
+    }
+
+    lastSparkleRef.current = time;
+    sparkleIdRef.current += 1;
+
+    const id = sparkleIdRef.current;
+
+    const sparkle = {
+      id,
+      x: event.clientX,
+      y: event.clientY,
+      symbol:
+        id % 3 === 0
+          ? "♡"
+          : id % 2 === 0
+            ? "✦"
+            : "·",
+    };
+
+    setSparkles((current) =>
+      [...current.slice(-14), sparkle]
+    );
+
+    setTimeout(() => {
+      setSparkles((current) =>
+        current.filter((item) =>
+          item.id !== id
+        )
+      );
+    }, 900);
+  }
+
+  // ==============================
   // DOMIK
   // ==============================
 
@@ -577,6 +712,7 @@ export default function Home() {
   return (
     <main
       className={`kessichka-page ${timeOfDay}`}
+      onPointerMove={createSparkle}
     >
       <style>
         {`
@@ -851,8 +987,331 @@ export default function Home() {
           }
         }
 
+        /* =========================
+           ЖИВЫЕ ЭФФЕКТЫ
+        ========================= */
+
+        .ambient-layer {
+          position: fixed;
+          inset: 0;
+          z-index: 30;
+          pointer-events: none;
+          overflow: hidden;
+        }
+
+        .paw-trail {
+          position: fixed;
+          left: -30px;
+          bottom: 118px;
+          z-index: 1200;
+          width: calc(100vw + 60px);
+          height: 90px;
+          pointer-events: none;
+        }
+
+        .paw-print {
+          position: absolute;
+          bottom: 0;
+          font-size: 22px;
+          opacity: 0;
+          filter: drop-shadow(0 4px 10px rgba(180,150,255,.25));
+          animation: pawAppear 4.8s ease forwards;
+        }
+
+        .paw-print:nth-child(1) { left: 3%; animation-delay: 0s; transform: rotate(-18deg); }
+        .paw-print:nth-child(2) { left: 13%; bottom: 22px; animation-delay: .28s; transform: rotate(13deg); }
+        .paw-print:nth-child(3) { left: 24%; animation-delay: .56s; transform: rotate(-13deg); }
+        .paw-print:nth-child(4) { left: 35%; bottom: 20px; animation-delay: .84s; transform: rotate(16deg); }
+        .paw-print:nth-child(5) { left: 46%; animation-delay: 1.12s; transform: rotate(-12deg); }
+        .paw-print:nth-child(6) { left: 57%; bottom: 22px; animation-delay: 1.4s; transform: rotate(14deg); }
+        .paw-print:nth-child(7) { left: 68%; animation-delay: 1.68s; transform: rotate(-14deg); }
+        .paw-print:nth-child(8) { left: 79%; bottom: 20px; animation-delay: 1.96s; transform: rotate(16deg); }
+        .paw-print:nth-child(9) { left: 89%; animation-delay: 2.24s; transform: rotate(-10deg); }
+
+        .paw-found-heart {
+          position: absolute;
+          right: 3%;
+          bottom: 5px;
+          font-size: 25px;
+          opacity: 0;
+          animation: pawHeart 2s ease 2.8s forwards;
+        }
+
+        @keyframes pawAppear {
+          0% { opacity: 0; transform: translateY(10px) scale(.6); }
+          15% { opacity: .85; }
+          58% { opacity: .85; }
+          100% { opacity: 0; transform: translateY(-4px) scale(1); }
+        }
+
+        @keyframes pawHeart {
+          0% { opacity: 0; transform: scale(.4); }
+          35% { opacity: 1; transform: scale(1.18); }
+          70% { opacity: 1; transform: scale(1); }
+          100% { opacity: 0; transform: translateY(-12px) scale(.9); }
+        }
+
+        .flying-heart {
+          position: fixed;
+          top: 36%;
+          z-index: 3000;
+          border: 0;
+          padding: 8px;
+          background: transparent;
+          font-size: 34px;
+          cursor: pointer;
+          filter: drop-shadow(0 8px 18px rgba(255,80,145,.45));
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        .flying-heart.left-to-right {
+          left: -70px;
+          animation: flyHeartRight 8s linear forwards;
+        }
+
+        .flying-heart.right-to-left {
+          right: -70px;
+          animation: flyHeartLeft 8s linear forwards;
+        }
+
+        @keyframes flyHeartRight {
+          0% { transform: translateX(0) translateY(0) rotate(-8deg); }
+          20% { transform: translateX(22vw) translateY(-45px) rotate(8deg); }
+          45% { transform: translateX(48vw) translateY(20px) rotate(-6deg); }
+          70% { transform: translateX(74vw) translateY(-35px) rotate(8deg); }
+          100% { transform: translateX(calc(100vw + 100px)) translateY(10px) rotate(0); }
+        }
+
+        @keyframes flyHeartLeft {
+          0% { transform: translateX(0) translateY(0) rotate(8deg); }
+          20% { transform: translateX(-22vw) translateY(-45px) rotate(-8deg); }
+          45% { transform: translateX(-48vw) translateY(20px) rotate(6deg); }
+          70% { transform: translateX(-74vw) translateY(-35px) rotate(-8deg); }
+          100% { transform: translateX(calc(-100vw - 100px)) translateY(10px) rotate(0); }
+        }
+
+        .heart-caught {
+          position: fixed;
+          left: 50%;
+          top: 50%;
+          z-index: 50000;
+          pointer-events: none;
+          transform: translate(-50%, -50%);
+          font-size: 46px;
+          animation: caughtHeart 1.2s ease forwards;
+        }
+
+        @keyframes caughtHeart {
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+          35% { opacity: 1; transform: translate(-50%, -50%) scale(1.45); }
+          100% { opacity: 0; transform: translate(-50%, -80%) scale(.9); }
+        }
+
+        .pointer-sparkle {
+          position: fixed;
+          z-index: 2500;
+          pointer-events: none;
+          color: rgba(255,210,235,.95);
+          font-size: 16px;
+          text-shadow: 0 0 12px rgba(255,110,180,.8);
+          animation: sparkleFade .9s ease-out forwards;
+        }
+
+        @keyframes sparkleFade {
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
+          25% { opacity: 1; }
+          100% { opacity: 0; transform: translate(-50%, -90%) scale(1.15) rotate(18deg); }
+        }
+
+        .weather-fx {
+          position: fixed;
+          inset: 0;
+          z-index: 25;
+          pointer-events: none;
+          overflow: hidden;
+        }
+
+        .rain-drop {
+          position: absolute;
+          top: -80px;
+          width: 1px;
+          height: 34px;
+          background: linear-gradient(to bottom, transparent, rgba(190,215,255,.55));
+          animation: rainFall 1.25s linear infinite;
+        }
+
+        .rain-drop:nth-child(1) { left: 4%; animation-delay: -.2s; }
+        .rain-drop:nth-child(2) { left: 12%; animation-delay: -.8s; }
+        .rain-drop:nth-child(3) { left: 20%; animation-delay: -.45s; }
+        .rain-drop:nth-child(4) { left: 29%; animation-delay: -1.1s; }
+        .rain-drop:nth-child(5) { left: 38%; animation-delay: -.65s; }
+        .rain-drop:nth-child(6) { left: 47%; animation-delay: -.05s; }
+        .rain-drop:nth-child(7) { left: 56%; animation-delay: -.9s; }
+        .rain-drop:nth-child(8) { left: 64%; animation-delay: -.35s; }
+        .rain-drop:nth-child(9) { left: 73%; animation-delay: -1.15s; }
+        .rain-drop:nth-child(10) { left: 81%; animation-delay: -.55s; }
+        .rain-drop:nth-child(11) { left: 90%; animation-delay: -.15s; }
+        .rain-drop:nth-child(12) { left: 97%; animation-delay: -.75s; }
+
+        @keyframes rainFall {
+          to { transform: translate(-28px, calc(100vh + 150px)); opacity: .15; }
+        }
+
+        .snow-flake {
+          position: absolute;
+          top: -40px;
+          color: rgba(255,255,255,.72);
+          font-size: 15px;
+          animation: snowFall 7s linear infinite;
+        }
+
+        .snow-flake:nth-child(1) { left: 5%; animation-delay: -1s; }
+        .snow-flake:nth-child(2) { left: 14%; animation-delay: -4s; font-size: 10px; }
+        .snow-flake:nth-child(3) { left: 23%; animation-delay: -2s; }
+        .snow-flake:nth-child(4) { left: 34%; animation-delay: -6s; font-size: 12px; }
+        .snow-flake:nth-child(5) { left: 43%; animation-delay: -3s; }
+        .snow-flake:nth-child(6) { left: 52%; animation-delay: -.5s; font-size: 9px; }
+        .snow-flake:nth-child(7) { left: 61%; animation-delay: -5s; }
+        .snow-flake:nth-child(8) { left: 70%; animation-delay: -2.5s; font-size: 11px; }
+        .snow-flake:nth-child(9) { left: 79%; animation-delay: -6.5s; }
+        .snow-flake:nth-child(10) { left: 88%; animation-delay: -1.5s; font-size: 10px; }
+        .snow-flake:nth-child(11) { left: 95%; animation-delay: -4.5s; }
+
+        @keyframes snowFall {
+          0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+          10% { opacity: .8; }
+          55% { transform: translate(25px, 55vh) rotate(170deg); }
+          100% { transform: translate(-15px, calc(100vh + 80px)) rotate(360deg); opacity: .1; }
+        }
+
+        .sun-glow-fx {
+          position: absolute;
+          top: -18%;
+          right: -20%;
+          width: 70vw;
+          height: 70vw;
+          max-width: 650px;
+          max-height: 650px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(255,215,135,.11), transparent 68%);
+          animation: sunGlowMove 7s ease-in-out infinite;
+        }
+
+        @keyframes sunGlowMove {
+          0%,100% { transform: scale(.95); opacity: .45; }
+          50% { transform: scale(1.08); opacity: .85; }
+        }
+
+        .storm-flash {
+          position: absolute;
+          inset: 0;
+          background: rgba(220,225,255,.13);
+          opacity: 0;
+          animation: stormFlash 8s linear infinite;
+        }
+
+        @keyframes stormFlash {
+          0%, 74%, 78%, 100% { opacity: 0; }
+          75% { opacity: .35; }
+          76% { opacity: .03; }
+          77% { opacity: .22; }
+        }
+
+        @media (max-width: 480px) {
+          .paw-trail { bottom: 96px; }
+          .paw-print { font-size: 18px; }
+          .flying-heart { font-size: 30px; }
+        }
+
         `}
       </style>
+
+      {/* =========================
+          ЖИВЫЕ ЭФФЕКТЫ
+      ========================= */}
+
+      <div className="ambient-layer">
+        {sparkles.map((sparkle) => (
+          <span
+            key={sparkle.id}
+            className="pointer-sparkle"
+            style={{
+              left: sparkle.x,
+              top: sparkle.y,
+            }}
+          >
+            {sparkle.symbol}
+          </span>
+        ))}
+      </div>
+
+      {showPawTrail && (
+        <div className="paw-trail">
+          {Array.from({ length: 9 }).map((_, index) => (
+            <span
+              key={index}
+              className="paw-print"
+            >
+              🐾
+            </span>
+          ))}
+
+          <span className="paw-found-heart">
+            ❤️
+          </span>
+        </div>
+      )}
+
+      {flyingHeart && (
+        <button
+          type="button"
+          className={`flying-heart ${flyingHeart}`}
+          onClick={catchFlyingHeart}
+          aria-label="Поймать сердечко"
+        >
+          💗
+        </button>
+      )}
+
+      {heartCaught && (
+        <div className="heart-caught">
+          💗 ✨ 💗
+        </div>
+      )}
+
+      {weather && !weather.error && (
+        <div className="weather-fx">
+          {[51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(
+            weather.weatherCode
+          ) &&
+            Array.from({ length: 12 }).map((_, index) => (
+              <span
+                key={`rain-${index}`}
+                className="rain-drop"
+              />
+            ))}
+
+          {[71, 73, 75, 77, 85, 86].includes(
+            weather.weatherCode
+          ) &&
+            Array.from({ length: 11 }).map((_, index) => (
+              <span
+                key={`snow-${index}`}
+                className="snow-flake"
+              >
+                ❄
+              </span>
+            ))}
+
+          {weather.weatherCode === 0 && (
+            <div className="sun-glow-fx" />
+          )}
+
+          {[95, 96, 99].includes(weather.weatherCode) && (
+            <div className="storm-flash" />
+          )}
+        </div>
+      )}
 
       <section className="kessichka-card">
 
