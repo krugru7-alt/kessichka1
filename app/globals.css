@@ -513,7 +513,7 @@ button {
 }
 
 /* =========================
-   СТАРЫЕ АНИМАЦИИ
+   АНИМАЦИИ САЙТА
 ========================= */
 
 @keyframes morningGlow {
@@ -574,14 +574,14 @@ button {
   }
 }
 
-/* =====================================================
-   НИЖЕ ТОЛЬКО НОВОЕ — ДРАКОША
-===================================================== */
+/* =========================
+   ДРАКОША
+========================= */
 
 .drakosha-floating {
   position: fixed;
 
-  right: 10px;
+  right: 8px;
   bottom: 8px;
 
   z-index: 1000;
@@ -590,24 +590,7 @@ button {
   flex-direction: column;
   align-items: center;
 
-  animation:
-    drakoshaFloat 3s
-    ease-in-out infinite;
-}
-
-.drakosha-button {
-  margin: 0;
-  padding: 0;
-
-  border: none;
-  outline: none;
-
-  background: transparent;
-
-  cursor: pointer;
-
-  -webkit-tap-highlight-color:
-    transparent;
+  transform-origin: center bottom;
 }
 
 .drakosha-image {
@@ -616,8 +599,12 @@ button {
   width: 120px;
   height: auto;
 
+  cursor: pointer;
+
   user-select: none;
   -webkit-user-drag: none;
+
+  -webkit-tap-highlight-color: transparent;
 
   filter:
     drop-shadow(
@@ -625,18 +612,7 @@ button {
       rgba(100, 100, 210, 0.32)
     );
 
-  transition:
-    transform 0.2s ease;
-}
-
-.drakosha-button:hover
-.drakosha-image {
-  transform: scale(1.06);
-}
-
-.drakosha-button:active
-.drakosha-image {
-  transform: scale(0.9);
+  transform-origin: center bottom;
 }
 
 /* =========================
@@ -669,6 +645,10 @@ button {
   animation:
     bubblePulse 2s
     ease-in-out infinite;
+
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .drakosha-bubble::after {
@@ -688,21 +668,6 @@ button {
   transform: rotate(45deg);
 }
 
-/* =========================
-   ПАРЕНИЕ ДРАКОШИ
-========================= */
-
-@keyframes drakoshaFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-7px);
-  }
-}
-
 @keyframes bubblePulse {
   0%,
   100% {
@@ -714,6 +679,145 @@ button {
     opacity: 1;
     transform: scale(1.04);
   }
+}
+
+/* =========================
+   ДРАКОША ДЫШИТ
+========================= */
+
+.drakosha-floating.idle
+.drakosha-image {
+  animation:
+    drakoshaBreathing
+    3s
+    ease-in-out
+    infinite;
+}
+
+@keyframes drakoshaBreathing {
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translateY(-2px)
+      scale(1.015);
+  }
+}
+
+/* =========================
+   ДРАКОША ПРЫГАЕТ
+========================= */
+
+.drakosha-floating.hop
+.drakosha-image {
+  animation:
+    drakoshaHop
+    0.7s
+    ease-in-out
+    2;
+}
+
+@keyframes drakoshaHop {
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  45% {
+    transform:
+      translateY(-18px)
+      scale(1.03);
+  }
+
+  65% {
+    transform:
+      translateY(-5px)
+      scale(0.98);
+  }
+}
+
+/* =========================
+   ДРАКОША ПОКАЧИВАЕТСЯ
+========================= */
+
+.drakosha-floating.wave
+.drakosha-image {
+  animation:
+    drakoshaWave
+    0.45s
+    ease-in-out
+    4;
+}
+
+@keyframes drakoshaWave {
+  0%,
+  100% {
+    transform:
+      rotate(-3deg)
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      rotate(4deg)
+      translateY(-3px);
+  }
+}
+
+/* =========================
+   ДРАКОША ЗАСЫПАЕТ
+========================= */
+
+.drakosha-floating.sleep
+.drakosha-image {
+  animation:
+    drakoshaSleep
+    1.8s
+    ease-in-out;
+}
+
+@keyframes drakoshaSleep {
+  0% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  40% {
+    transform:
+      translateY(4px)
+      scale(0.97);
+  }
+
+  70%,
+  100% {
+    transform:
+      translateY(6px)
+      scale(0.96);
+  }
+}
+
+/* =========================
+   ОБЛАЧКО ПРИ ДЕЙСТВИЯХ
+========================= */
+
+.drakosha-floating.hop
+.drakosha-bubble,
+.drakosha-floating.wave
+.drakosha-bubble {
+  transform: translateY(-4px);
+}
+
+.drakosha-floating.sleep
+.drakosha-bubble {
+  opacity: 0.75;
 }
 
 /* =========================
@@ -748,6 +852,17 @@ button {
 
   animation:
     kissOverlay 1.5s ease forwards;
+}
+
+.kiss-hearts {
+  font-size: 28px;
+
+  margin-bottom: 10px;
+
+  animation:
+    kissHeartsFloat
+    1.4s
+    ease-out;
 }
 
 .kiss-mark {
@@ -801,58 +916,6 @@ button {
     kissSubtitle 0.8s ease-out;
 }
 
-/* =========================
-   СЕРДЕЧКИ ЧМОКА
-========================= */
-
-.kiss-heart {
-  position: absolute;
-
-  font-size:
-    clamp(24px, 7vw, 45px);
-
-  animation:
-    kissHeart 1.35s
-    ease-out forwards;
-}
-
-.heart-1 {
-  left: 12%;
-  top: 60%;
-}
-
-.heart-2 {
-  left: 25%;
-  top: 25%;
-
-  animation-delay: 0.08s;
-}
-
-.heart-3 {
-  right: 20%;
-  top: 30%;
-
-  animation-delay: 0.15s;
-}
-
-.heart-4 {
-  right: 10%;
-  top: 65%;
-
-  animation-delay: 0.05s;
-}
-
-.heart-5 {
-  left: 47%;
-  top: 12%;
-
-  animation-delay: 0.2s;
-}
-
-/* =========================
-   АНИМАЦИИ ЧМОКА
-========================= */
-
 @keyframes kissPop {
   0% {
     opacity: 0;
@@ -882,12 +945,16 @@ button {
 @keyframes kissSubtitle {
   from {
     opacity: 0;
-    transform: translateY(15px);
+
+    transform:
+      translateY(15px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+
+    transform:
+      translateY(0);
   }
 }
 
@@ -909,17 +976,16 @@ button {
   }
 }
 
-@keyframes kissHeart {
+@keyframes kissHeartsFloat {
   0% {
     opacity: 0;
 
     transform:
-      translateY(40px)
-      scale(0.4)
-      rotate(-15deg);
+      translateY(25px)
+      scale(0.8);
   }
 
-  25% {
+  30% {
     opacity: 1;
   }
 
@@ -927,9 +993,8 @@ button {
     opacity: 0;
 
     transform:
-      translateY(-100px)
-      scale(1.35)
-      rotate(15deg);
+      translateY(-45px)
+      scale(1.15);
   }
 }
 
@@ -968,8 +1033,6 @@ button {
     padding: 19px;
   }
 
-  /* ДРАКОША НА ТЕЛЕФОНЕ */
-
   .drakosha-floating {
     right: 4px;
     bottom: 5px;
@@ -984,102 +1047,4 @@ button {
 
     font-size: 10px;
   }
-}
-
-/* =========================
-   ЖИВОЙ ДРАКОША
-========================= */
-
-.drakosha-floating {
-  position: fixed;
-
-  left: 8px !important;
-  right: auto !important;
-  bottom: 8px;
-
-  z-index: 1000;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  transform:
-    translateX(
-      calc(
-        (100vw - 145px) /
-        16 *
-        var(--drakosha-position)
-      )
-    );
-
-  transition: none !important;
-  animation: none !important;
-}
-
-
-/* =========================
-   КОГДА СТОИТ
-========================= */
-
-.drakosha-floating.idle
-.drakosha-image {
-  animation:
-    drakoshaBreathing
-    3.2s
-    ease-in-out
-    infinite;
-}
-
-@keyframes drakoshaBreathing {
-  0%,
-  100% {
-    transform:
-      translateY(0)
-      scale(1);
-  }
-
-  50% {
-    transform:
-      translateY(-2px)
-      scale(1.015);
-  }
-}
-
-
-/* =========================
-   КОГДА ИДЁТ
-========================= */
-
-.drakosha-floating.walking
-.drakosha-image {
-  animation: none !important;
-  transform: none !important;
-}
-
-.drakosha-floating.walking
-.drakosha-bubble {
-  animation: none;
-}
-
-
-/* =========================
-   ТЕЛЕФОН
-========================= */
-
-@media (max-width: 480px) {
-
-  .drakosha-floating {
-    left: 4px !important;
-    right: auto !important;
-
-    transform:
-      translateX(
-        calc(
-          (100vw - 108px) /
-          16 *
-          var(--drakosha-position)
-        )
-      );
-  }
-
 }
