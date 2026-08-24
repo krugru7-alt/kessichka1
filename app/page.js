@@ -512,6 +512,25 @@ export default function Home() {
             )}
 
         </div>
+{/* =====================================
+    ДРАКОША
+===================================== */}
+
+<div className="drakosha-card">
+  <p className="drakosha-label">
+    Твой маленький Дракоша 🐉
+  </p>
+
+  <img
+    src="/drakosha.png"
+    alt="Дракоша"
+    className="drakosha-image"
+  />
+
+  <p className="drakosha-text">
+    Тыкни на меня 👀
+  </p>
+</div>
 
         {/* =====================================
             PUSH
