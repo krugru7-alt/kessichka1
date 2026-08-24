@@ -149,6 +149,9 @@ export default function Home() {
   const [drakoshaWalking, setDrakoshaWalking] =
     useState(false);
 
+  const [drakoshaFrame, setDrakoshaFrame] =
+    useState(1);
+
   // ==========================================
   // PUSH УВЕДОМЛЕНИЯ
   // ==========================================
@@ -327,18 +330,14 @@ export default function Home() {
         15000;
 
       waitTimer = setTimeout(() => {
-        // Начинает перебирать лапками
         setDrakoshaWalking(true);
 
-        // Сразу начинает двигаться
-        // в противоположную сторону
         setDrakoshaSide((current) =>
           current === "right"
             ? "left"
             : "right"
         );
 
-        // Через 2.8 секунды дошёл
         walkTimer = setTimeout(() => {
           setDrakoshaWalking(false);
 
@@ -354,6 +353,27 @@ export default function Home() {
       clearTimeout(walkTimer);
     };
   }, []);
+
+  // ==========================================
+  // КАДРЫ ХОДЬБЫ ДРАКОШИ
+  // ==========================================
+
+  useEffect(() => {
+    if (!drakoshaWalking) {
+      setDrakoshaFrame(1);
+      return;
+    }
+
+    const frameTimer = setInterval(() => {
+      setDrakoshaFrame((current) =>
+        current >= 4 ? 1 : current + 1
+      );
+    }, 180);
+
+    return () => {
+      clearInterval(frameTimer);
+    };
+  }, [drakoshaWalking]);
 
   // ==========================================
   // ВРЕМЯ И РАСПИСАНИЕ
@@ -587,7 +607,11 @@ export default function Home() {
           </div>
 
           <img
-            src="/drakosha.png"
+            src={
+              drakoshaWalking
+                ? `/drakosha/walk_${drakoshaFrame}.png`
+                : "/drakosha.png"
+            }
             alt="Дракоша"
             className="drakosha-image"
             onClick={() => {
