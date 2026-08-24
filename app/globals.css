@@ -991,6 +991,10 @@ button {
    НЕ ЛЕТИТ, А ТОПАЕТ
 ========================= */
 
+/* =========================
+   НАСТОЯЩАЯ ХОДЬБА ДРАКОШИ
+========================= */
+
 .drakosha-floating {
   left: 8px !important;
   right: auto !important;
@@ -998,24 +1002,23 @@ button {
   --drakosha-distance:
     calc(100vw - 145px);
 
-  animation: none;
-
-  /*
-    Вместо плавного скольжения
-    делаем движение ступеньками.
-  */
   transition:
-    transform 2.8s steps(12, end);
+    transform 2.8s linear;
 }
 
-/* ЛЕВАЯ СТОРОНА */
+
+/* =========================
+   ЛЕВАЯ СТОРОНА
+========================= */
 
 .drakosha-floating.left {
-  transform:
-    translateX(0);
+  transform: translateX(0);
 }
 
-/* ПРАВАЯ СТОРОНА */
+
+/* =========================
+   ПРАВАЯ СТОРОНА
+========================= */
 
 .drakosha-floating.right {
   transform:
@@ -1024,8 +1027,9 @@ button {
     );
 }
 
+
 /* =========================
-   КОГДА СТОИТ
+   КОГДА ДРАКОША СТОИТ
 ========================= */
 
 .drakosha-floating:not(.walking)
@@ -1035,88 +1039,54 @@ button {
     ease-in-out infinite;
 }
 
+
 @keyframes drakoshaIdle {
+
   0%,
   100% {
-    transform:
-      translateY(0);
+    transform: translateY(0);
   }
 
   50% {
-    transform:
-      translateY(-4px);
+    transform: translateY(-4px);
   }
+
 }
 
+
 /* =========================
-   КОГДА ИДЁТ
+   КОГДА ДРАКОША ИДЁТ
 ========================= */
+
+/*
+  Никакой тряски.
+  Лапки анимируются сменой
+  right_1 - right_8
+  и
+  left_1 - left_8
+*/
 
 .drakosha-floating.walking
 .drakosha-image {
-  animation:
-    drakoshaBodyWalk
-    0.36s
-    steps(2, end)
-    infinite;
+  animation: none !important;
+  transform: none !important;
 }
 
-/*
-  Корпус слегка приседает
-  на каждом "шаге".
-*/
 
-@keyframes drakoshaBodyWalk {
-  0% {
-    transform:
-      translateY(0)
-      rotate(-2deg);
-  }
-
-  50% {
-    transform:
-      translateY(5px)
-      rotate(2deg);
-  }
-
-  100% {
-    transform:
-      translateY(0)
-      rotate(-2deg);
-  }
-}
-
-/* =========================
-   ОБЛАЧКО ПРИ ХОДЬБЕ
-========================= */
+/* Облачко тоже не трясём */
 
 .drakosha-floating.walking
 .drakosha-bubble {
-  animation:
-    drakoshaBubbleWalk
-    0.36s
-    steps(2, end)
-    infinite;
+  animation: none;
 }
 
-@keyframes drakoshaBubbleWalk {
-  0%,
-  100% {
-    transform:
-      translateY(0);
-  }
-
-  50% {
-    transform:
-      translateY(3px);
-  }
-}
 
 /* =========================
    ТЕЛЕФОН
 ========================= */
 
 @media (max-width: 480px) {
+
   .drakosha-floating {
     left: 4px !important;
     right: auto !important;
@@ -1124,4 +1094,5 @@ button {
     --drakosha-distance:
       calc(100vw - 108px);
   }
+
 }
