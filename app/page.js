@@ -365,10 +365,10 @@ export default function Home() {
     }
 
     const frameTimer = setInterval(() => {
-      setDrakoshaFrame((current) =>
-        current >= 8 ? 1 : current + 1
-      );
-    }, 140);
+  setDrakoshaFrame((current) =>
+    current >= 8 ? 1 : current + 1
+  );
+}, 350);
 
     return () => {
       clearInterval(frameTimer);
