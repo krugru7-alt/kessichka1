@@ -87,20 +87,28 @@ function getTimeOfDay() {
 
 function weatherText(code) {
   if (code === 0) return "Ясно всё гуд ☀️";
+
   if ([1, 2, 3].includes(code))
     return "Облачно вайбик 🌤️";
+
   if ([45, 48].includes(code))
     return "Туман сайлентхилл 🌫️";
+
   if ([51, 53, 55, 56, 57].includes(code))
     return "Морось фе 🌦️";
+
   if ([61, 63, 65, 66, 67].includes(code))
     return "Дождь +вайб 🌧️";
+
   if ([71, 73, 75, 77].includes(code))
     return "Снег вайбик ❄️";
+
   if ([80, 81, 82].includes(code))
     return "Ливень любимое 🌧️";
+
   if ([85, 86].includes(code))
     return "Снегопад ❄️";
+
   if ([95, 96, 99].includes(code))
     return "Гроза ⛈️";
 
@@ -132,7 +140,14 @@ export default function Home() {
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
   const [now, setNow] = useState(new Date());
+
   const [showKiss, setShowKiss] = useState(false);
+
+  const [drakoshaSide, setDrakoshaSide] =
+    useState("right");
+
+  const [drakoshaWalking, setDrakoshaWalking] =
+    useState(false);
 
   // ==========================================
   // PUSH УВЕДОМЛЕНИЯ
@@ -296,6 +311,49 @@ export default function Home() {
           );
         });
     }
+  }, []);
+
+  // ==========================================
+  // ДРАКОША ХОДИТ ТУДА-СЮДА
+  // ==========================================
+
+  useEffect(() => {
+    let waitTimer;
+    let walkTimer;
+
+    function scheduleMove() {
+      // сидит на месте случайно от 15 до 30 секунд
+      const delay =
+        Math.floor(Math.random() * 15000) +
+        15000;
+
+      waitTimer = setTimeout(() => {
+        // начинает топать
+        setDrakoshaWalking(true);
+
+        // через 2.4 секунды оказывается
+        // в противоположном углу
+        walkTimer = setTimeout(() => {
+          setDrakoshaSide((current) =>
+            current === "right"
+              ? "left"
+              : "right"
+          );
+
+          setDrakoshaWalking(false);
+
+          // потом снова ждёт
+          scheduleMove();
+        }, 2400);
+      }, delay);
+    }
+
+    scheduleMove();
+
+    return () => {
+      clearTimeout(waitTimer);
+      clearTimeout(walkTimer);
+    };
   }, []);
 
   // ==========================================
@@ -513,28 +571,35 @@ export default function Home() {
             )}
 
         </div>
-{/* =====================================
-    ДРАКОША
-===================================== */}
 
-<div className="drakosha-floating">
-  <div className="drakosha-bubble">
-    Тыкни 👀
-  </div>
+        {/* =====================================
+            ДРАКОША
+        ===================================== */}
 
-  <img
-    src="/drakosha.png"
-    alt="Дракоша"
-    className="drakosha-image"
-    onClick={() => {
-      setShowKiss(true);
+        <div
+          className={`drakosha-floating ${drakoshaSide} ${
+            drakoshaWalking
+              ? "walking"
+              : ""
+          }`}
+        >
+          <div className="drakosha-bubble">
+            Тыкни 👀
+          </div>
 
-      setTimeout(() => {
-        setShowKiss(false);
-      }, 1500);
-    }}
-  />
-</div>
+          <img
+            src="/drakosha.png"
+            alt="Дракоша"
+            className="drakosha-image"
+            onClick={() => {
+              setShowKiss(true);
+
+              setTimeout(() => {
+                setShowKiss(false);
+              }, 1500);
+            }}
+          />
+        </div>
 
         {/* =====================================
             PUSH
@@ -565,25 +630,29 @@ export default function Home() {
         </p>
 
       </section>
-          {showKiss && (
-  <div className="kiss-overlay">
-    <div className="kiss-hearts">
-      ❤️ 💗 💕 ❤️ 💗
-    </div>
 
-    <div className="kiss-mark">
-      💋
-    </div>
+      {showKiss && (
+        <div className="kiss-overlay">
 
-    <div className="kiss-title">
-      ТЬМОК!
-    </div>
+          <div className="kiss-hearts">
+            ❤️ 💗 💕 ❤️ 💗
+          </div>
 
-    <div className="kiss-subtitle">
-      словила буську ❤️
-    </div>
-  </div>
-)}
+          <div className="kiss-mark">
+            💋
+          </div>
+
+          <div className="kiss-title">
+            ТЬМОК!
+          </div>
+
+          <div className="kiss-subtitle">
+            словила буську ❤️
+          </div>
+
+        </div>
+      )}
+
     </main>
   );
 }
