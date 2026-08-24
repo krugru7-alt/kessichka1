@@ -1,699 +1,1085 @@
-"use client";
+* {
+  box-sizing: border-box;
+}
 
-import { useEffect, useState } from "react";
-import "./globals.css";
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
 
-import {
-  getCurrentScheduleItem,
-  getCurrentDay,
-  dayNames,
-} from "./schedule";
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #09070a;
+  color: #fff;
+}
 
-const dailyMessages = [
-  "У тебя сегодня всё получится. А если нет - ничего страшного, я всё равно рядом. ❤️",
+button {
+  font: inherit;
+}
 
-  "Сегодня просто напоминание я скучаю 😌",
+/* =========================
+   ОСНОВНОЙ ФОН
+========================= */
 
-  "Пусть сегодня у тебя будет хотя бы один момент, когда ты поймаешь себя на мысли: «А ведь день неплохой». 🌷",
+.kessichka-page {
+  min-height: 100vh;
+  min-height: 100svh;
 
-  "Ты уже проснулась - значит, день официально начался. Теперь осталось сделать его немного приятнее. ☀️",
+  padding: 22px;
 
-  "Просто не забывай, что кое-кто далеко очень хочет видеть тебя счастливой. ❤️",
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  "Маленькое утреннее напоминание: ты прекрасна. Всё, я сказал. 😌",
+  overflow: hidden;
 
-  "Пусть сегодня всё складывается чуть легче, чем ты ожидаешь. А если день будет вредничать - будем вредничать вместе с ним. ❤️",
-];
+  background: #09070a;
 
-// ==========================================
-// VAPID PUBLIC KEY
-// ==========================================
+  transition:
+    background 1.2s ease,
+    color 0.8s ease;
+}
 
-function urlBase64ToUint8Array(base64String) {
-  const padding =
-    "=".repeat(
-      (4 - (base64String.length % 4)) % 4
+/* =========================
+   УТРО
+========================= */
+
+.kessichka-page.morning {
+  background:
+    radial-gradient(
+      circle at 20% 10%,
+      rgba(255, 105, 150, 0.32),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(255, 45, 100, 0.18),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #160b12 0%,
+      #2b111e 50%,
+      #0b080a 100%
+    );
+}
+
+/* =========================
+   ДЕНЬ
+========================= */
+
+.kessichka-page.day {
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(255, 70, 120, 0.25),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(255, 140, 180, 0.18),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #16090f 0%,
+      #300d1b 50%,
+      #0c080a 100%
+    );
+}
+
+/* =========================
+   ВЕЧЕР
+========================= */
+
+.kessichka-page.evening {
+  background:
+    radial-gradient(
+      circle at 80% 15%,
+      rgba(220, 25, 80, 0.30),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 15% 80%,
+      rgba(150, 20, 70, 0.20),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #10070c 0%,
+      #260914 50%,
+      #070609 100%
+    );
+}
+
+/* =========================
+   НОЧЬ
+========================= */
+
+.kessichka-page.night {
+  background:
+    radial-gradient(
+      circle at 75% 20%,
+      rgba(150, 15, 65, 0.26),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(255, 20, 80, 0.11),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      #060507 0%,
+      #100509 50%,
+      #030304 100%
+    );
+}
+
+/* =========================
+   КАРТОЧКА
+========================= */
+
+.kessichka-card {
+  width: 100%;
+  max-width: 540px;
+
+  padding: 38px 26px;
+
+  border: 1px solid rgba(255, 105, 150, 0.18);
+
+  border-radius: 32px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.025)
     );
 
-  const base64 =
-    (base64String + padding)
-      .replace(/-/g, "+")
-      .replace(/_/g, "/");
+  box-shadow:
+    0 30px 100px rgba(0, 0, 0, 0.55),
+    0 0 80px rgba(255, 30, 100, 0.08);
 
-  const rawData = window.atob(base64);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
 
-  const outputArray =
-    new Uint8Array(rawData.length);
+  text-align: center;
 
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] =
-      rawData.charCodeAt(i);
-  }
-
-  return outputArray;
+  transition:
+    background 1s ease,
+    box-shadow 1s ease,
+    border-color 1s ease;
 }
 
-// ==========================================
-// ВРЕМЯ СУТОК
-// ==========================================
+/* =========================
+   ИКОНКА
+========================= */
 
-function getTimeOfDay() {
-  const hour = Number(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "Europe/Minsk",
-      hour: "numeric",
-      hourCycle: "h23",
-    }).format(new Date())
-  );
+.kessichka-sun {
+  font-size: 48px;
 
-  if (hour >= 6 && hour < 12) {
-    return "morning";
-  }
+  margin-bottom: 12px;
 
-  if (hour >= 12 && hour < 18) {
-    return "day";
-  }
+  filter:
+    drop-shadow(
+      0 0 18px
+      rgba(255, 120, 150, 0.35)
+    );
 
-  if (hour >= 18 && hour < 22) {
-    return "evening";
-  }
-
-  return "night";
+  transition:
+    transform 0.8s ease,
+    filter 0.8s ease;
 }
 
-// ==========================================
-// ПОГОДА
-// ==========================================
-
-function weatherText(code) {
-  if (code === 0) return "Ясно всё гуд ☀️";
-
-  if ([1, 2, 3].includes(code))
-    return "Облачно вайбик 🌤️";
-
-  if ([45, 48].includes(code))
-    return "Туман сайлентхилл 🌫️";
-
-  if ([51, 53, 55, 56, 57].includes(code))
-    return "Морось фе 🌦️";
-
-  if ([61, 63, 65, 66, 67].includes(code))
-    return "Дождь +вайб 🌧️";
-
-  if ([71, 73, 75, 77].includes(code))
-    return "Снег вайбик ❄️";
-
-  if ([80, 81, 82].includes(code))
-    return "Ливень любимое 🌧️";
-
-  if ([85, 86].includes(code))
-    return "Снегопад ❄️";
-
-  if ([95, 96, 99].includes(code))
-    return "Гроза ⛈️";
-
-  return "Погода сегодня загадочная 🌥️";
+.kessichka-page.morning .kessichka-sun {
+  animation: morningGlow 3s ease-in-out infinite;
 }
 
-function getWeatherAdvice(weather) {
-  if (weather.temperature < 0) {
-    return "Сегодня холодно - пожалуйста, оденься потеплее 🧣";
-  }
-
-  if (weather.temperature < 10) {
-    return "На улице прохладно - надень что-нибудь тёплое 🧥";
-  }
-
-  if (weather.rainChance >= 50) {
-    return "Берем зонтик але ☔";
-  }
-
-  if (weather.temperature >= 25) {
-    return "Сегодня тепло всё гуд малыш ☀️";
-  }
-
-  return "Погода вроде хорошая. Хорошего тебе дня 🌷";
+.kessichka-page.day .kessichka-sun {
+  animation: dayGlow 4s ease-in-out infinite;
 }
 
-export default function Home() {
-  const [weather, setWeather] = useState(null);
-  const [pushEnabled, setPushEnabled] = useState(false);
-  const [pushLoading, setPushLoading] = useState(false);
-  const [now, setNow] = useState(new Date());
+.kessichka-page.evening .kessichka-sun {
+  animation: eveningFloat 5s ease-in-out infinite;
+}
 
-  const [showKiss, setShowKiss] = useState(false);
+.kessichka-page.night .kessichka-sun {
+  animation: nightFloat 6s ease-in-out infinite;
+}
 
-  const [drakoshaWalking, setDrakoshaWalking] =
-    useState(false);
+/* =========================
+   LABEL
+========================= */
 
-  const [drakoshaFrame, setDrakoshaFrame] =
-    useState(1);
+.kessichka-label {
+  margin: 0 0 10px;
 
-  const [drakoshaDirection, setDrakoshaDirection] =
-    useState("left");
+  color: #ff7fa8;
 
-  const [drakoshaPosition, setDrakoshaPosition] =
-    useState(16);
+  font-size: 11px;
+  font-weight: 700;
 
-  // ==========================================
-  // PUSH УВЕДОМЛЕНИЯ
-  // ==========================================
+  letter-spacing: 4px;
 
-  async function enablePushNotifications() {
-    try {
-      setPushLoading(true);
+  text-transform: uppercase;
+}
 
-      if (!("Notification" in window)) {
-        alert(
-          "Этот браузер не поддерживает уведомления."
-        );
-        return;
-      }
+/* =========================
+   ЗАГОЛОВОК
+========================= */
 
-      if (!("serviceWorker" in navigator)) {
-        alert(
-          "Этот браузер не поддерживает Push-уведомления."
-        );
-        return;
-      }
+.kessichka-title {
+  margin: 0 0 20px;
 
-      const permission =
-        await Notification.requestPermission();
+  color: #fff;
 
-      if (permission !== "granted") {
-        alert(
-          "Разрешение на уведомления не получено."
-        );
-        return;
-      }
+  font-size: clamp(30px, 8vw, 43px);
 
-      const registration =
-        await navigator.serviceWorker.ready;
+  line-height: 1.12;
 
-      if (!registration.pushManager) {
-        alert(
-          "Push-уведомления недоступны в этом браузере."
-        );
-        return;
-      }
+  text-shadow:
+    0 4px 30px
+    rgba(255, 50, 100, 0.20);
 
-      let subscription =
-        await registration.pushManager.getSubscription();
+  transition:
+    text-shadow 1s ease;
+}
 
-      if (!subscription) {
-        const publicKey =
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+/* =========================
+   ОСНОВНОЙ ТЕКСТ
+========================= */
 
-        if (!publicKey) {
-          throw new Error(
-            "NEXT_PUBLIC_VAPID_PUBLIC_KEY не найден."
-          );
-        }
+.kessichka-text {
+  max-width: 440px;
 
-        const applicationServerKey =
-          urlBase64ToUint8Array(publicKey);
+  margin: 0 auto 25px;
 
-        subscription =
-          await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey,
-          });
-      }
+  color: rgba(255, 255, 255, 0.72);
 
-      const response =
-        await fetch("/api/subscribe", {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-          body: JSON.stringify(
-            subscription
-          ),
-        });
+  font-size: 16px;
 
-      if (!response.ok) {
-        const data =
-          await response
-            .json()
-            .catch(() => null);
+  line-height: 1.7;
+}
 
-        throw new Error(
-          data?.error ||
-            "Не удалось сохранить Push-подписку."
-        );
-      }
+/* =========================
+   СООБЩЕНИЕ ДНЯ
+========================= */
 
-      setPushEnabled(true);
+.daily-message {
+  margin: 0 0 18px;
 
-      alert(
-        "Уведомления подключены ❤️"
+  padding: 21px 20px;
+
+  border-radius: 23px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 50, 105, 0.15),
+      rgba(255, 255, 255, 0.035)
+    );
+
+  border: 1px solid
+    rgba(255, 105, 150, 0.18);
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.04),
+    0 15px 40px
+      rgba(0, 0, 0, 0.18);
+
+  transition:
+    background 1s ease,
+    border-color 1s ease;
+}
+
+.daily-message-label {
+  margin-bottom: 10px;
+
+  color: #ff86aa;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 1.8px;
+
+  text-transform: uppercase;
+}
+
+.daily-message p {
+  margin: 0;
+
+  color: rgba(255, 255, 255, 0.9);
+
+  font-size: 16px;
+
+  line-height: 1.65;
+}
+
+/* =========================
+   ПОГОДА
+========================= */
+
+.weather-card {
+  padding: 22px;
+
+  border-radius: 24px;
+
+  background:
+    rgba(255, 255, 255, 0.055);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.035);
+
+  transition:
+    background 1s ease,
+    border-color 1s ease;
+}
+
+.weather-icon {
+  font-size: 34px;
+
+  margin-bottom: 5px;
+
+  filter:
+    drop-shadow(
+      0 0 15px
+      rgba(255, 150, 170, 0.25)
+    );
+}
+
+.weather-title {
+  margin: 0;
+
+  color: #fff;
+
+  font-size: 16px;
+
+  font-weight: 600;
+}
+
+.weather-text {
+  margin: 8px 0 0;
+
+  color:
+    rgba(255, 255, 255, 0.58);
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+.temperature {
+  margin-top: 8px;
+
+  color: #fff;
+
+  font-size: 48px;
+
+  font-weight: 300;
+
+  line-height: 1;
+
+  text-shadow:
+    0 0 30px
+    rgba(255, 90, 130, 0.25);
+}
+
+.weather-feels {
+  margin: 8px 0 0;
+
+  color:
+    rgba(255, 255, 255, 0.52);
+
+  font-size: 13px;
+}
+
+.weather-advice {
+  margin-top: 17px;
+
+  padding: 12px 14px;
+
+  border-radius: 15px;
+
+  background:
+    rgba(255, 55, 105, 0.09);
+
+  border:
+    1px solid
+    rgba(255, 90, 135, 0.12);
+
+  color: #ff9bb8;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+/* =========================
+   PUSH
+========================= */
+
+.push-button {
+  width: 100%;
+
+  margin-top: 22px;
+
+  padding: 15px 18px;
+
+  border:
+    1px solid
+    rgba(255, 105, 150, 0.35);
+
+  border-radius: 17px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 45, 100, 0.22),
+      rgba(255, 255, 255, 0.06)
+    );
+
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 30px
+    rgba(255, 30, 90, 0.12);
+
+  transition:
+    transform 0.2s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.push-button:hover {
+  transform: translateY(-2px);
+}
+
+.push-button:active {
+  transform: scale(0.98);
+}
+
+.push-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.push-enabled {
+  margin-top: 22px;
+
+  padding: 13px 16px;
+
+  border-radius: 16px;
+
+  background:
+    rgba(255, 80, 130, 0.08);
+
+  border:
+    1px solid
+    rgba(255, 105, 150, 0.15);
+
+  color:
+    rgba(255, 180, 200, 0.9);
+
+  font-size: 13px;
+}
+
+/* =========================
+   ПОДПИСЬ
+========================= */
+
+.signature {
+  margin: 25px 0 0;
+
+  color:
+    rgba(255, 130, 165, 0.8);
+
+  font-size: 14px;
+
+  letter-spacing: 0.4px;
+}
+
+/* =========================
+   СТАРЫЕ АНИМАЦИИ
+========================= */
+
+@keyframes morningGlow {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+
+    filter:
+      drop-shadow(
+        0 0 15px
+        rgba(255, 120, 150, 0.25)
       );
-    } catch (error) {
-      console.error(
-        "Ошибка подключения уведомлений:",
-        error
-      );
-
-      alert(
-        "ОШИБКА PUSH:\n\n" +
-          String(
-            error?.name ||
-              "UnknownError"
-          ) +
-          "\n\n" +
-          String(
-            error?.message ||
-              error
-          )
-      );
-    } finally {
-      setPushLoading(false);
-    }
   }
 
-  // ==========================================
-  // ОБНОВЛЯЕМ ВРЕМЯ КАЖДУЮ МИНУТУ
-  // ==========================================
+  50% {
+    transform: translateY(-5px) scale(1.04);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setNow(new Date());
-    }, 60000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  // ==========================================
-  // ПОГОДА
-  // ==========================================
-
-  useEffect(() => {
-    fetch("/api/weather")
-      .then((response) => response.json())
-      .then((data) => setWeather(data))
-      .catch(() =>
-        setWeather({ error: true })
+    filter:
+      drop-shadow(
+        0 0 28px
+        rgba(255, 120, 150, 0.55)
       );
-  }, []);
-
-  // ==========================================
-  // SERVICE WORKER
-  // ==========================================
-
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then(() => {
-          console.log(
-            "Kessichka Service Worker зарегистрирован ❤️"
-          );
-        })
-        .catch((error) => {
-          console.error(
-            "Ошибка регистрации Service Worker:",
-            error
-          );
-        });
-    }
-  }, []);
-
-  // ==========================================
-  // ЖИВОЙ ДРАКОША
-  // ==========================================
-
-  useEffect(() => {
-    let waitTimer;
-    let walkTimer;
-
-    function startWaiting() {
-      const delay =
-        Math.floor(Math.random() * 20000) +
-        20000;
-
-      waitTimer = setTimeout(() => {
-        setDrakoshaWalking(true);
-
-        let currentPosition =
-          drakoshaDirection === "left"
-            ? 16
-            : 0;
-
-        let currentFrame = 1;
-
-        walkTimer = setInterval(() => {
-          currentFrame =
-            currentFrame >= 8
-              ? 1
-              : currentFrame + 1;
-
-          setDrakoshaFrame(currentFrame);
-
-          if (drakoshaDirection === "left") {
-            currentPosition -= 1;
-          } else {
-            currentPosition += 1;
-          }
-
-          setDrakoshaPosition(
-            currentPosition
-          );
-
-          const finishedLeft =
-            drakoshaDirection === "left" &&
-            currentPosition <= 0;
-
-          const finishedRight =
-            drakoshaDirection === "right" &&
-            currentPosition >= 16;
-
-          if (
-            finishedLeft ||
-            finishedRight
-          ) {
-            clearInterval(walkTimer);
-
-            setDrakoshaWalking(false);
-            setDrakoshaFrame(1);
-
-            setDrakoshaDirection(
-              drakoshaDirection === "left"
-                ? "right"
-                : "left"
-            );
-          }
-        }, 180);
-      }, delay);
-    }
-
-    startWaiting();
-
-    return () => {
-      clearTimeout(waitTimer);
-      clearInterval(walkTimer);
-    };
-  }, [drakoshaDirection]);
-
-  // ==========================================
-  // ВРЕМЯ И РАСПИСАНИЕ
-  // ==========================================
-
-  const timeOfDay = getTimeOfDay();
-
-  const currentSchedule =
-    getCurrentScheduleItem();
-
-  const currentDay = getCurrentDay();
-
-  const minskTime =
-    new Intl.DateTimeFormat("ru-RU", {
-      timeZone: "Europe/Minsk",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hourCycle: "h23",
-    }).format(now);
-
-  // ==========================================
-  // СООБЩЕНИЕ ДНЯ
-  // ==========================================
-
-  const today = new Date();
-
-  const message =
-    dailyMessages[
-      Math.floor(
-        (
-          new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate()
-          ) -
-          new Date(2026, 0, 1)
-        ) /
-          86400000
-      ) % dailyMessages.length
-    ];
-
-  // ==========================================
-  // РЕНДЕР
-  // ==========================================
-
-  return (
-    <main
-      className={`kessichka-page ${timeOfDay}`}
-    >
-      <section className="kessichka-card">
-
-        <div className="kessichka-sun">
-          {timeOfDay === "morning" && "🌅"}
-          {timeOfDay === "day" && "☀️"}
-          {timeOfDay === "evening" && "🌆"}
-          {timeOfDay === "night" && "🌙"}
-        </div>
-
-        <p className="kessichka-label">
-          Для Кэссички
-        </p>
-
-        <h1 className="kessichka-title">
-          {timeOfDay === "morning" &&
-            "Доброе утро, Любовь моя ❤️"}
-
-          {timeOfDay === "day" &&
-            "Хорошего дня, Любовь моя ❤️"}
-
-          {timeOfDay === "evening" &&
-            "Добрый вечер, Любовь моя ❤️"}
-
-          {timeOfDay === "night" &&
-            "Спокойной ночи, Любовь моя ❤️"}
-        </h1>
-
-        <p className="kessichka-text">
-          Я далеко, и не могу пока лично
-          следить за тобой, но могу хотя бы
-          иногда напоминать о простых вещах
-          и заботиться о бусе:
-          поешь, не мёрзни, отдыхай
-          и иногда улыбайся.
-        </p>
-
-        {/* РАСПИСАНИЕ */}
-
-        {currentSchedule && (
-          <div className="daily-message">
-
-            <div
-              style={{
-                fontSize: "12px",
-                opacity: 0.5,
-                marginBottom: "8px",
-              }}
-            >
-              Сейчас по Минску: {minskTime}
-            </div>
-
-            <div className="daily-message-label">
-              {dayNames[currentDay]} •{" "}
-              {currentSchedule.time}
-            </div>
-
-            <p
-              style={{
-                fontWeight: 700,
-                marginBottom: "8px",
-              }}
-            >
-              {currentSchedule.title}
-            </p>
-
-            <p>
-              {currentSchedule.text}
-            </p>
-
-          </div>
-        )}
-
-        {/* СООБЩЕНИЕ ДНЯ */}
-
-        <div className="daily-message">
-
-          <div className="daily-message-label">
-            Маленькое сообщение для тебя
-          </div>
-
-          <p>
-            {message}
-          </p>
-
-        </div>
-
-        {/* ПОГОДА */}
-
-        <div className="weather-card">
-
-          <div className="weather-icon">
-            {weather?.error
-              ? "🌥️"
-              : "🌤️"}
-          </div>
-
-          <h2 className="weather-title">
-            Погода в Минске
-          </h2>
-
-          {!weather && (
-            <p className="weather-text">
-              Смотрю, что там у тебя за окном...
-            </p>
-          )}
-
-          {weather?.error && (
-            <p className="weather-text">
-              Не смог посмотреть погоду,
-              но ты всё равно оденься
-              по погоде 😌
-            </p>
-          )}
-
-          {weather &&
-            !weather.error && (
-              <>
-                <p className="weather-text">
-                  {weatherText(
-                    weather.weatherCode
-                  )}
-                </p>
-
-                <div className="temperature">
-                  {Math.round(
-                    weather.temperature
-                  )}
-                  °
-                </div>
-
-                <p className="weather-feels">
-                  Ощущается как{" "}
-                  {Math.round(
-                    weather.feelsLike
-                  )}
-                  °
-                </p>
-
-                <p className="weather-text">
-                  Сегодня от{" "}
-                  {Math.round(weather.min)}
-                  ° до{" "}
-                  {Math.round(weather.max)}
-                  °C
-                </p>
-
-                <p className="weather-text">
-                  Вероятность дождя:{" "}
-                  {weather.rainChance}%
-                </p>
-
-                <div className="weather-advice">
-                  {getWeatherAdvice(
-                    weather
-                  )}
-                </div>
-              </>
-            )}
-
-        </div>
-
-        {/* =====================================
-            ДРАКОША
-        ===================================== */}
-
-        <div
-          className={`drakosha-floating ${
-            drakoshaWalking
-              ? "walking"
-              : "idle"
-          }`}
-          style={{
-            "--drakosha-position":
-              drakoshaPosition,
-          }}
-        >
-          <div className="drakosha-bubble">
-            Тыкни 👀
-          </div>
-
-          <img
-            src={
-              drakoshaWalking
-                ? `/drakosha/${
-                    drakoshaDirection
-                  }_${drakoshaFrame}.png`
-                : "/drakosha.png"
-            }
-            alt="Дракоша"
-            className="drakosha-image"
-            onClick={() => {
-              setShowKiss(true);
-
-              setTimeout(() => {
-                setShowKiss(false);
-              }, 1500);
-            }}
-          />
-        </div>
-
-        {/* PUSH */}
-
-        {!pushEnabled && (
-          <button
-            className="push-button"
-            onClick={
-              enablePushNotifications
-            }
-            disabled={pushLoading}
-          >
-            {pushLoading
-              ? "Подключаю уведомления..."
-              : "🔔 Получать приветы от Обсидика ❤️"}
-          </button>
-        )}
-
-        {pushEnabled && (
-          <div className="push-enabled">
-            🔔 Уведомления подключены ❤️
-          </div>
-        )}
-
-        <p className="signature">
-          Обсидик ❤️
-        </p>
-
-      </section>
-
-      {showKiss && (
-        <div className="kiss-overlay">
-
-          <div className="kiss-hearts">
-            ❤️ 💗 💕 ❤️ 💗
-          </div>
-
-          <div className="kiss-mark">
-            💋
-          </div>
-
-          <div className="kiss-title">
-            ТЬМОК!
-          </div>
-
-          <div className="kiss-subtitle">
-            словила буську ❤️
-          </div>
-
-        </div>
-      )}
-
-    </main>
-  );
+  }
+}
+
+@keyframes dayGlow {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes eveningFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes nightFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.85;
+  }
+
+  50% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
+}
+
+/* =====================================================
+   НИЖЕ ТОЛЬКО НОВОЕ — ДРАКОША
+===================================================== */
+
+.drakosha-floating {
+  position: fixed;
+
+  right: 10px;
+  bottom: 8px;
+
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  animation:
+    drakoshaFloat 3s
+    ease-in-out infinite;
+}
+
+.drakosha-button {
+  margin: 0;
+  padding: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+.drakosha-image {
+  display: block;
+
+  width: 120px;
+  height: auto;
+
+  user-select: none;
+  -webkit-user-drag: none;
+
+  filter:
+    drop-shadow(
+      0 12px 20px
+      rgba(100, 100, 210, 0.32)
+    );
+
+  transition:
+    transform 0.2s ease;
+}
+
+.drakosha-button:hover
+.drakosha-image {
+  transform: scale(1.06);
+}
+
+.drakosha-button:active
+.drakosha-image {
+  transform: scale(0.9);
+}
+
+/* =========================
+   ОБЛАЧКО ДРАКОШИ
+========================= */
+
+.drakosha-bubble {
+  position: relative;
+
+  margin-bottom: -5px;
+
+  padding: 6px 10px;
+
+  border-radius: 14px;
+
+  background:
+    rgba(255, 255, 255, 0.92);
+
+  color: #5d5685;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0 5px 15px
+    rgba(0, 0, 0, 0.12);
+
+  animation:
+    bubblePulse 2s
+    ease-in-out infinite;
+}
+
+.drakosha-bubble::after {
+  content: "";
+
+  position: absolute;
+
+  right: 20px;
+  bottom: -5px;
+
+  width: 10px;
+  height: 10px;
+
+  background:
+    rgba(255, 255, 255, 0.92);
+
+  transform: rotate(45deg);
+}
+
+/* =========================
+   ПАРЕНИЕ ДРАКОШИ
+========================= */
+
+@keyframes drakoshaFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes bubblePulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+/* =========================
+   ЧМОК НА ВЕСЬ ЭКРАН
+========================= */
+
+.kiss-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 99999;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255, 95, 160, 0.42),
+      rgba(20, 5, 15, 0.96)
+    );
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  animation:
+    kissOverlay 1.5s ease forwards;
+}
+
+.kiss-mark {
+  font-size:
+    clamp(110px, 34vw, 230px);
+
+  line-height: 1;
+
+  filter:
+    drop-shadow(
+      0 0 35px
+      rgba(255, 80, 145, 0.7)
+    );
+
+  animation:
+    kissPop 0.55s ease-out;
+}
+
+.kiss-title {
+  margin-top: -12px;
+
+  color: #fff;
+
+  font-size:
+    clamp(55px, 17vw, 110px);
+
+  font-weight: 900;
+
+  letter-spacing: -3px;
+
+  text-shadow:
+    0 0 35px
+    rgba(255, 70, 135, 0.85);
+
+  animation:
+    kissPop 0.65s ease-out;
+}
+
+.kiss-subtitle {
+  margin-top: 8px;
+
+  color:
+    rgba(255, 225, 238, 0.95);
+
+  font-size:
+    clamp(15px, 4vw, 20px);
+
+  font-weight: 600;
+
+  animation:
+    kissSubtitle 0.8s ease-out;
+}
+
+/* =========================
+   СЕРДЕЧКИ ЧМОКА
+========================= */
+
+.kiss-heart {
+  position: absolute;
+
+  font-size:
+    clamp(24px, 7vw, 45px);
+
+  animation:
+    kissHeart 1.35s
+    ease-out forwards;
+}
+
+.heart-1 {
+  left: 12%;
+  top: 60%;
+}
+
+.heart-2 {
+  left: 25%;
+  top: 25%;
+
+  animation-delay: 0.08s;
+}
+
+.heart-3 {
+  right: 20%;
+  top: 30%;
+
+  animation-delay: 0.15s;
+}
+
+.heart-4 {
+  right: 10%;
+  top: 65%;
+
+  animation-delay: 0.05s;
+}
+
+.heart-5 {
+  left: 47%;
+  top: 12%;
+
+  animation-delay: 0.2s;
+}
+
+/* =========================
+   АНИМАЦИИ ЧМОКА
+========================= */
+
+@keyframes kissPop {
+  0% {
+    opacity: 0;
+
+    transform:
+      scale(0.15)
+      rotate(-12deg);
+  }
+
+  65% {
+    opacity: 1;
+
+    transform:
+      scale(1.17)
+      rotate(4deg);
+  }
+
+  100% {
+    opacity: 1;
+
+    transform:
+      scale(1)
+      rotate(0);
+  }
+}
+
+@keyframes kissSubtitle {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kissOverlay {
+  0% {
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  78% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes kissHeart {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateY(40px)
+      scale(0.4)
+      rotate(-15deg);
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateY(-100px)
+      scale(1.35)
+      rotate(15deg);
+  }
+}
+
+/* =========================
+   МОБИЛЬНЫЕ
+========================= */
+
+@media (max-width: 480px) {
+  .kessichka-page {
+    padding: 14px;
+
+    align-items: flex-start;
+
+    padding-top: 24px;
+  }
+
+  .kessichka-card {
+    padding: 32px 19px;
+
+    border-radius: 27px;
+  }
+
+  .kessichka-title {
+    font-size: 32px;
+  }
+
+  .kessichka-text {
+    font-size: 15px;
+  }
+
+  .daily-message {
+    padding: 19px 17px;
+  }
+
+  .weather-card {
+    padding: 19px;
+  }
+
+  /* ДРАКОША НА ТЕЛЕФОНЕ */
+
+  .drakosha-floating {
+    right: 4px;
+    bottom: 5px;
+  }
+
+  .drakosha-image {
+    width: 95px;
+  }
+
+  .drakosha-bubble {
+    padding: 5px 8px;
+
+    font-size: 10px;
+  }
+}
+
+/* =========================
+   ЖИВОЙ ДРАКОША
+========================= */
+
+.drakosha-floating {
+  position: fixed;
+
+  left: 8px !important;
+  right: auto !important;
+  bottom: 8px;
+
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  transform:
+    translateX(
+      calc(
+        (100vw - 145px) /
+        16 *
+        var(--drakosha-position)
+      )
+    );
+
+  transition: none !important;
+  animation: none !important;
+}
+
+
+/* =========================
+   КОГДА СТОИТ
+========================= */
+
+.drakosha-floating.idle
+.drakosha-image {
+  animation:
+    drakoshaBreathing
+    3.2s
+    ease-in-out
+    infinite;
+}
+
+@keyframes drakoshaBreathing {
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translateY(-2px)
+      scale(1.015);
+  }
+}
+
+
+/* =========================
+   КОГДА ИДЁТ
+========================= */
+
+.drakosha-floating.walking
+.drakosha-image {
+  animation: none !important;
+  transform: none !important;
+}
+
+.drakosha-floating.walking
+.drakosha-bubble {
+  animation: none;
+}
+
+
+/* =========================
+   ТЕЛЕФОН
+========================= */
+
+@media (max-width: 480px) {
+
+  .drakosha-floating {
+    left: 4px !important;
+    right: auto !important;
+
+    transform:
+      translateX(
+        calc(
+          (100vw - 108px) /
+          16 *
+          var(--drakosha-position)
+        )
+      );
+  }
+
 }
