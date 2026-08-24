@@ -1002,6 +1002,12 @@ button {
   --drakosha-distance:
     calc(100vw - 145px);
 
+  /* ВАЖНО:
+     отключаем старое парение контейнера,
+     потому что оно тоже меняло transform
+  */
+  animation: none !important;
+
   transition:
     transform 2.8s linear;
 }
