@@ -355,7 +355,7 @@ export default function Home() {
   }, []);
 
   // ==========================================
-  // КАДРЫ ХОДЬБЫ ДРАКОШИ
+  // 8 КАДРОВ НАСТОЯЩЕЙ ХОДЬБЫ
   // ==========================================
 
   useEffect(() => {
@@ -366,9 +366,9 @@ export default function Home() {
 
     const frameTimer = setInterval(() => {
       setDrakoshaFrame((current) =>
-        current >= 4 ? 1 : current + 1
+        current >= 8 ? 1 : current + 1
       );
-    }, 180);
+    }, 140);
 
     return () => {
       clearInterval(frameTimer);
@@ -460,9 +460,7 @@ export default function Home() {
           и иногда улыбайся.
         </p>
 
-        {/* =====================================
-            РАСПИСАНИЕ
-        ===================================== */}
+        {/* РАСПИСАНИЕ */}
 
         {currentSchedule && (
           <div className="daily-message">
@@ -498,9 +496,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* =====================================
-            СООБЩЕНИЕ ДНЯ
-        ===================================== */}
+        {/* СООБЩЕНИЕ ДНЯ */}
 
         <div className="daily-message">
 
@@ -514,9 +510,7 @@ export default function Home() {
 
         </div>
 
-        {/* =====================================
-            ПОГОДА
-        ===================================== */}
+        {/* ПОГОДА */}
 
         <div className="weather-card">
 
@@ -609,7 +603,11 @@ export default function Home() {
           <img
             src={
               drakoshaWalking
-                ? `/drakosha/walk_${drakoshaFrame}.png`
+                ? `/drakosha/${
+                    drakoshaSide === "right"
+                      ? "right"
+                      : "left"
+                  }_${drakoshaFrame}.png`
                 : "/drakosha.png"
             }
             alt="Дракоша"
@@ -624,9 +622,7 @@ export default function Home() {
           />
         </div>
 
-        {/* =====================================
-            PUSH
-        ===================================== */}
+        {/* PUSH */}
 
         {!pushEnabled && (
           <button
