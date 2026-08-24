@@ -74,18 +74,7 @@ const littlePermissions = [
   "выбрать себя хотя бы на час",
 ];
 
-const tinyInternetNews = [
-  "Дракоша замечен рядом с прогнозом погоды. Делает вид, что это не он.",
-  "В Минске снова обнаружена одна буська. Состояние: прекрасное.",
-  "Обсидик скучает. Эксперты сообщают: ничего нового.",
-  "На сайте зафиксирован повышенный уровень уюта.",
-  "Неизвестный оставил здесь ❤️. Подозреваемых двое.",
-  "Дракоша запросил отпуск. Заявление отклонено.",
-  "Система сообщает: вероятность тьмока сегодня — 100%.",
-  "Срочная новость: можно не успеть всё и всё равно быть молодцом.",
-];
 
-const flowerStages = ["🌱", "🌱", "🌿", "🌿", "🪴", "🌷", "🌷"];
 
 const wallMessages = [
   "ты здесь ↓",
@@ -104,6 +93,25 @@ const polaroidCaptions = [
   "для памяти",
   "одна буська в интернете",
   "тихий момент",
+];
+
+const roomDeskNotes = [
+  "Я тут оставил тебе место, где можно просто побыть. Никаких дел. ❤️",
+  "Если день оказался громким — посиди здесь минутку. Я рядом мысленно.",
+  "Напоминание со стола: поесть, выдохнуть и не требовать от себя невозможного.",
+  "Эта записка ничего не просит. Просто тьмок и немного тепла. 💋",
+  "Сегодня разрешается быть сонной буськой и всё равно быть прекрасной.",
+  "Сюда можно возвращаться даже просто на минуту. Я всё равно рад, что ты зашла.",
+];
+
+const roomObjects = [
+  "🎧",
+  "🕯️",
+  "🧸",
+  "☕",
+  "📎",
+  "🎀",
+  "🪩",
 ];
 
 function urlBase64ToUint8Array(base64String) {
@@ -667,43 +675,30 @@ export default function Home() {
         dragonDiaryEntries.length
     ];
 
-  const todayPermission =
-    littlePermissions[
-      (worldSeed + 4) %
-        littlePermissions.length
+  const deskNote =
+    roomDeskNotes[
+      (worldSeed + 4) % roomDeskNotes.length
     ];
 
-  const flowerStage =
-    flowerStages[
-      worldSeed % flowerStages.length
+  const roomObject =
+    roomObjects[
+      (worldSeed + 2) % roomObjects.length
     ];
 
   const wallMessage =
     wallMessages[
-      (worldSeed + 1) %
-        wallMessages.length
+      (worldSeed + 1) % wallMessages.length
     ];
 
   const polaroidCaption =
     polaroidCaptions[
-      (worldSeed + 3) %
-        polaroidCaptions.length
+      (worldSeed + 3) % polaroidCaptions.length
     ];
 
-  const todaysNews = [
-    tinyInternetNews[
-      worldSeed %
-        tinyInternetNews.length
-    ],
-    tinyInternetNews[
-      (worldSeed + 3) %
-        tinyInternetNews.length
-    ],
-    tinyInternetNews[
-      (worldSeed + 5) %
-        tinyInternetNews.length
-    ],
-  ];
+  const secondPolaroidCaption =
+    polaroidCaptions[
+      (worldSeed + 5) % polaroidCaptions.length
+    ];
 
   const prettyMinskDate =
     new Intl.DateTimeFormat("ru-RU", {
@@ -991,14 +986,14 @@ export default function Home() {
 
 
         /* =========================
-           МАЛЕНЬКИЙ МИР КЭССИЧКИ
+           КОМНАТА КЭССИЧКИ
         ========================= */
 
         .world-page {
           display: block !important;
           overflow-x: hidden !important;
           overflow-y: visible !important;
-          padding-bottom: 150px !important;
+          padding-bottom: 130px !important;
         }
 
         .world-page > .kessichka-card {
@@ -1006,533 +1001,257 @@ export default function Home() {
           margin-right: auto;
         }
 
-        .kessichka-world {
+        .kessichka-room {
           position: relative;
           width: min(100%, 980px);
-          min-height: 1250px;
-          margin: 54px auto 0;
-          padding: 30px 18px 80px;
+          min-height: 1460px;
+          margin: 55px auto 0;
+          padding: 42px 22px 90px;
+          overflow: hidden;
           isolation: isolate;
         }
 
-        .world-glow {
+        .room-ambient {
           position: absolute;
           inset: 0;
-          z-index: -2;
+          z-index: -3;
           pointer-events: none;
           background:
-            radial-gradient(circle at 18% 16%, rgba(255,90,150,.10), transparent 22%),
-            radial-gradient(circle at 80% 42%, rgba(135,105,255,.10), transparent 24%),
-            radial-gradient(circle at 35% 82%, rgba(255,190,220,.06), transparent 25%);
+            radial-gradient(circle at 83% 14%, rgba(255,184,215,.10), transparent 25%),
+            radial-gradient(circle at 13% 48%, rgba(131,110,255,.09), transparent 24%),
+            radial-gradient(circle at 72% 86%, rgba(255,102,159,.07), transparent 26%);
         }
 
-        .dragon-path {
-          position: absolute;
-          left: 50%;
-          top: 85px;
-          bottom: 105px;
-          width: 2px;
-          z-index: -1;
-          opacity: .22;
-          background:
-            repeating-linear-gradient(
-              to bottom,
-              rgba(255,180,210,.8) 0 6px,
-              transparent 6px 17px
-            );
-          transform: translateX(-50%) rotate(3deg);
-        }
-
-        .world-piece {
-          position: relative;
-          width: min(78%, 390px);
-          border: 1px solid rgba(255,255,255,.09);
-          box-shadow: 0 24px 60px rgba(0,0,0,.25);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-        }
-
-        .sticky-note {
-          margin-left: 1%;
-          padding: 23px 21px 22px;
-          border-radius: 7px 18px 16px 11px;
-          background:
-            linear-gradient(
-              145deg,
-              rgba(255,224,234,.16),
-              rgba(255,120,160,.07)
-            );
-          transform: rotate(-2.3deg);
-        }
-
-        .sticky-note::before {
-          content: "📎";
-          position: absolute;
-          top: -17px;
-          right: 22px;
-          font-size: 24px;
-          transform: rotate(14deg);
-        }
-
-        .world-kicker {
-          margin: 0 0 9px;
-          color: #ff9ab7;
-          font-size: 10px;
-          font-weight: 800;
-          letter-spacing: 2px;
-          text-transform: uppercase;
-        }
-
-        .world-copy {
-          margin: 0;
-          color: rgba(255,255,255,.88);
-          font-size: 15px;
-          line-height: 1.65;
-        }
-
-        .flower-corner {
-          width: min(62%, 300px);
-          margin: 58px 1% 0 auto;
-          padding: 18px 20px;
-          border-radius: 24px 7px 21px 18px;
-          background:
-            linear-gradient(
-              145deg,
-              rgba(125,210,150,.10),
-              rgba(255,255,255,.035)
-            );
-          text-align: right;
-          transform: rotate(1.8deg);
-        }
-
-        .flower-stage {
-          display: block;
-          margin-bottom: 8px;
-          font-size: 52px;
-          line-height: 1;
-          filter: drop-shadow(0 12px 22px rgba(100,210,140,.17));
-        }
-
-        .flower-small {
-          margin: 0;
-          color: rgba(255,255,255,.55);
-          font-size: 12px;
-          line-height: 1.55;
-        }
-
-        .diary-piece {
-          width: min(76%, 430px);
-          margin: 80px auto 0 3%;
-          padding: 25px 23px;
-          border-radius: 26px 20px 7px 25px;
-          background:
-            linear-gradient(
-              145deg,
-              rgba(115,100,230,.13),
-              rgba(255,255,255,.035)
-            );
-          transform: rotate(1deg);
-        }
-
-        .diary-heading {
-          display: flex;
-          align-items: center;
-          gap: 9px;
-          margin-bottom: 11px;
-          color: #fff;
-          font-size: 17px;
-          font-weight: 800;
-        }
-
-        .diary-meta {
-          margin-top: 12px;
-          color: rgba(255,190,215,.65);
-          font-size: 11px;
-        }
-
-        .polaroid-piece {
-          width: 230px;
-          margin: -52px 3% 0 auto;
-          padding: 11px 11px 17px;
-          border: 0;
-          border-radius: 6px;
-          background: rgba(250,245,247,.92);
-          box-shadow: 0 25px 60px rgba(0,0,0,.32);
-          color: #31262c;
-          transform: rotate(5deg);
-        }
-
-        .polaroid-photo {
-          height: 180px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 2px;
-          background:
-            radial-gradient(circle at 35% 28%, rgba(255,190,220,.75), transparent 26%),
-            linear-gradient(145deg, #776a91, #2d2638 62%, #15131a);
-          font-size: 64px;
-          box-shadow: inset 0 0 40px rgba(0,0,0,.18);
-        }
-
-        .polaroid-caption {
-          margin: 11px 4px 0;
-          font-family: "Comic Sans MS", "Segoe Print", cursive;
-          font-size: 12px;
-          text-align: center;
-          transform: rotate(-1deg);
-        }
-
-        .thread-piece {
-          width: 92%;
-          margin: 88px auto 0;
-          padding: 23px 18px 25px;
-          border: 0;
-          box-shadow: none;
-          background: transparent;
-        }
-
-        .thread-labels {
-          display: flex;
-          justify-content: space-between;
-          gap: 14px;
-          color: rgba(255,255,255,.78);
-          font-size: 12px;
-          font-weight: 700;
-        }
-
-        .thread-line {
-          position: relative;
-          height: 1px;
-          margin: 19px 10px 15px;
-          background:
-            linear-gradient(
-              90deg,
-              rgba(255,90,145,.25),
-              rgba(255,150,190,.8),
-              rgba(150,120,255,.7),
-              rgba(255,90,145,.25)
-            );
-          box-shadow: 0 0 18px rgba(255,95,155,.18);
-        }
-
-        .thread-line::before,
-        .thread-line::after {
-          content: "";
-          position: absolute;
-          top: 50%;
-          width: 9px;
-          height: 9px;
-          border-radius: 50%;
-          background: #ff8fb0;
-          box-shadow: 0 0 15px rgba(255,100,155,.65);
-          transform: translateY(-50%);
-        }
-
-        .thread-line::before { left: -2px; }
-        .thread-line::after { right: -2px; }
-
-        .thread-heart {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          padding: 0 8px;
-          background: #120b11;
-          transform: translate(-50%, -50%);
-          font-size: 18px;
-        }
-
-        .thread-note {
-          margin: 0;
-          color: rgba(255,255,255,.5);
-          font-size: 11px;
+        .room-heading {
+          width: min(80%, 520px);
+          margin: 0 auto 55px;
           text-align: center;
         }
 
-        .permission-piece {
-          width: min(69%, 350px);
-          margin: 58px 5% 0 auto;
-          padding: 22px 20px;
-          border-radius: 25px 8px 23px 18px;
-          background:
-            linear-gradient(
-              145deg,
-              rgba(255,140,175,.11),
-              rgba(255,255,255,.025)
-            );
-          transform: rotate(-1.5deg);
-        }
-
-        .permission-main {
-          margin: 4px 0 0;
-          color: #fff;
-          font-size: 20px;
-          font-weight: 800;
-          line-height: 1.3;
-        }
-
-        .world-wall {
-          position: relative;
-          width: 94%;
-          min-height: 350px;
-          margin: 90px auto 0;
-          overflow: hidden;
-          border: 1px solid rgba(255,255,255,.07);
-          border-radius: 34px;
-          background:
-            linear-gradient(rgba(255,255,255,.025), rgba(255,255,255,.015)),
-            repeating-linear-gradient(
-              0deg,
-              transparent 0 31px,
-              rgba(255,255,255,.018) 31px 32px
-            );
-          box-shadow:
-            inset 0 1px 0 rgba(255,255,255,.025),
-            0 30px 90px rgba(0,0,0,.2);
-        }
-
-        .wall-title {
-          position: absolute;
-          top: 24px;
-          left: 50%;
+        .room-heading-small {
+          margin: 0 0 7px;
           color: rgba(255,255,255,.35);
           font-size: 10px;
           font-weight: 800;
           letter-spacing: 4px;
           text-transform: uppercase;
-          transform: translateX(-50%);
-          white-space: nowrap;
         }
 
-        .wall-you {
-          position: absolute;
-          top: 82px;
-          left: 50%;
-          color: rgba(255,255,255,.8);
-          text-align: center;
-          transform: translateX(-50%) rotate(-1deg);
-        }
-
-        .wall-you-arrow {
-          display: block;
-          margin-top: 3px;
-          color: #ff88ab;
-          font-size: 23px;
-        }
-
-        .wall-note-a,
-        .wall-note-b {
-          position: absolute;
-          padding: 13px 14px;
-          color: #33242c;
-          font-family: "Comic Sans MS", "Segoe Print", cursive;
-          font-size: 12px;
-          line-height: 1.45;
-          box-shadow: 0 12px 28px rgba(0,0,0,.18);
-        }
-
-        .wall-note-a {
-          left: 7%;
-          top: 155px;
-          width: 140px;
-          background: #f6d8e3;
-          transform: rotate(-6deg);
-        }
-
-        .wall-note-b {
-          right: 7%;
-          top: 180px;
-          width: 145px;
-          background: #ddd7f3;
-          transform: rotate(5deg);
-        }
-
-        .wall-dragon {
-          position: absolute;
-          left: 48%;
-          bottom: 35px;
-          font-size: 40px;
-          transform: rotate(-5deg);
-          filter: drop-shadow(0 8px 15px rgba(0,0,0,.25));
-        }
-
-        .wall-flower {
-          position: absolute;
-          left: 18%;
-          bottom: 27px;
-          font-size: 27px;
-        }
-
-        .wall-star {
-          position: absolute;
-          right: 19%;
-          bottom: 45px;
-          color: #ffdbe6;
-          font-size: 20px;
-          opacity: .75;
-        }
-
-        .internet-piece {
-          width: 88%;
-          margin: 78px auto 0;
-          padding: 8px 0;
-          border: 0;
-          box-shadow: none;
-          background: transparent;
-        }
-
-        .internet-title {
-          margin: 0 0 24px;
-          color: rgba(255,255,255,.5);
-          font-size: 11px;
-          font-weight: 800;
-          letter-spacing: 3px;
-          text-align: center;
-          text-transform: uppercase;
-        }
-
-        .news-row {
-          display: grid;
-          grid-template-columns: 60px 1fr;
-          gap: 13px;
-          align-items: start;
-          margin-bottom: 17px;
-        }
-
-        .news-row:nth-child(odd) {
-          margin-left: 10%;
-        }
-
-        .news-time {
-          color: #ff84a9;
-          font-size: 11px;
-          font-variant-numeric: tabular-nums;
-          opacity: .7;
-        }
-
-        .news-copy {
-          position: relative;
+        .room-heading-main {
           margin: 0;
-          padding-left: 17px;
-          color: rgba(255,255,255,.72);
-          font-size: 13px;
-          line-height: 1.55;
+          color: rgba(255,255,255,.9);
+          font-size: clamp(25px, 6vw, 40px);
+          line-height: 1.2;
         }
 
-        .news-copy::before {
+        /* ГИРЛЯНДА ИДЁТ ЧЕРЕЗ ВСЮ КОМНАТУ */
+        .room-garland {
+          position: relative;
+          width: 92%;
+          height: 78px;
+          margin: 0 auto 15px;
+          border-top: 1px solid rgba(255,180,210,.30);
+          border-radius: 50%;
+          transform: rotate(-1.5deg);
+        }
+
+        .garland-word {
+          position: absolute;
+          top: -11px;
+          padding: 4px 8px;
+          border-radius: 10px;
+          background: rgba(20,11,18,.9);
+          color: rgba(255,215,230,.82);
+          font-size: 10px;
+          box-shadow: 0 0 18px rgba(255,100,160,.12);
+        }
+        .garland-word:nth-child(1){left:5%; transform:rotate(-7deg)}
+        .garland-word:nth-child(2){left:27%; top:4px; transform:rotate(4deg)}
+        .garland-word:nth-child(3){left:53%; top:10px; transform:rotate(-3deg)}
+        .garland-word:nth-child(4){right:5%; transform:rotate(6deg)}
+
+        /* ОКНО — СПРАВА */
+        .room-window {
+          position: relative;
+          width: min(58%, 390px);
+          min-height: 310px;
+          margin: 10px 1% 0 auto;
+          overflow: hidden;
+          border: 9px solid rgba(255,255,255,.08);
+          border-radius: 25px 25px 9px 9px;
+          background: linear-gradient(180deg, rgba(65,59,91,.95), rgba(20,17,31,.96));
+          box-shadow: 0 28px 80px rgba(0,0,0,.35), inset 0 0 50px rgba(255,255,255,.03);
+          transform: rotate(1.2deg);
+        }
+
+        .room-window::before,
+        .room-window::after {
           content: "";
           position: absolute;
-          left: 0;
-          top: 6px;
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: rgba(255,125,170,.75);
-          box-shadow: 0 0 12px rgba(255,100,155,.35);
+          z-index: 2;
+          background: rgba(255,255,255,.09);
+        }
+        .room-window::before { left: 50%; top: 0; bottom: 0; width: 5px; transform: translateX(-50%); }
+        .room-window::after { left: 0; right: 0; top: 49%; height: 5px; }
+
+        .window-sky {
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(circle at 75% 22%, rgba(255,213,232,.22), transparent 12%),
+            linear-gradient(180deg, rgba(80,64,112,.68), rgba(31,25,49,.93));
+        }
+        .world-page.day .window-sky, .world-page.morning .window-sky {
+          background: linear-gradient(180deg, rgba(240,151,184,.38), rgba(74,64,105,.78));
+        }
+        .world-page.night .window-sky {
+          background:
+            radial-gradient(circle at 76% 18%, rgba(249,235,255,.78) 0 13px, transparent 14px),
+            linear-gradient(180deg, #17162c, #30223e 68%, #15131e);
         }
 
-        .goodbye-piece {
-          width: min(80%, 480px);
-          margin: 94px auto 0;
-          padding: 28px 22px;
-          border: 0;
-          box-shadow: none;
-          background: transparent;
-          text-align: center;
+        .window-stars {
+          position: absolute;
+          inset: 0;
+          opacity: .65;
+          background-image:
+            radial-gradient(circle at 20% 20%, white 0 1px, transparent 2px),
+            radial-gradient(circle at 65% 32%, white 0 1px, transparent 2px),
+            radial-gradient(circle at 37% 73%, white 0 1px, transparent 2px),
+            radial-gradient(circle at 84% 64%, white 0 1px, transparent 2px);
         }
+        .world-page.day .window-stars, .world-page.morning .window-stars { opacity: .1; }
 
-        .goodbye-small {
-          margin: 0 0 9px;
-          color: rgba(255,255,255,.32);
-          font-size: 10px;
-          letter-spacing: 3px;
-          text-transform: uppercase;
+        .window-weather-info {
+          position: absolute;
+          left: 18px;
+          bottom: 17px;
+          z-index: 5;
+          max-width: 70%;
+          padding: 10px 12px;
+          border-radius: 14px;
+          background: rgba(9,8,15,.48);
+          backdrop-filter: blur(10px);
+          color: rgba(255,255,255,.88);
         }
+        .window-weather-city { margin:0 0 3px; font-size:11px; letter-spacing:2px; text-transform:uppercase; opacity:.55; }
+        .window-weather-main { margin:0; font-size:15px; font-weight:800; }
+        .window-weather-temp { margin:5px 0 0; font-size:12px; opacity:.65; }
 
-        .goodbye-main {
-          margin: 0;
-          color: rgba(255,255,255,.86);
-          font-size: clamp(20px, 5vw, 30px);
-          font-weight: 700;
-          line-height: 1.4;
+        .window-rain { position:absolute; inset:0; opacity:.45; background: repeating-linear-gradient(105deg, transparent 0 18px, rgba(215,225,255,.25) 19px 20px, transparent 21px 38px); }
+        .window-snow { position:absolute; inset:0; color:white; font-size:18px; opacity:.65; letter-spacing:30px; line-height:62px; padding:8px; }
+
+        /* СТОЛИК / ЗАПИСКА — СЛЕВА */
+        .room-desk {
+          position: relative;
+          width: min(64%, 430px);
+          margin: -80px auto 0 1%;
+          padding: 65px 18px 21px;
+          transform: rotate(-1.7deg);
         }
-
-        .goodbye-heart {
-          display: block;
-          margin-top: 14px;
-          font-size: 22px;
-          opacity: .75;
+        .desk-surface {
+          position:absolute; left:-8%; right:-4%; bottom:0; height:38px;
+          border-radius: 15px 12px 28px 18px;
+          background: linear-gradient(180deg, rgba(111,65,76,.46), rgba(54,32,43,.70));
+          box-shadow: 0 18px 40px rgba(0,0,0,.24);
         }
+        .desk-note {
+          position: relative;
+          z-index:2;
+          width: 82%;
+          padding: 21px 18px 20px;
+          border-radius: 5px 16px 11px 8px;
+          background: #ead9df;
+          color: #38282f;
+          box-shadow: 0 16px 32px rgba(0,0,0,.22);
+          font-family: "Segoe Print", "Comic Sans MS", cursive;
+          font-size: 13px;
+          line-height: 1.65;
+          transform: rotate(-3deg);
+        }
+        .desk-note::before { content:"📎"; position:absolute; top:-17px; right:18px; font-size:22px; }
+        .desk-object { position:absolute; right:5%; bottom:25px; z-index:3; font-size:38px; transform:rotate(8deg); filter:drop-shadow(0 10px 14px rgba(0,0,0,.25)); }
 
-        @media (max-width: 650px) {
-          .world-page {
-            padding-left: 12px !important;
-            padding-right: 12px !important;
-          }
+        /* POLAROID-СТЕНА */
+        .photo-wall {
+          position: relative;
+          width: 95%;
+          min-height: 345px;
+          margin: 85px auto 0;
+          border-radius: 36px;
+          background: repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 31px, rgba(255,255,255,.035) 31px 32px);
+          border:1px solid rgba(255,255,255,.06);
+          box-shadow: inset 0 0 90px rgba(0,0,0,.12);
+        }
+        .photo-wall-title { position:absolute; left:50%; top:25px; transform:translateX(-50%); color:rgba(255,255,255,.28); font-size:10px; letter-spacing:4px; text-transform:uppercase; white-space:nowrap; }
+        .room-polaroid {
+          position:absolute; width:195px; padding:10px 10px 16px; background:#f0e9eb; color:#31272c; box-shadow:0 20px 45px rgba(0,0,0,.30);
+        }
+        .room-polaroid.one { left:8%; top:72px; transform:rotate(-7deg); }
+        .room-polaroid.two { right:8%; top:95px; transform:rotate(6deg); }
+        .room-polaroid-photo { height:145px; display:flex; align-items:center; justify-content:center; background:linear-gradient(145deg,#776a91,#2d2638 62%,#15131a); font-size:53px; }
+        .room-polaroid.two .room-polaroid-photo { background:radial-gradient(circle at 50% 40%, rgba(255,150,190,.4), transparent 28%), linear-gradient(145deg,#421c2e,#15131a); }
+        .room-polaroid-caption { margin:10px 2px 0; text-align:center; font:12px "Segoe Print",cursive; }
+        .wall-mini-note { position:absolute; left:43%; bottom:40px; padding:10px 12px; background:#d9d3ef; color:#342d3d; font:11px "Segoe Print",cursive; transform:rotate(3deg); box-shadow:0 10px 25px rgba(0,0,0,.2); }
 
-          .kessichka-world {
-            min-height: 1340px;
-            margin-top: 40px;
-            padding-left: 4px;
-            padding-right: 4px;
-          }
+        /* УГОЛОК ДРАКОШИ — ВНИЗУ СПРАВА */
+        .dragon-nook {
+          position: relative;
+          width: min(72%, 460px);
+          min-height: 300px;
+          margin: 92px 1% 0 auto;
+          overflow:hidden;
+          border-radius: 46px 18px 35px 18px;
+          background: linear-gradient(145deg, rgba(103,87,180,.12), rgba(255,255,255,.025));
+          border:1px solid rgba(255,255,255,.07);
+          box-shadow:0 28px 75px rgba(0,0,0,.23);
+        }
+        .nook-title { position:absolute; top:22px; left:25px; margin:0; color:rgba(255,255,255,.42); font-size:10px; letter-spacing:3px; text-transform:uppercase; }
+        .nook-bed { position:absolute; left:30px; bottom:30px; width:200px; height:72px; border-radius:50%; background:radial-gradient(ellipse, rgba(185,149,230,.38), rgba(82,64,111,.35) 65%, transparent 67%); filter:drop-shadow(0 14px 20px rgba(0,0,0,.2)); }
+        .nook-dragon { position:absolute; left:66px; bottom:43px; width:130px; filter:drop-shadow(0 13px 18px rgba(60,45,100,.35)); }
+        .nook-bowl { position:absolute; right:44px; bottom:42px; font-size:35px; }
+        .nook-toy { position:absolute; right:95px; bottom:37px; font-size:23px; transform:rotate(-10deg); }
+        .nook-diary { position:absolute; right:25px; top:70px; width:43%; margin:0; color:rgba(255,255,255,.72); font-size:12px; line-height:1.65; }
 
-          .world-piece {
-            width: 80%;
-          }
+        /* НИТЬ */
+        .room-thread {
+          width:90%; margin:90px auto 0; color:rgba(255,255,255,.6);
+        }
+        .thread-labels { display:flex; justify-content:space-between; font-size:11px; font-weight:700; }
+        .thread-line { position:relative; height:1px; margin:18px 8px 12px; background:linear-gradient(90deg,rgba(255,100,150,.2),rgba(255,145,190,.85),rgba(145,120,255,.75),rgba(255,100,150,.2)); box-shadow:0 0 20px rgba(255,100,160,.18); }
+        .thread-line::before,.thread-line::after { content:"";position:absolute;top:50%;width:8px;height:8px;border-radius:50%;background:#ff8eb0;box-shadow:0 0 14px rgba(255,100,160,.6);transform:translateY(-50%); }
+        .thread-line::before{left:-1px}.thread-line::after{right:-1px}
+        .thread-heart { position:absolute; left:50%; top:50%; padding:0 7px; background:#120b11; transform:translate(-50%,-50%); }
+        .thread-note { margin:0; text-align:center; font-size:11px; opacity:.45; }
 
-          .sticky-note {
-            margin-left: 0;
-          }
+        /* НОЧНИК И ФИНАЛ */
+        .room-lamp-zone {
+          position:relative; width:min(76%,500px); min-height:250px; margin:90px auto 0; text-align:center;
+        }
+        .lamp-glow { position:absolute; left:50%; bottom:18px; width:260px; height:190px; border-radius:50%; background:radial-gradient(ellipse, rgba(255,182,202,.18), transparent 68%); transform:translateX(-50%); opacity:.35; }
+        .world-page.night .lamp-glow, .world-page.evening .lamp-glow { opacity:.9; filter:blur(3px); }
+        .room-lamp { position:relative; z-index:2; display:block; margin:0 auto 18px; font-size:64px; filter:drop-shadow(0 0 24px rgba(255,180,210,.3)); }
+        .room-goodbye { position:relative; z-index:2; margin:0; color:rgba(255,255,255,.85); font-size:clamp(20px,5vw,29px); font-weight:700; line-height:1.45; }
+        .room-goodbye-small { position:relative; z-index:2; margin:10px 0 0; color:rgba(255,255,255,.38); font-size:11px; }
 
-          .flower-corner {
-            width: 58%;
-            margin-right: 0;
-          }
-
-          .diary-piece {
-            width: 79%;
-            margin-left: 0;
-          }
-
-          .polaroid-piece {
-            width: 190px;
-            margin-top: -20px;
-            margin-right: 0;
-          }
-
-          .polaroid-photo {
-            height: 145px;
-            font-size: 52px;
-          }
-
-          .thread-piece {
-            width: 100%;
-          }
-
-          .permission-piece {
-            width: 76%;
-            margin-right: 0;
-          }
-
-          .world-wall {
-            width: 100%;
-            min-height: 330px;
-          }
-
-          .wall-note-a {
-            left: 4%;
-            width: 126px;
-          }
-
-          .wall-note-b {
-            right: 4%;
-            width: 126px;
-          }
-
-          .internet-piece {
-            width: 96%;
-          }
+        @media (max-width:650px) {
+          .world-page { padding-left:12px !important; padding-right:12px !important; }
+          .kessichka-room { min-height:1510px; margin-top:38px; padding-left:2px; padding-right:2px; }
+          .room-heading { margin-bottom:42px; }
+          .room-window { width:71%; min-height:270px; margin-right:-4px; }
+          .room-desk { width:74%; margin-top:-48px; margin-left:-5px; }
+          .desk-note { width:91%; }
+          .photo-wall { width:100%; min-height:330px; }
+          .room-polaroid { width:145px; }
+          .room-polaroid-photo { height:108px; font-size:42px; }
+          .room-polaroid.one { left:4%; }
+          .room-polaroid.two { right:4%; top:115px; }
+          .wall-mini-note { left:37%; bottom:30px; }
+          .dragon-nook { width:82%; min-height:290px; margin-right:-5px; }
+          .nook-dragon { width:112px; left:46px; }
+          .nook-bed { width:165px; left:22px; }
+          .nook-diary { width:44%; right:15px; }
+          .room-thread { width:97%; }
         }
 
         `}
@@ -1836,171 +1555,131 @@ export default function Home() {
       </section>
 
       {/* =========================
-          МАЛЕНЬКИЙ МИР КЭССИЧКИ
-          Здесь специально нет одной
-          центральной колонки.
+          КОМНАТА КЭССИЧКИ
+          Свободная композиция, не лента
       ========================= */}
 
-      <section className="kessichka-world">
+      <section className="kessichka-room">
+        <div className="room-ambient" />
 
-        <div className="world-glow" />
-        <div className="dragon-path" />
-
-        <article className="world-piece sticky-note">
-          <p className="world-kicker">
-            записка, оставленная тут
+        <header className="room-heading">
+          <p className="room-heading-small">
+            ещё одно маленькое место
           </p>
+          <h2 className="room-heading-main">
+            Комната Кэссички
+          </h2>
+        </header>
 
-          <p className="world-copy">
-            {warmNote}
-          </p>
-        </article>
+        <div className="room-garland" aria-hidden="true">
+          <span className="garland-word">поешь</span>
+          <span className="garland-word">выдохни</span>
+          <span className="garland-word">тьмок ❤️</span>
+          <span className="garland-word">не мёрзни</span>
+        </div>
 
-        <article className="world-piece flower-corner">
-          <span className="flower-stage">
-            {flowerStage}
-          </span>
+        {/* ОКНО В МИНСК */}
+        <section className="room-window">
+          <div className="window-sky" />
+          <div className="window-stars" />
 
-          <p className="world-kicker">
-            маленькая штука растёт сама
-          </p>
+          {weather && !weather.error &&
+            [51,53,55,56,57,61,63,65,66,67,80,81,82].includes(weather.weatherCode) && (
+              <div className="window-rain" />
+            )}
 
-          <p className="flower-small">
-            Сегодня — {prettyMinskDate}.
-            Завтра она может выглядеть
-            уже немного иначе.
-          </p>
-        </article>
+          {weather && !weather.error &&
+            [71,73,75,77,85,86].includes(weather.weatherCode) && (
+              <div className="window-snow">❄ ❄ ❄ ❄ ❄ ❄</div>
+            )}
 
-        <article className="world-piece diary-piece">
-          <div className="diary-heading">
-            <span>🐉</span>
-            <span>Дракошин дневник</span>
+          <div className="window-weather-info">
+            <p className="window-weather-city">Минск • сейчас</p>
+            <p className="window-weather-main">
+              {weather && !weather.error
+                ? weatherText(weather.weatherCode)
+                : "Смотрю в окно..."}
+            </p>
+            {weather && !weather.error && (
+              <p className="window-weather-temp">
+                {Math.round(weather.temperature)}° • ощущается как {Math.round(weather.feelsLike)}°
+              </p>
+            )}
           </div>
+        </section>
 
-          <p className="world-copy">
+        {/* СТОЛИК */}
+        <section className="room-desk">
+          <div className="desk-surface" />
+          <div className="desk-note">
+            {deskNote}
+            <div style={{ marginTop: "10px", opacity: 0.55 }}>— Обсидик</div>
+          </div>
+          <div className="desk-object" aria-hidden="true">
+            {roomObject}
+          </div>
+        </section>
+
+        {/* СТЕНА С ПОЛАРОИДАМИ */}
+        <section className="photo-wall">
+          <div className="photo-wall-title">стена маленьких моментов</div>
+
+          <article className="room-polaroid one">
+            <div className="room-polaroid-photo">🐉</div>
+            <p className="room-polaroid-caption">{polaroidCaption}</p>
+          </article>
+
+          <article className="room-polaroid two">
+            <div className="room-polaroid-photo">❤️</div>
+            <p className="room-polaroid-caption">{secondPolaroidCaption}</p>
+          </article>
+
+          <div className="wall-mini-note">
+            {wallMessage}
+          </div>
+        </section>
+
+        {/* УГОЛОК ДРАКОШИ */}
+        <section className="dragon-nook">
+          <p className="nook-title">уголок дракоши</p>
+          <div className="nook-bed" />
+          <img src="/drakosha.png" alt="Дракоша отдыхает" className="nook-dragon" />
+          <div className="nook-bowl" aria-hidden="true">🥣</div>
+          <div className="nook-toy" aria-hidden="true">🧸</div>
+          <p className="nook-diary">
+            <strong style={{ color: "rgba(255,255,255,.9)" }}>Сегодня в дневнике:</strong>
+            <br />
             {dragonDiary}
+            <br />
+            <span style={{ opacity: .5 }}>— {prettyMinskDate}</span>
           </p>
+        </section>
 
-          <div className="diary-meta">
-            запись от {prettyMinskDate}
-          </div>
-        </article>
-
-        <article className="world-piece polaroid-piece">
-          <div className="polaroid-photo">
-            🐉
-          </div>
-
-          <p className="polaroid-caption">
-            {polaroidCaption}
-          </p>
-        </article>
-
-        <article className="world-piece thread-piece">
+        {/* НИТЬ */}
+        <section className="room-thread">
           <div className="thread-labels">
             <span>Обсидик</span>
             <span>Кэссичка</span>
           </div>
-
           <div className="thread-line">
-            <span className="thread-heart">
-              ❤️
-            </span>
+            <span className="thread-heart">❤️</span>
           </div>
-
           <p className="thread-note">
-            расстояние большое.
-            нить всё равно работает.
+            расстояние большое. нить всё равно работает.
           </p>
-        </article>
-
-        <article className="world-piece permission-piece">
-          <p className="world-kicker">
-            сегодня официально можно
-          </p>
-
-          <p className="permission-main">
-            {todayPermission}.
-          </p>
-        </article>
-
-        <section className="world-wall">
-          <div className="wall-title">
-            маленькая стена
-          </div>
-
-          <div className="wall-you">
-            YOU ARE HERE
-            <span className="wall-you-arrow">
-              ↓
-            </span>
-            ❤️
-          </div>
-
-          <div className="wall-note-a">
-            {wallMessage}
-          </div>
-
-          <div className="wall-note-b">
-            скучаю вообще-то
-            <br />
-            — Обсидик
-          </div>
-
-          <div className="wall-flower">
-            🌷
-          </div>
-
-          <div className="wall-dragon">
-            🐉
-          </div>
-
-          <div className="wall-star">
-            ✦
-          </div>
         </section>
 
-        <section className="world-piece internet-piece">
-          <h2 className="internet-title">
-            наш маленький интернет
-          </h2>
-
-          {todaysNews.map((news, index) => (
-            <div
-              className="news-row"
-              key={`${news}-${index}`}
-            >
-              <div className="news-time">
-                {[
-                  "12:41",
-                  "15:08",
-                  "18:31",
-                ][index]}
-              </div>
-
-              <p className="news-copy">
-                {news}
-              </p>
-            </div>
-          ))}
-        </section>
-
-        <footer className="world-piece goodbye-piece">
-          <p className="goodbye-small">
-            перед тем как уйдёшь
+        {/* НОЧНИК */}
+        <footer className="room-lamp-zone">
+          <div className="lamp-glow" />
+          <span className="room-lamp" aria-hidden="true">💡</span>
+          <p className="room-goodbye">
+            Возвращайся сюда иногда. Здесь тебя всегда ждут.
           </p>
-
-          <p className="goodbye-main">
-            Иди занимайся своими делами.
-            Здесь всё останется на месте.
+          <p className="room-goodbye-small">
+            береги себя, бус ❤️
           </p>
-
-          <span className="goodbye-heart">
-            береги себя ❤️
-          </span>
         </footer>
-
       </section>
 
       {/* =========================
