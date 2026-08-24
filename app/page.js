@@ -311,11 +311,14 @@ export default function Home() {
   const [drawerFind, setDrawerFind] = useState("пока закрыто");
   const [mysteryBoxCount, setMysteryBoxCount] = useState(0);
   const [mysteryBoxText, setMysteryBoxText] = useState("НЕ ТРОГАТЬ 👀");
+  const [mysteryBoxOpen, setMysteryBoxOpen] = useState(false);
   const [ticketText, setTicketText] = useState("дёрни рычаг");
+  const [ticketPulling, setTicketPulling] = useState(false);
   const [stashOpen, setStashOpen] = useState(false);
   const [stashText, setStashText] = useState("тайник закрыт");
   const [doorCount, setDoorCount] = useState(0);
   const [doorText, setDoorText] = useState("куда собралась? 👀");
+  const [doorOpen, setDoorOpen] = useState(false);
 
   // ==============================
   // PUSH
@@ -682,6 +685,8 @@ export default function Home() {
   function touchMysteryBox() {
     const next = mysteryBoxCount + 1;
     setMysteryBoxCount(next);
+    setMysteryBoxOpen(true);
+
     const reactions = [
       "Я же написал не трогать.",
       "Коробка делает вид, что ничего не произошло.",
@@ -689,28 +694,62 @@ export default function Home() {
       "🐉 Дракоша: ЭТО МОЁ.",
       "💗 Ладно. Внутри было сердечко. Забирай.",
     ];
-    setMysteryBoxText(reactions[Math.min(next - 1, reactions.length - 1)]);
+
+    setMysteryBoxText(
+      reactions[Math.min(next - 1, reactions.length - 1)]
+    );
+
+    setTimeout(() => {
+      setMysteryBoxOpen(false);
+    }, 1800);
   }
 
   function pullTicket() {
-    setTicketText(ticketPrizes[Math.floor(Math.random() * ticketPrizes.length)]);
+    if (ticketPulling) return;
+
+    setTicketPulling(true);
+    setTicketText("дёрни рычаг");
+
+    setTimeout(() => {
+      setTicketText(
+        ticketPrizes[Math.floor(Math.random() * ticketPrizes.length)]
+      );
+    }, 650);
+
+    setTimeout(() => {
+      setTicketPulling(false);
+    }, 1500);
   }
 
   function openStash() {
-    setStashOpen(true);
-    setStashText(dragonStashFinds[Math.floor(Math.random() * dragonStashFinds.length)]);
+    setStashOpen((current) => !current);
+
+    if (!stashOpen) {
+      setTimeout(() => {
+        setStashText(
+          dragonStashFinds[
+            Math.floor(Math.random() * dragonStashFinds.length)
+          ]
+        );
+      }, 450);
+    }
   }
 
   function touchDoor() {
     const next = doorCount + 1;
     setDoorCount(next);
+    setDoorOpen((current) => !current);
+
     const messages = [
       "Куда собралась? 👀",
       "Ну ладно... но ненадолго.",
       "Дракоша сказал закрыть дверь, тепло уходит 🐉",
       "Возвращайся потом ❤️",
     ];
-    setDoorText(messages[Math.min(next - 1, messages.length - 1)]);
+
+    setDoorText(
+      messages[Math.min(next - 1, messages.length - 1)]
+    );
   }
 
   const timeOfDay =
@@ -1343,15 +1382,55 @@ export default function Home() {
         .discovery-object{display:block;margin:8px auto 12px;font-size:52px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.22));transition:transform .2s ease}
         .room-discovery:active .discovery-object{transform:scale(.92) rotate(-3deg)}
         .discovery-button{border:0;border-radius:14px;padding:10px 14px;background:rgba(255,255,255,.09);color:#fff;font-weight:750;font-size:11px;cursor:pointer}
-        .drawer-open{animation:drawerPop .35s ease}
-        @keyframes drawerPop{0%{transform:translateY(12px);opacity:.3}100%{transform:translateY(0);opacity:1}}
-        .ticket-paper{margin:10px 0 0;padding:11px 12px;border-radius:8px;background:#f3e6d5;color:#493b38;font-size:11px;font-weight:700;transform:rotate(-1deg);box-shadow:0 8px 18px rgba(0,0,0,.18)}
-        .stash-door{font-size:45px}
-        .room-door-zone{width:min(72%,520px);margin:100px auto 20px;text-align:center}
-        .room-door{position:relative;width:145px;height:205px;margin:0 auto 16px;border-radius:72px 72px 12px 12px;background:linear-gradient(145deg,rgba(112,73,96,.82),rgba(53,35,54,.95));border:2px solid rgba(255,255,255,.08);box-shadow:inset 0 0 0 8px rgba(0,0,0,.12),0 22px 50px rgba(0,0,0,.25);cursor:pointer}
-        .room-door::after{content:"•";position:absolute;right:20px;top:105px;color:#f2c3a5;font-size:24px;text-shadow:0 0 10px rgba(255,200,160,.4)}
-        .door-sign{position:absolute;left:50%;top:48px;transform:translateX(-50%) rotate(-3deg);width:82px;padding:7px 5px;background:#ead8c9;color:#5a4448;font-size:9px;font-weight:800;border-radius:4px;box-shadow:0 5px 12px rgba(0,0,0,.2)}
-        .door-message{margin:0;font-size:12px;opacity:.6}
+        /* ЯЩИК — реально выезжает */
+        .drawer-visual{position:relative;width:118px;height:76px;margin:8px auto 14px;perspective:500px}
+        .drawer-cabinet{position:absolute;inset:0;border-radius:12px;background:linear-gradient(145deg,#5d4052,#332634);box-shadow:inset 0 0 0 5px rgba(0,0,0,.13),0 14px 28px rgba(0,0,0,.23)}
+        .drawer-front{position:absolute;left:12px;right:12px;top:22px;height:38px;border-radius:7px;background:linear-gradient(145deg,#8a6175,#654758);box-shadow:0 8px 18px rgba(0,0,0,.22);transition:transform .55s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+        .drawer-front::after{content:"•";position:absolute;left:50%;top:6px;transform:translateX(-50%);color:#e8bdcd;font-size:17px}
+        .drawer-visual.open .drawer-front{transform:translateY(30px) translateZ(28px)}
+        .drawer-find-pop{position:absolute;left:50%;top:15px;transform:translate(-50%,10px) scale(.4);opacity:0;font-size:28px;transition:all .45s ease .25s}
+        .drawer-visual.open .drawer-find-pop{transform:translate(-50%,-12px) scale(1);opacity:1}
+        .drawer-open{animation:drawerText .45s ease}
+        @keyframes drawerText{0%{transform:translateY(10px);opacity:.2}100%{transform:translateY(0);opacity:1}}
+
+        /* КОРОБКА — крышка откидывается */
+        .mystery-box-visual{position:relative;width:110px;height:82px;margin:5px auto 14px;perspective:500px}
+        .box-body{position:absolute;left:12px;right:12px;bottom:0;height:54px;border-radius:6px 6px 12px 12px;background:linear-gradient(145deg,#9b6f48,#6b4b31);box-shadow:0 12px 24px rgba(0,0,0,.22)}
+        .box-lid{position:absolute;left:5px;right:5px;top:10px;height:24px;border-radius:7px;background:linear-gradient(145deg,#b48559,#795536);transform-origin:left bottom;transition:transform .5s cubic-bezier(.2,.8,.2,1);box-shadow:0 6px 12px rgba(0,0,0,.18)}
+        .mystery-box-visual.open .box-lid{transform:rotateZ(-17deg) rotateY(-36deg) translateY(-8px)}
+        .box-surprise{position:absolute;left:50%;top:30px;opacity:0;transform:translate(-50%,8px) scale(.3);font-size:31px;transition:all .45s ease .25s}
+        .mystery-box-visual.open .box-surprise{opacity:1;transform:translate(-50%,-15px) scale(1.1)}
+
+        /* БИЛЕТНЫЙ АППАРАТ — рычаг и выдача */
+        .ticket-machine{position:relative;width:125px;height:128px;margin:4px auto 10px}
+        .machine-body{position:absolute;left:16px;right:16px;top:13px;height:92px;border-radius:18px;background:linear-gradient(145deg,#7b667e,#403444);box-shadow:inset 0 0 0 5px rgba(255,255,255,.035),0 15px 30px rgba(0,0,0,.24)}
+        .machine-slot{position:absolute;left:38px;right:38px;bottom:26px;height:7px;border-radius:5px;background:#19131b;box-shadow:inset 0 2px 5px rgba(0,0,0,.5)}
+        .machine-lever{position:absolute;right:3px;top:28px;width:8px;height:51px;border-radius:8px;background:#c7a0ad;transform-origin:50% 8px;transition:transform .28s ease}
+        .machine-lever::after{content:"";position:absolute;left:50%;bottom:-10px;width:18px;height:18px;border-radius:50%;background:#e7b7c6;transform:translateX(-50%);box-shadow:0 5px 12px rgba(0,0,0,.25)}
+        .ticket-machine.pulling .machine-lever{animation:leverPull .65s ease}
+        @keyframes leverPull{0%{transform:rotate(0)}45%{transform:rotate(42deg)}100%{transform:rotate(0)}}
+        .ticket-paper{position:relative;margin:0 auto;padding:11px 12px;width:88%;border-radius:8px;background:#f3e6d5;color:#493b38;font-size:11px;font-weight:700;transform:translateY(-28px) rotate(-1deg);opacity:0;box-shadow:0 8px 18px rgba(0,0,0,.18)}
+        .ticket-paper.ticket-out{animation:ticketOut .65s cubic-bezier(.2,.8,.2,1) forwards}
+        @keyframes ticketOut{0%{opacity:0;transform:translateY(-42px) scaleY(.35) rotate(-1deg)}35%{opacity:1}100%{opacity:1;transform:translateY(0) scaleY(1) rotate(-1deg)}}
+
+        /* ТАЙНИК — люк открывается */
+        .stash-visual{position:relative;width:112px;height:88px;margin:5px auto 13px;perspective:500px}
+        .stash-hole{position:absolute;left:15px;right:15px;bottom:5px;height:45px;border-radius:50%;background:radial-gradient(ellipse,#08070a 0 48%,#2f2630 50% 70%,transparent 72%);filter:drop-shadow(0 10px 15px rgba(0,0,0,.35))}
+        .stash-hatch{position:absolute;left:18px;right:18px;bottom:21px;height:39px;border-radius:50%;background:linear-gradient(145deg,#574450,#352b36);transform-origin:left center;transition:transform .55s cubic-bezier(.2,.8,.2,1);box-shadow:0 6px 15px rgba(0,0,0,.25)}
+        .stash-visual.open .stash-hatch{transform:rotateY(-72deg) translateX(-4px)}
+        .stash-treasure{position:absolute;left:50%;bottom:25px;opacity:0;transform:translate(-50%,8px) scale(.4);font-size:31px;transition:all .45s ease .28s}
+        .stash-visual.open .stash-treasure{opacity:1;transform:translate(-50%,-12px) scale(1)}
+
+        /* ДВЕРЬ — реально открывается */
+        .room-door-zone{width:min(72%,520px);margin:100px auto 20px;text-align:center;perspective:900px}
+        .door-frame{position:relative;width:160px;height:220px;margin:0 auto 16px;border-radius:78px 78px 14px 14px;background:linear-gradient(145deg,#241a24,#120f14);box-shadow:0 25px 55px rgba(0,0,0,.3),inset 0 0 0 7px rgba(255,255,255,.025);overflow:visible}
+        .room-door{position:absolute;inset:7px;border-radius:70px 70px 10px 10px;background:linear-gradient(145deg,rgba(112,73,96,.94),rgba(53,35,54,.98));border:2px solid rgba(255,255,255,.08);box-shadow:inset 0 0 0 8px rgba(0,0,0,.12);cursor:pointer;transform-origin:left center;transition:transform .7s cubic-bezier(.2,.75,.2,1),box-shadow .7s ease;transform-style:preserve-3d}
+        .room-door.open{transform:rotateY(-67deg);box-shadow:18px 15px 35px rgba(0,0,0,.38)}
+        .room-door::after{content:"•";position:absolute;right:20px;top:100px;color:#f2c3a5;font-size:24px;text-shadow:0 0 10px rgba(255,200,160,.4)}
+        .door-behind{position:absolute;inset:18px 14px 12px;border-radius:58px 58px 8px 8px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 38%,rgba(255,120,175,.16),transparent 35%),linear-gradient(180deg,#160f17,#08070a);color:#ffd7e5;font-size:31px;opacity:.8}
+        .door-sign{position:absolute;left:50%;top:42px;transform:translateX(-50%) rotate(-3deg);width:82px;padding:7px 5px;background:#ead8c9;color:#5a4448;font-size:9px;font-weight:800;border-radius:4px;box-shadow:0 5px 12px rgba(0,0,0,.2)}
+        .door-message{margin:0;font-size:12px;opacity:.6;transition:transform .3s ease,opacity .3s ease}
+        .room-door-zone:active .door-message{transform:translateY(2px);opacity:.9}
         @media(max-width:650px){.room-discovery-zone{grid-template-columns:1fr;gap:18px}.room-discovery:nth-child(even),.room-discovery:nth-child(odd){transform:none}.room-discovery{min-height:165px}.room-door-zone{margin-top:70px}}
 
         /* НОЧНИК И ФИНАЛ */
@@ -1885,43 +1964,104 @@ export default function Home() {
           <article className="room-discovery" onClick={openDrawer}>
             <p className="discovery-kicker">стол • ящик №1</p>
             <h3 className="discovery-title">Ящик стола</h3>
-            <span className="discovery-object">🗄️</span>
+
+            <div className={`drawer-visual ${drawerOpen ? "open" : ""}`}>
+              <div className="drawer-cabinet" />
+              <div className="drawer-front" />
+              <div className="drawer-find-pop">💌</div>
+            </div>
+
             <p className={`discovery-text ${drawerOpen ? "drawer-open" : ""}`}>
-              {drawerOpen ? drawerFind : "Внутри что-то лежит. Каждый раз может попасться другое."}
+              {drawerOpen
+                ? drawerFind
+                : "Внутри что-то лежит. Каждый раз может попасться другое."}
             </p>
-            <button className="discovery-button" type="button">{drawerOpen ? "закрыть ящик" : "выдвинуть ящик"}</button>
+
+            <button className="discovery-button" type="button">
+              {drawerOpen ? "задвинуть ящик" : "выдвинуть ящик"}
+            </button>
           </article>
 
           <article className="room-discovery" onClick={touchMysteryBox}>
             <p className="discovery-kicker">под столом • подозрительно</p>
             <h3 className="discovery-title">Коробка «не трогать»</h3>
-            <span className="discovery-object">📦</span>
+
+            <div className={`mystery-box-visual ${mysteryBoxOpen ? "open" : ""}`}>
+              <div className="box-body" />
+              <div className="box-lid" />
+              <div className="box-surprise">
+                {mysteryBoxCount >= 5 ? "💗" : mysteryBoxCount === 4 ? "🐉" : "✨"}
+              </div>
+            </div>
+
             <p className="discovery-text">{mysteryBoxText}</p>
-            <button className="discovery-button" type="button">всё равно потрогать</button>
+            <button className="discovery-button" type="button">
+              всё равно потрогать
+            </button>
           </article>
 
           <article className="room-discovery">
             <p className="discovery-kicker">аппарат • один билетик</p>
             <h3 className="discovery-title">Билетик на сегодня</h3>
-            <span className="discovery-object">🎟️</span>
-            <p className="discovery-text">Потяни рычаг — аппарат решит, что тебе сегодня официально положено.</p>
-            <button className="discovery-button" type="button" onClick={pullTicket}>дёрнуть рычаг</button>
-            {ticketText !== "дёрни рычаг" && <div className="ticket-paper">{ticketText}</div>}
+
+            <div className={`ticket-machine ${ticketPulling ? "pulling" : ""}`}>
+              <div className="machine-body" />
+              <div className="machine-slot" />
+              <div className="machine-lever" />
+            </div>
+
+            <p className="discovery-text">
+              Потяни рычаг — аппарат решит, что тебе сегодня официально положено.
+            </p>
+
+            <button
+              className="discovery-button"
+              type="button"
+              onClick={pullTicket}
+              disabled={ticketPulling}
+            >
+              {ticketPulling ? "аппарат думает..." : "дёрнуть рычаг"}
+            </button>
+
+            {ticketText !== "дёрни рычаг" && (
+              <div className="ticket-paper ticket-out">
+                {ticketText}
+              </div>
+            )}
           </article>
 
           <article className="room-discovery" onClick={openStash}>
             <p className="discovery-kicker">за уголком Дракоши • секретно</p>
             <h3 className="discovery-title">Тайник Дракоши</h3>
-            <span className="discovery-object stash-door">🕳️🐉</span>
-            <p className="discovery-text">{stashOpen ? stashText : "Он утверждает, что никакого тайника здесь нет. Очень убедительно."}</p>
-            <button className="discovery-button" type="button">{stashOpen ? "проверить ещё раз" : "заглянуть"}</button>
+
+            <div className={`stash-visual ${stashOpen ? "open" : ""}`}>
+              <div className="stash-hole" />
+              <div className="stash-hatch" />
+              <div className="stash-treasure">🐉✨</div>
+            </div>
+
+            <p className="discovery-text">
+              {stashOpen
+                ? stashText
+                : "Он утверждает, что никакого тайника здесь нет. Очень убедительно."}
+            </p>
+
+            <button className="discovery-button" type="button">
+              {stashOpen ? "закрыть тайник" : "открыть тайник"}
+            </button>
           </article>
         </section>
 
         {/* ДВЕРЬ КОМНАТЫ */}
         <section className="room-door-zone">
-          <div className="room-door" onClick={touchDoor}>
-            <div className="door-sign">КОМНАТА КЭССИЧКИ</div>
+          <div className="door-frame">
+            <div className="door-behind">{doorOpen ? "❤️" : "✦"}</div>
+            <div
+              className={`room-door ${doorOpen ? "open" : ""}`}
+              onClick={touchDoor}
+            >
+              <div className="door-sign">КОМНАТА КЭССИЧКИ</div>
+            </div>
           </div>
           <p className="door-message">{doorText}</p>
         </section>
