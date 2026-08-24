@@ -271,6 +271,23 @@ export default function Home() {
     useState("НЕ НАЖИМАТЬ");
 
   // ==============================
+  // ИНТЕРАКТИВНАЯ КОМНАТА
+  // ==============================
+
+  const [windowFogged, setWindowFogged] = useState(false);
+  const [noteFlipped, setNoteFlipped] = useState(false);
+  const [activePolaroid, setActivePolaroid] = useState(null);
+  const [nookMessage, setNookMessage] = useState(
+    "Тыкни на лежанку, игрушку или миску 👀"
+  );
+  const [lampOn, setLampOn] = useState(false);
+  const [garlandMode, setGarlandMode] = useState(0);
+  const [threadMessage, setThreadMessage] = useState(
+    "расстояние большое. нить всё равно работает."
+  );
+  const [threadPulse, setThreadPulse] = useState(false);
+
+  // ==============================
   // PUSH
   // ==============================
 
@@ -592,6 +609,49 @@ export default function Home() {
 
       setSignatureClicks(0);
     }
+  }
+
+  // ==============================
+  // ИНТЕРАКТИВЫ КОМНАТЫ
+  // ==============================
+
+  const garlandSets = [
+    ["поешь", "выдохни", "тьмок ❤️", "не мёрзни"],
+    ["ты умничка", "не спеши", "я рядом", "улыбнись 😌"],
+    ["бус", "отдохни", "❤️", "всё получится"],
+  ];
+
+  function changeGarland() {
+    setGarlandMode((current) =>
+      current >= garlandSets.length - 1 ? 0 : current + 1
+    );
+  }
+
+  function touchNook(type) {
+    const messages = {
+      bed: "Дракоша улёгся. Просил не шуметь... хотя сам храпит 💤",
+      toy: "Игрушка найдена. Дракоша делает вид, что она ему вообще не нужна 🧸",
+      bowl: "Миска проверена. Дракоша требует вкусняшку и профсоюз 🥣",
+      dragon: "Дракоша пойман за бездельем. Срочно выдан тьмок 🐉❤️",
+    };
+
+    setNookMessage(messages[type]);
+
+    if (type === "dragon") {
+      setDrakoshaAction("hop");
+      setTimeout(() => setDrakoshaAction("idle"), 900);
+    }
+  }
+
+  function touchThread() {
+    setThreadPulse(true);
+    setThreadMessage(
+      threadMessage.includes("долетел")
+        ? "расстояние большое. нить всё равно работает."
+        : "тьмок по ниточке успешно долетел ❤️"
+    );
+
+    setTimeout(() => setThreadPulse(false), 900);
   }
 
   const timeOfDay =
@@ -1234,6 +1294,59 @@ export default function Home() {
         .room-goodbye { position:relative; z-index:2; margin:0; color:rgba(255,255,255,.85); font-size:clamp(20px,5vw,29px); font-weight:700; line-height:1.45; }
         .room-goodbye-small { position:relative; z-index:2; margin:10px 0 0; color:rgba(255,255,255,.38); font-size:11px; }
 
+        /* =========================
+           ИНТЕРАКТИВЫ КОМНАТЫ
+        ========================= */
+
+        .room-clickable { cursor:pointer; -webkit-tap-highlight-color:transparent; }
+
+        .room-garland { cursor:pointer; transition:filter .25s ease, transform .25s ease; }
+        .room-garland:active { filter:brightness(1.35); transform:rotate(-1.5deg) scale(.985); }
+
+        .room-window { cursor:pointer; transition:transform .3s ease, box-shadow .3s ease; }
+        .room-window:active { transform:rotate(1.2deg) scale(.985); }
+        .window-fog {
+          position:absolute; inset:0; z-index:4; display:flex; align-items:center; justify-content:center;
+          padding:25px; background:rgba(225,220,235,.24); backdrop-filter:blur(7px);
+          color:rgba(255,255,255,.88); font:15px "Segoe Print",cursive; text-align:center;
+          transition:opacity .35s ease;
+        }
+        .window-hint { position:absolute; right:10px; top:10px; z-index:6; padding:5px 8px; border-radius:10px; background:rgba(10,8,15,.38); color:rgba(255,255,255,.48); font-size:9px; }
+
+        .desk-note { cursor:pointer; transform-style:preserve-3d; transition:transform .5s ease, background .3s ease; }
+        .desk-note.flipped { transform:rotate(-3deg) rotateY(180deg); background:#ded7ef; }
+        .desk-note-inner { transition:opacity .2s ease; }
+        .desk-note.flipped .desk-note-inner { transform:rotateY(180deg); }
+        .desk-note-hint { display:block; margin-top:9px; font-family:Arial,sans-serif; font-size:9px; opacity:.42; }
+
+        .room-polaroid { cursor:pointer; transition:transform .3s ease, z-index .1s, box-shadow .3s ease; }
+        .room-polaroid.one.active { z-index:12; transform:rotate(-2deg) scale(1.16); box-shadow:0 28px 70px rgba(0,0,0,.42); }
+        .room-polaroid.two.active { z-index:12; transform:rotate(2deg) scale(1.16); box-shadow:0 28px 70px rgba(0,0,0,.42); }
+        .polaroid-secret { margin:7px 2px 0; font:10px "Segoe Print",cursive; opacity:.65; text-align:center; }
+
+        .nook-bed,.nook-bowl,.nook-toy,.nook-dragon { cursor:pointer; -webkit-tap-highlight-color:transparent; }
+        .nook-bowl,.nook-toy,.nook-dragon { transition:transform .2s ease; }
+        .nook-bowl:active,.nook-toy:active { transform:scale(.82) rotate(-8deg); }
+        .nook-dragon:active { transform:scale(.94); }
+        .nook-reaction { position:absolute; left:24px; right:24px; bottom:8px; margin:0; color:rgba(255,210,230,.66); font-size:10px; text-align:center; }
+
+        .thread-heart { cursor:pointer; user-select:none; transition:transform .2s ease, filter .2s ease; }
+        .thread-heart.pulse { animation:roomHeartPulse .85s ease; }
+        @keyframes roomHeartPulse {
+          0%,100% { transform:translate(-50%,-50%) scale(1); }
+          35% { transform:translate(-50%,-50%) scale(1.8); filter:drop-shadow(0 0 18px rgba(255,90,150,.9)); }
+          65% { transform:translate(-50%,-50%) scale(.9); }
+        }
+
+        .room-lamp-zone { cursor:pointer; transition:background .45s ease, box-shadow .45s ease; border-radius:45px; padding-top:15px; }
+        .room-lamp-zone.lamp-on {
+          background:radial-gradient(ellipse at 50% 45%, rgba(255,181,105,.12), transparent 68%);
+          box-shadow:0 20px 90px rgba(255,145,90,.08);
+        }
+        .room-lamp-zone.lamp-on .lamp-glow { opacity:1 !important; background:radial-gradient(ellipse, rgba(255,196,120,.34), transparent 68%); }
+        .room-lamp-zone.lamp-on .room-lamp { filter:drop-shadow(0 0 36px rgba(255,194,105,.8)); }
+        .lamp-hint { position:relative; z-index:2; margin:7px 0 0; color:rgba(255,255,255,.28); font-size:9px; }
+
         @media (max-width:650px) {
           .world-page { padding-left:12px !important; padding-right:12px !important; }
           .kessichka-room { min-height:1510px; margin-top:38px; padding-left:2px; padding-right:2px; }
@@ -1571,15 +1684,23 @@ export default function Home() {
           </h2>
         </header>
 
-        <div className="room-garland" aria-hidden="true">
-          <span className="garland-word">поешь</span>
-          <span className="garland-word">выдохни</span>
-          <span className="garland-word">тьмок ❤️</span>
-          <span className="garland-word">не мёрзни</span>
+        <div
+          className="room-garland room-clickable"
+          onClick={changeGarland}
+          title="Тыкни на гирлянду"
+        >
+          {garlandSets[garlandMode].map((word, index) => (
+            <span className="garland-word" key={`${word}-${index}`}>
+              {word}
+            </span>
+          ))}
         </div>
 
         {/* ОКНО В МИНСК */}
-        <section className="room-window">
+        <section
+          className="room-window room-clickable"
+          onClick={() => setWindowFogged((current) => !current)}
+        >
           <div className="window-sky" />
           <div className="window-stars" />
 
@@ -1592,6 +1713,14 @@ export default function Home() {
             [71,73,75,77,85,86].includes(weather.weatherCode) && (
               <div className="window-snow">❄ ❄ ❄ ❄ ❄ ❄</div>
             )}
+
+          <div className="window-hint">тыкни по стеклу</div>
+
+          {windowFogged && (
+            <div className="window-fog">
+              снаружи Минск, а здесь можно немного выдохнуть ❤️
+            </div>
+          )}
 
           <div className="window-weather-info">
             <p className="window-weather-city">Минск • сейчас</p>
@@ -1611,9 +1740,17 @@ export default function Home() {
         {/* СТОЛИК */}
         <section className="room-desk">
           <div className="desk-surface" />
-          <div className="desk-note">
-            {deskNote}
-            <div style={{ marginTop: "10px", opacity: 0.55 }}>— Обсидик</div>
+          <div
+            className={`desk-note ${noteFlipped ? "flipped" : ""}`}
+            onClick={() => setNoteFlipped((current) => !current)}
+          >
+            <div className="desk-note-inner">
+              {noteFlipped
+                ? "P.S. если ты дочитала обратную сторону — тебе положен дополнительный тьмок 💋"
+                : deskNote}
+              <div style={{ marginTop: "10px", opacity: 0.55 }}>— Обсидик</div>
+              <span className="desk-note-hint">тыкни — у записки есть обратная сторона</span>
+            </div>
           </div>
           <div className="desk-object" aria-hidden="true">
             {roomObject}
@@ -1624,14 +1761,26 @@ export default function Home() {
         <section className="photo-wall">
           <div className="photo-wall-title">стена маленьких моментов</div>
 
-          <article className="room-polaroid one">
+          <article
+            className={`room-polaroid one ${activePolaroid === 1 ? "active" : ""}`}
+            onClick={() => setActivePolaroid(activePolaroid === 1 ? null : 1)}
+          >
             <div className="room-polaroid-photo">🐉</div>
             <p className="room-polaroid-caption">{polaroidCaption}</p>
+            {activePolaroid === 1 && (
+              <p className="polaroid-secret">он утверждает, что позировал именно так специально 👀</p>
+            )}
           </article>
 
-          <article className="room-polaroid two">
+          <article
+            className={`room-polaroid two ${activePolaroid === 2 ? "active" : ""}`}
+            onClick={() => setActivePolaroid(activePolaroid === 2 ? null : 2)}
+          >
             <div className="room-polaroid-photo">❤️</div>
             <p className="room-polaroid-caption">{secondPolaroidCaption}</p>
+            {activePolaroid === 2 && (
+              <p className="polaroid-secret">маленькая штука на память: ты здесь очень важная ❤️</p>
+            )}
           </article>
 
           <div className="wall-mini-note">
@@ -1642,10 +1791,15 @@ export default function Home() {
         {/* УГОЛОК ДРАКОШИ */}
         <section className="dragon-nook">
           <p className="nook-title">уголок дракоши</p>
-          <div className="nook-bed" />
-          <img src="/drakosha.png" alt="Дракоша отдыхает" className="nook-dragon" />
-          <div className="nook-bowl" aria-hidden="true">🥣</div>
-          <div className="nook-toy" aria-hidden="true">🧸</div>
+          <div className="nook-bed" onClick={() => touchNook("bed")} />
+          <img
+            src="/drakosha.png"
+            alt="Дракоша отдыхает"
+            className="nook-dragon"
+            onClick={() => touchNook("dragon")}
+          />
+          <div className="nook-bowl" onClick={() => touchNook("bowl")}>🥣</div>
+          <div className="nook-toy" onClick={() => touchNook("toy")}>🧸</div>
           <p className="nook-diary">
             <strong style={{ color: "rgba(255,255,255,.9)" }}>Сегодня в дневнике:</strong>
             <br />
@@ -1653,6 +1807,7 @@ export default function Home() {
             <br />
             <span style={{ opacity: .5 }}>— {prettyMinskDate}</span>
           </p>
+          <p className="nook-reaction">{nookMessage}</p>
         </section>
 
         {/* НИТЬ */}
@@ -1662,23 +1817,32 @@ export default function Home() {
             <span>Кэссичка</span>
           </div>
           <div className="thread-line">
-            <span className="thread-heart">❤️</span>
+            <span
+              className={`thread-heart ${threadPulse ? "pulse" : ""}`}
+              onClick={touchThread}
+            >
+              ❤️
+            </span>
           </div>
           <p className="thread-note">
-            расстояние большое. нить всё равно работает.
+            {threadMessage}
           </p>
         </section>
 
         {/* НОЧНИК */}
-        <footer className="room-lamp-zone">
+        <footer
+          className={`room-lamp-zone ${lampOn ? "lamp-on" : ""}`}
+          onClick={() => setLampOn((current) => !current)}
+        >
           <div className="lamp-glow" />
-          <span className="room-lamp" aria-hidden="true">💡</span>
+          <span className="room-lamp">{lampOn ? "💡" : "🌑"}</span>
           <p className="room-goodbye">
             Возвращайся сюда иногда. Здесь тебя всегда ждут.
           </p>
           <p className="room-goodbye-small">
-            береги себя, бус ❤️
+            {lampOn ? "теперь тут немного теплее ✨" : "береги себя, бус ❤️"}
           </p>
+          <p className="lamp-hint">тыкни на ночник</p>
         </footer>
       </section>
 
