@@ -1,0 +1,20 @@
+name: Kessichka Push Schedule
+
+on:
+  schedule:
+    - cron: "45 3 * * *"
+    - cron: "10 9 * * *"
+    - cron: "30 13 * * *"
+    - cron: "0 21 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  send-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send push
+        run: |
+          curl -X POST "https://kessichka1.vercel.app/api/send-push" \
+          -H "Authorization: Bearer ${{ secrets.PUSH_SECRET }}"
