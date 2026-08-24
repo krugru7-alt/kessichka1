@@ -990,21 +990,9 @@ button {
    СЛЕВА НАПРАВО
 ========================= */
 
-.drakosha-floating {
-  transition:
-    left 2.4s ease-in-out,
-    right 2.4s ease-in-out;
-}
 
-.drakosha-floating.right {
-  right: 10px;
-  left: auto;
-}
 
-.drakosha-floating.left {
-  left: 10px;
-  right: auto;
-}
+
 
 /* Пока Дракоша идёт,
    обычное парение выключаем */
@@ -1093,5 +1081,141 @@ button {
   .drakosha-floating.left {
     left: 4px;
     right: auto;
+  }
+}
+/* =========================
+   ДРАКОША ХОДИТ ПО ЭКРАНУ
+========================= */
+
+/*
+  Дракоша всегда физически стоит слева.
+  В правый угол мы переносим его transform-ом.
+  Благодаря этому браузер может плавно
+  анимировать весь путь.
+*/
+
+.drakosha-floating {
+  left: 8px !important;
+  right: auto !important;
+
+  --drakosha-distance:
+    calc(100vw - 145px);
+
+  transition:
+    transform 2.8s linear;
+}
+
+/* Слева */
+
+.drakosha-floating.left {
+  transform: translateX(0);
+}
+
+/* Справа */
+
+.drakosha-floating.right {
+  transform:
+    translateX(
+      var(--drakosha-distance)
+    );
+}
+
+
+/* =========================
+   ТОП-ТОП ЛАПКАМИ
+========================= */
+
+.drakosha-floating.walking
+.drakosha-image {
+  animation:
+    drakoshaTopTop
+    0.28s
+    ease-in-out
+    infinite;
+}
+
+
+/* Пока идёт — облачко тоже трясётся */
+
+.drakosha-floating.walking
+.drakosha-bubble {
+  animation:
+    drakoshaWalkingBubble
+    0.28s
+    ease-in-out
+    infinite;
+}
+
+
+/*
+  Покачивание создаёт ощущение,
+  будто он переносит вес с лапки
+  на лапку.
+*/
+
+@keyframes drakoshaTopTop {
+  0% {
+    transform:
+      translateY(0)
+      rotate(-4deg)
+      scaleX(1);
+  }
+
+  25% {
+    transform:
+      translateY(-5px)
+      rotate(4deg)
+      scaleX(0.98);
+  }
+
+  50% {
+    transform:
+      translateY(0)
+      rotate(-4deg)
+      scaleX(1);
+  }
+
+  75% {
+    transform:
+      translateY(-5px)
+      rotate(4deg)
+      scaleX(0.98);
+  }
+
+  100% {
+    transform:
+      translateY(0)
+      rotate(-4deg)
+      scaleX(1);
+  }
+}
+
+
+@keyframes drakoshaWalkingBubble {
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+
+  50% {
+    transform:
+      translateY(-4px)
+      rotate(2deg);
+  }
+}
+
+
+/* =========================
+   ТЕЛЕФОН
+========================= */
+
+@media (max-width: 480px) {
+  .drakosha-floating {
+    left: 4px !important;
+
+    --drakosha-distance:
+      calc(100vw - 108px);
   }
 }
