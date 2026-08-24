@@ -517,27 +517,23 @@ export default function Home() {
     ДРАКОША
 ===================================== */}
 
-<div className="drakosha-card">
-  <p className="drakosha-label">
-    Твой маленький Дракоша 🐉
-  </p>
+<div className="drakosha-floating">
+  <div className="drakosha-bubble">
+    Тыкни 👀
+  </div>
 
   <img
-  src="/drakosha.png"
-  alt="Дракоша"
-  className="drakosha-image"
-  onClick={() => {
-    setShowKiss(true);
+    src="/drakosha.png"
+    alt="Дракоша"
+    className="drakosha-image"
+    onClick={() => {
+      setShowKiss(true);
 
-    setTimeout(() => {
-      setShowKiss(false);
-    }, 1500);
-  }}
-/>
-
-  <p className="drakosha-text">
-    Тыкни на меня 👀
-  </p>
+      setTimeout(() => {
+        setShowKiss(false);
+      }, 1500);
+    }}
+  />
 </div>
 
         {/* =====================================
