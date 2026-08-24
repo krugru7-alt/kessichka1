@@ -1009,7 +1009,7 @@ button {
   animation: none !important;
 
   transition:
-    transform 2.8s linear;
+  transform 2.8s steps(8, end);
 }
 
 
@@ -1074,8 +1074,24 @@ button {
 
 .drakosha-floating.walking
 .drakosha-image {
-  animation: none !important;
-  transform: none !important;
+  animation:
+    drakoshaRealStep 0.35s
+    ease-in-out
+    infinite !important;
+}
+
+@keyframes drakoshaRealStep {
+  0% {
+    transform: translateY(0);
+  }
+
+  45% {
+    transform: translateY(-3px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 
