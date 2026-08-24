@@ -11,23 +11,36 @@ import {
 
 const dailyMessages = [
   "У тебя сегодня всё получится. А если нет - ничего страшного, я всё равно рядом. ❤️",
-
   "Сегодня просто напоминание я скучаю 😌",
-
   "Пусть сегодня у тебя будет хотя бы один момент, когда ты поймаешь себя на мысли: «А ведь день неплохой». 🌷",
-
   "Ты уже проснулась - значит, день официально начался. Теперь осталось сделать его немного приятнее. ☀️",
-
   "Просто не забывай, что кое-кто далеко очень хочет видеть тебя счастливой. ❤️",
-
   "Маленькое утреннее напоминание: ты прекрасна. Всё, я сказал. 😌",
-
   "Пусть сегодня всё складывается чуть легче, чем ты ожидаешь. А если день будет вредничать - будем вредничать вместе с ним. ❤️",
 ];
 
-// ==========================================
-// VAPID PUBLIC KEY
-// ==========================================
+const dragonPhrases = [
+  "Сижу. Наблюдаю. Осуждаю 👀",
+  "Я вообще-то занят поиском буськи 🐉",
+  "Проверка связи: тьмок работает? 💋",
+  "Дракоша сообщает: пора немного отдохнуть.",
+  "Ушёл искать вкусняшку. Скоро буду.",
+  "Сегодня я официально ничего не делаю 😌",
+  "Обсидик просил за тобой присматривать 👀",
+];
+
+const redButtonPhrases = [
+  "Я же написал: НЕ НАЖИМАТЬ.",
+  "Кэссичка.",
+  "Ты серьёзно? 👀",
+  "Ещё раз — и я вызываю Дракошу.",
+  "🐉 Дракоша уже в пути.",
+  "Последнее предупреждение.",
+  "Ладно. Теперь это твоя кнопка.",
+  "Ты победила кнопку. Наверное.",
+  "💋 ШТРАФНОЙ ТЬМОК!",
+  "Всё. Кнопка увольняется.",
+];
 
 function urlBase64ToUint8Array(base64String) {
   const padding =
@@ -53,18 +66,18 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray;
 }
 
-// ==========================================
-// ВРЕМЯ СУТОК
-// ==========================================
-
-function getTimeOfDay() {
-  const hour = Number(
+function getMinskHour() {
+  return Number(
     new Intl.DateTimeFormat("en-US", {
       timeZone: "Europe/Minsk",
       hour: "numeric",
       hourCycle: "h23",
     }).format(new Date())
   );
+}
+
+function getTimeOfDay() {
+  const hour = getMinskHour();
 
   if (hour >= 6 && hour < 12) {
     return "morning";
@@ -80,10 +93,6 @@ function getTimeOfDay() {
 
   return "night";
 }
-
-// ==========================================
-// ПОГОДА
-// ==========================================
 
 function weatherText(code) {
   if (code === 0) return "Ясно всё гуд ☀️";
@@ -143,15 +152,55 @@ export default function Home() {
 
   const [showKiss, setShowKiss] = useState(false);
 
+  // ==============================
+  // ДРАКОША
+  // ==============================
+
   const [drakoshaAction, setDrakoshaAction] =
     useState("idle");
 
   const [drakoshaBubble, setDrakoshaBubble] =
     useState("Тыкни 👀");
 
-  // ==========================================
-  // PUSH УВЕДОМЛЕНИЯ
-  // ==========================================
+  const [dragonHouseOpen, setDragonHouseOpen] =
+    useState(false);
+
+  const [dragonHousePhrase, setDragonHousePhrase] =
+    useState(dragonPhrases[0]);
+
+  // ==============================
+  // НОЧНОЙ СЕКРЕТ
+  // ==============================
+
+  const [nightSecretOpen, setNightSecretOpen] =
+    useState(false);
+
+  // ==============================
+  // ПАСХАЛКИ
+  // ==============================
+
+  const [weatherClicks, setWeatherClicks] =
+    useState(0);
+
+  const [signatureClicks, setSignatureClicks] =
+    useState(0);
+
+  const [easterEgg, setEasterEgg] =
+    useState("");
+
+  // ==============================
+  // КРАСНАЯ КНОПКА
+  // ==============================
+
+  const [redButtonCount, setRedButtonCount] =
+    useState(0);
+
+  const [redButtonText, setRedButtonText] =
+    useState("НЕ НАЖИМАТЬ");
+
+  // ==============================
+  // PUSH
+  // ==============================
 
   async function enablePushNotifications() {
     try {
@@ -217,13 +266,12 @@ export default function Home() {
       const response =
         await fetch("/api/subscribe", {
           method: "POST",
+
           headers: {
-            "Content-Type":
-              "application/json",
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(
-            subscription
-          ),
+
+          body: JSON.stringify(subscription),
         });
 
       if (!response.ok) {
@@ -266,44 +314,47 @@ export default function Home() {
     }
   }
 
-  // ==========================================
-  // ОБНОВЛЯЕМ ВРЕМЯ КАЖДУЮ МИНУТУ
-  // ==========================================
+  // ==============================
+  // ВРЕМЯ
+  // ==============================
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setNow(new Date());
-    }, 60000);
+    const timer =
+      setInterval(() => {
+        setNow(new Date());
+      }, 60000);
 
-    return () => clearInterval(timer);
+    return () =>
+      clearInterval(timer);
   }, []);
 
-  // ==========================================
+  // ==============================
   // ПОГОДА
-  // ==========================================
+  // ==============================
 
   useEffect(() => {
     fetch("/api/weather")
-      .then((response) => response.json())
-      .then((data) => setWeather(data))
+      .then((response) =>
+        response.json()
+      )
+      .then((data) =>
+        setWeather(data)
+      )
       .catch(() =>
-        setWeather({ error: true })
+        setWeather({
+          error: true,
+        })
       );
   }, []);
 
-  // ==========================================
+  // ==============================
   // SERVICE WORKER
-  // ==========================================
+  // ==============================
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw.js")
-        .then(() => {
-          console.log(
-            "Kessichka Service Worker зарегистрирован ❤️"
-          );
-        })
         .catch((error) => {
           console.error(
             "Ошибка регистрации Service Worker:",
@@ -313,9 +364,9 @@ export default function Home() {
     }
   }, []);
 
-  // ==========================================
-  // ЖИВОЙ ДРАКОША
-  // ==========================================
+  // ==============================
+  // СЛУЧАЙНЫЕ ДЕЙСТВИЯ ДРАКОШИ
+  // ==============================
 
   useEffect(() => {
     let actionTimer;
@@ -338,33 +389,45 @@ export default function Home() {
 
     function scheduleAction() {
       const delay =
-        Math.floor(Math.random() * 15000) +
-        12000;
+        Math.floor(
+          Math.random() * 15000
+        ) + 12000;
 
-      actionTimer = setTimeout(() => {
-        const randomAction =
-          actions[
-            Math.floor(
-              Math.random() * actions.length
-            )
-          ];
+      actionTimer =
+        setTimeout(() => {
+          const randomAction =
+            actions[
+              Math.floor(
+                Math.random() *
+                  actions.length
+              )
+            ];
 
-        const randomBubble =
-          bubbles[
-            Math.floor(
-              Math.random() * bubbles.length
-            )
-          ];
+          const randomBubble =
+            bubbles[
+              Math.floor(
+                Math.random() *
+                  bubbles.length
+              )
+            ];
 
-        setDrakoshaAction(randomAction);
-        setDrakoshaBubble(randomBubble);
+          setDrakoshaAction(
+            randomAction
+          );
 
-        resetTimer = setTimeout(() => {
-          setDrakoshaAction("idle");
+          setDrakoshaBubble(
+            randomBubble
+          );
 
-          scheduleAction();
-        }, 1800);
-      }, delay);
+          resetTimer =
+            setTimeout(() => {
+              setDrakoshaAction(
+                "idle"
+              );
+
+              scheduleAction();
+            }, 1800);
+        }, delay);
     }
 
     scheduleAction();
@@ -375,31 +438,121 @@ export default function Home() {
     };
   }, []);
 
-  // ==========================================
-  // ВРЕМЯ И РАСПИСАНИЕ
-  // ==========================================
+  // ==============================
+  // DOMIK
+  // ==============================
 
-  const timeOfDay = getTimeOfDay();
+  function openDragonHouse() {
+    const phrase =
+      dragonPhrases[
+        Math.floor(
+          Math.random() *
+            dragonPhrases.length
+        )
+      ];
+
+    setDragonHousePhrase(phrase);
+    setDragonHouseOpen(true);
+  }
+
+  // ==============================
+  // RED BUTTON
+  // ==============================
+
+  function pressRedButton() {
+    const newCount =
+      redButtonCount + 1;
+
+    setRedButtonCount(newCount);
+
+    const index =
+      Math.min(
+        newCount - 1,
+        redButtonPhrases.length - 1
+      );
+
+    setRedButtonText(
+      redButtonPhrases[index]
+    );
+
+    if (newCount === 9) {
+      setShowKiss(true);
+
+      setTimeout(() => {
+        setShowKiss(false);
+      }, 1500);
+    }
+  }
+
+  // ==============================
+  // ПАСХАЛКА ПОГОДЫ
+  // ==============================
+
+  function weatherEgg() {
+    const clicks =
+      weatherClicks + 1;
+
+    setWeatherClicks(clicks);
+
+    if (clicks === 5) {
+      setEasterEgg(
+        "🌦️ Секрет найден: погода официально находится под контролем Дракоши."
+      );
+
+      setWeatherClicks(0);
+    }
+  }
+
+  // ==============================
+  // ПАСХАЛКА ПОДПИСИ
+  // ==============================
+
+  function signatureEgg() {
+    const clicks =
+      signatureClicks + 1;
+
+    setSignatureClicks(clicks);
+
+    if (clicks === 4) {
+      setEasterEgg(
+        "❤️ Обсидик был здесь. И вообще-то очень скучает."
+      );
+
+      setSignatureClicks(0);
+    }
+  }
+
+  const timeOfDay =
+    getTimeOfDay();
 
   const currentSchedule =
     getCurrentScheduleItem();
 
-  const currentDay = getCurrentDay();
+  const currentDay =
+    getCurrentDay();
 
   const minskTime =
-    new Intl.DateTimeFormat("ru-RU", {
-      timeZone: "Europe/Minsk",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hourCycle: "h23",
-    }).format(now);
+    new Intl.DateTimeFormat(
+      "ru-RU",
+      {
+        timeZone:
+          "Europe/Minsk",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23",
+      }
+    ).format(now);
 
-  // ==========================================
-  // СООБЩЕНИЕ ДНЯ
-  // ==========================================
+  const minskHour =
+    getMinskHour();
 
-  const today = new Date();
+  const isNight =
+    minskHour >= 22 ||
+    minskHour < 6;
+
+  const today =
+    new Date();
 
   const message =
     dailyMessages[
@@ -410,27 +563,311 @@ export default function Home() {
             today.getMonth(),
             today.getDate()
           ) -
-          new Date(2026, 0, 1)
+          new Date(
+            2026,
+            0,
+            1
+          )
         ) /
           86400000
-      ) % dailyMessages.length
+      ) %
+        dailyMessages.length
     ];
-
-  // ==========================================
-  // РЕНДЕР
-  // ==========================================
 
   return (
     <main
       className={`kessichka-page ${timeOfDay}`}
     >
+      <style>
+        {`
+
+        /* =========================
+           НОВЫЕ ШТУКИ
+        ========================= */
+
+        .fun-zone {
+          margin-top: 18px;
+          display: grid;
+          gap: 12px;
+        }
+
+        .fun-card {
+          padding: 16px;
+          border-radius: 20px;
+
+          border:
+            1px solid
+            rgba(255,255,255,.08);
+
+          background:
+            rgba(255,255,255,.045);
+
+          color: white;
+
+          text-align: left;
+        }
+
+        .fun-card-title {
+          margin: 0 0 6px;
+          font-size: 14px;
+          font-weight: 800;
+        }
+
+        .fun-card-text {
+          margin: 0;
+          font-size: 13px;
+          opacity: .65;
+          line-height: 1.5;
+        }
+
+        .fun-button {
+          width: 100%;
+          margin-top: 11px;
+
+          padding: 11px 14px;
+
+          border: 0;
+          border-radius: 14px;
+
+          background:
+            rgba(255,255,255,.09);
+
+          color: white;
+
+          font-weight: 700;
+
+          cursor: pointer;
+        }
+
+        /* ДОМ ДРАКОШИ */
+
+        .dragon-house-button {
+          background:
+            linear-gradient(
+              135deg,
+              rgba(120,100,255,.18),
+              rgba(255,100,180,.12)
+            );
+        }
+
+        /* НОЧНАЯ ЗВЕЗДА */
+
+        .night-secret-button {
+          font-size: 25px;
+
+          animation:
+            secretStar 2.5s
+            ease-in-out infinite;
+        }
+
+        @keyframes secretStar {
+          0%,100% {
+            transform: scale(1);
+            opacity: .75;
+          }
+
+          50% {
+            transform: scale(1.12);
+            opacity: 1;
+          }
+        }
+
+        /* КРАСНАЯ КНОПКА */
+
+        .danger-button {
+          background:
+            linear-gradient(
+              135deg,
+              #b60028,
+              #5f0016
+            );
+
+          box-shadow:
+            0 10px 30px
+            rgba(255,0,60,.18);
+
+          transition:
+            transform .15s ease;
+        }
+
+        .danger-button:active {
+          transform:
+            scale(.95);
+        }
+
+        .danger-count {
+          margin-top: 8px;
+
+          font-size: 11px;
+          opacity: .4;
+        }
+
+        /* MODAL */
+
+        .mini-modal {
+          position: fixed;
+          inset: 0;
+
+          z-index: 50000;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          padding: 25px;
+
+          background:
+            rgba(0,0,0,.72);
+
+          backdrop-filter:
+            blur(12px);
+        }
+
+        .mini-modal-card {
+          width: 100%;
+          max-width: 370px;
+
+          padding: 26px 22px;
+
+          border-radius: 28px;
+
+          background:
+            linear-gradient(
+              145deg,
+              #211422,
+              #100b12
+            );
+
+          border:
+            1px solid
+            rgba(255,255,255,.1);
+
+          box-shadow:
+            0 30px 90px
+            rgba(0,0,0,.5);
+
+          text-align: center;
+        }
+
+        .modal-dragon {
+          width: 150px;
+          max-width: 70%;
+
+          filter:
+            drop-shadow(
+              0 15px 25px
+              rgba(100,100,230,.25)
+            );
+        }
+
+        .modal-title {
+          margin:
+            10px 0 8px;
+
+          font-size: 22px;
+        }
+
+        .modal-text {
+          margin: 0;
+
+          font-size: 15px;
+          line-height: 1.6;
+
+          opacity: .8;
+        }
+
+        .modal-close {
+          margin-top: 18px;
+
+          padding: 10px 18px;
+
+          border: 0;
+          border-radius: 14px;
+
+          background:
+            rgba(255,255,255,.1);
+
+          color: white;
+
+          font-weight: 700;
+        }
+
+        /* ПАСХАЛКА */
+
+        .easter-overlay {
+          position: fixed;
+          left: 50%;
+          bottom: 25px;
+
+          z-index: 60000;
+
+          width:
+            min(
+              calc(100% - 30px),
+              420px
+            );
+
+          padding: 15px 16px;
+
+          transform:
+            translateX(-50%);
+
+          border-radius: 18px;
+
+          background:
+            rgba(20,12,22,.94);
+
+          border:
+            1px solid
+            rgba(255,120,170,.25);
+
+          box-shadow:
+            0 20px 50px
+            rgba(0,0,0,.45);
+
+          color: white;
+
+          text-align: center;
+
+          font-size: 13px;
+
+          animation:
+            eggAppear .3s ease;
+        }
+
+        @keyframes eggAppear {
+          from {
+            opacity: 0;
+            transform:
+              translateX(-50%)
+              translateY(20px);
+          }
+
+          to {
+            opacity: 1;
+            transform:
+              translateX(-50%)
+              translateY(0);
+          }
+        }
+
+        `}
+      </style>
+
       <section className="kessichka-card">
 
         <div className="kessichka-sun">
-          {timeOfDay === "morning" && "🌅"}
-          {timeOfDay === "day" && "☀️"}
-          {timeOfDay === "evening" && "🌆"}
-          {timeOfDay === "night" && "🌙"}
+          {timeOfDay === "morning" &&
+            "🌅"}
+
+          {timeOfDay === "day" &&
+            "☀️"}
+
+          {timeOfDay === "evening" &&
+            "🌆"}
+
+          {timeOfDay === "night" &&
+            "🌙"}
         </div>
 
         <p className="kessichka-label">
@@ -460,8 +897,6 @@ export default function Home() {
           и иногда улыбайся.
         </p>
 
-        {/* РАСПИСАНИЕ */}
-
         {currentSchedule && (
           <div className="daily-message">
 
@@ -472,7 +907,8 @@ export default function Home() {
                 marginBottom: "8px",
               }}
             >
-              Сейчас по Минску: {minskTime}
+              Сейчас по Минску:{" "}
+              {minskTime}
             </div>
 
             <div className="daily-message-label">
@@ -496,8 +932,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* СООБЩЕНИЕ ДНЯ */}
-
         <div className="daily-message">
 
           <div className="daily-message-label">
@@ -510,9 +944,10 @@ export default function Home() {
 
         </div>
 
-        {/* ПОГОДА */}
-
-        <div className="weather-card">
+        <div
+          className="weather-card"
+          onClick={weatherEgg}
+        >
 
           <div className="weather-icon">
             {weather?.error
@@ -526,7 +961,8 @@ export default function Home() {
 
           {!weather && (
             <p className="weather-text">
-              Смотрю, что там у тебя за окном...
+              Смотрю, что там у тебя
+              за окном...
             </p>
           )}
 
@@ -564,9 +1000,13 @@ export default function Home() {
 
                 <p className="weather-text">
                   Сегодня от{" "}
-                  {Math.round(weather.min)}
+                  {Math.round(
+                    weather.min
+                  )}
                   ° до{" "}
-                  {Math.round(weather.max)}
+                  {Math.round(
+                    weather.max
+                  )}
                   °C
                 </p>
 
@@ -585,32 +1025,100 @@ export default function Home() {
 
         </div>
 
-        {/* =====================================
-            ДРАКОША
-        ===================================== */}
+        {/* =========================
+            НОВЫЕ ШТУКИ
+        ========================= */}
 
-        <div
-          className={`drakosha-floating ${drakoshaAction}`}
-        >
-          <div className="drakosha-bubble">
-            {drakoshaBubble}
+        <div className="fun-zone">
+
+          {/* ДОМ ДРАКОШИ */}
+
+          <div className="fun-card">
+            <p className="fun-card-title">
+              🏠 Домик Дракоши
+            </p>
+
+            <p className="fun-card-text">
+              Иногда он дома. Иногда занят
+              очень важными драконьими
+              делами.
+            </p>
+
+            <button
+              className="
+                fun-button
+                dragon-house-button
+              "
+              onClick={
+                openDragonHouse
+              }
+            >
+              Постучать 🐉
+            </button>
           </div>
 
-          <img
-            src="/drakosha.png"
-            alt="Дракоша"
-            className="drakosha-image"
-            onClick={() => {
-              setShowKiss(true);
+          {/* НОЧНОЙ СЕКРЕТ */}
 
-              setTimeout(() => {
-                setShowKiss(false);
-              }, 1500);
-            }}
-          />
+          {isNight && (
+            <div className="fun-card">
+              <p className="fun-card-title">
+                🌙 Что это там?
+              </p>
+
+              <p className="fun-card-text">
+                Эта штука появляется только
+                ночью по Минску.
+              </p>
+
+              <button
+                className="
+                  fun-button
+                  night-secret-button
+                "
+                onClick={() =>
+                  setNightSecretOpen(
+                    true
+                  )
+                }
+              >
+                ✨
+              </button>
+            </div>
+          )}
+
+          {/* КРАСНАЯ КНОПКА */}
+
+          <div className="fun-card">
+            <p className="fun-card-title">
+              🔴 Очень важная кнопка
+            </p>
+
+            <p className="fun-card-text">
+              Инструкция максимально
+              простая.
+            </p>
+
+            <button
+              className="
+                fun-button
+                danger-button
+              "
+              onClick={
+                pressRedButton
+              }
+            >
+              {redButtonText}
+            </button>
+
+            {redButtonCount > 0 && (
+              <div className="danger-count">
+                Нажато:{" "}
+                {redButtonCount}
+              </div>
+            )}
+          </div>
+
         </div>
-
-        {/* PUSH */}
 
         {!pushEnabled && (
           <button
@@ -632,11 +1140,153 @@ export default function Home() {
           </div>
         )}
 
-        <p className="signature">
+        <p
+          className="signature"
+          onClick={
+            signatureEgg
+          }
+        >
           Обсидик ❤️
         </p>
 
       </section>
+
+      {/* =========================
+          ДРАКОША
+      ========================= */}
+
+      <div
+        className={`drakosha-floating ${drakoshaAction}`}
+      >
+        <div className="drakosha-bubble">
+          {drakoshaBubble}
+        </div>
+
+        <img
+          src="/drakosha.png"
+          alt="Дракоша"
+          className="drakosha-image"
+          onClick={() => {
+            setShowKiss(true);
+
+            setTimeout(() => {
+              setShowKiss(false);
+            }, 1500);
+          }}
+        />
+      </div>
+
+      {/* =========================
+          ДОМИК ДРАКОШИ
+      ========================= */}
+
+      {dragonHouseOpen && (
+        <div className="mini-modal">
+
+          <div className="mini-modal-card">
+
+            <img
+              src="/drakosha.png"
+              alt="Дракоша"
+              className="modal-dragon"
+            />
+
+            <h2 className="modal-title">
+              Домик Дракоши 🐉
+            </h2>
+
+            <p className="modal-text">
+              {dragonHousePhrase}
+            </p>
+
+            <button
+              className="modal-close"
+              onClick={() =>
+                setDragonHouseOpen(
+                  false
+                )
+              }
+            >
+              Закрыть
+            </button>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* =========================
+          НОЧНОЙ СЕКРЕТ
+      ========================= */}
+
+      {nightSecretOpen && (
+        <div className="mini-modal">
+
+          <div className="mini-modal-card">
+
+            <div
+              style={{
+                fontSize: "60px",
+              }}
+            >
+              🌙
+            </div>
+
+            <h2 className="modal-title">
+              Ночной секрет
+            </h2>
+
+            <p className="modal-text">
+              Если ты это нашла —
+              значит уже поздно.
+              Отдыхай иногда, бус.
+              И сладких снов ❤️
+            </p>
+
+            <button
+              className="modal-close"
+              onClick={() =>
+                setNightSecretOpen(
+                  false
+                )
+              }
+            >
+              Тьмок и спать 💋
+            </button>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* =========================
+          ПАСХАЛКА
+      ========================= */}
+
+      {easterEgg && (
+        <div
+          className="easter-overlay"
+          onClick={() =>
+            setEasterEgg("")
+          }
+        >
+          {easterEgg}
+
+          <div
+            style={{
+              marginTop: "5px",
+              opacity: 0.4,
+              fontSize: "10px",
+            }}
+          >
+            тыкни, чтобы закрыть
+          </div>
+        </div>
+      )}
+
+      {/* =========================
+          ТЬМОК
+      ========================= */}
 
       {showKiss && (
         <div className="kiss-overlay">
