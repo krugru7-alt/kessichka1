@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./globals.css";
 
 import {
@@ -40,6 +40,70 @@ const redButtonPhrases = [
   "Ты победила кнопку. Наверное.",
   "💋 ШТРАФНОЙ ТЬМОК!",
   "Всё. Кнопка увольняется.",
+];
+
+
+const warmNotes = [
+  "Не забывай: где-то далеко есть человек, которому очень важно, как прошёл твой день. ❤️",
+  "Сегодня ничего не обязано быть идеально. Главное — береги себя.",
+  "Если день шумный, вот тебе маленький тихий уголок. 🌷",
+  "Записка без повода: ты очень-очень ценная буська.",
+  "В случае сложного дня разрешается завернуться в плед и временно отменить взрослую жизнь.",
+  "Если ты сейчас улыбаешься — эта записка сработала 😌",
+  "Оставляю здесь немного тепла. Вдруг пригодится позже.",
+  "Даже если забежала сюда на минуту — тьмок тебе всё равно положен. 💋",
+];
+
+const dragonDiaryEntries = [
+  "День прошёл продуктивно: охранял сайт, смотрел в стену, съел воображаемую печеньку.",
+  "Сегодня нашёл подозрительный носок. Ведётся расследование.",
+  "Пытался управлять погодой в Минске. Пока получается только выглядеть уверенно.",
+  "Охранял буську. Никого подозрительного, кроме Обсидика, не обнаружено.",
+  "Спал 14 часов. Очень устал после такого насыщенного дня.",
+  "Проверил запасы тьмоков. Требуется срочное пополнение.",
+  "Сегодня ничего не сломал. Прошу занести это достижение в историю.",
+];
+
+const littlePermissions = [
+  "не отвечать всем сразу",
+  "сделать паузу без объяснений",
+  "съесть что-нибудь вкусное",
+  "отложить несрочное на завтра",
+  "посмеяться с какой-нибудь фигни",
+  "побыть в тишине",
+  "выбрать себя хотя бы на час",
+];
+
+const tinyInternetNews = [
+  "Дракоша замечен рядом с прогнозом погоды. Делает вид, что это не он.",
+  "В Минске снова обнаружена одна буська. Состояние: прекрасное.",
+  "Обсидик скучает. Эксперты сообщают: ничего нового.",
+  "На сайте зафиксирован повышенный уровень уюта.",
+  "Неизвестный оставил здесь ❤️. Подозреваемых двое.",
+  "Дракоша запросил отпуск. Заявление отклонено.",
+  "Система сообщает: вероятность тьмока сегодня — 100%.",
+  "Срочная новость: можно не успеть всё и всё равно быть молодцом.",
+];
+
+const flowerStages = ["🌱", "🌱", "🌿", "🌿", "🪴", "🌷", "🌷"];
+
+const wallMessages = [
+  "ты здесь ↓",
+  "береги себя",
+  "не мёрзни",
+  "поешь, бус",
+  "ты важная ❤️",
+  "улыбнись, если можешь",
+  "возвращайся потом",
+];
+
+const polaroidCaptions = [
+  "somewhere far away ❤️",
+  "маленький хороший день",
+  "дракоша был здесь",
+  "для памяти",
+  "одна буська в интернете",
+  "тихий момент",
 ];
 
 function urlBase64ToUint8Array(base64String) {
@@ -197,25 +261,6 @@ export default function Home() {
 
   const [redButtonText, setRedButtonText] =
     useState("НЕ НАЖИМАТЬ");
-
-  // ==============================
-  // ЖИВЫЕ ЭФФЕКТЫ САЙТА
-  // ==============================
-
-  const [showPawTrail, setShowPawTrail] =
-    useState(false);
-
-  const [flyingHeart, setFlyingHeart] =
-    useState(null);
-
-  const [heartCaught, setHeartCaught] =
-    useState(false);
-
-  const [sparkles, setSparkles] =
-    useState([]);
-
-  const sparkleIdRef = useRef(0);
-  const lastSparkleRef = useRef(0);
 
   // ==============================
   // PUSH
@@ -458,122 +503,6 @@ export default function Home() {
   }, []);
 
   // ==============================
-  // СЛЕДЫ ДРАКОШИ
-  // ==============================
-
-  useEffect(() => {
-    let timer;
-    let hideTimer;
-
-    function schedulePaws() {
-      const delay =
-        Math.floor(Math.random() * 25000) +
-        25000;
-
-      timer = setTimeout(() => {
-        setShowPawTrail(true);
-
-        hideTimer = setTimeout(() => {
-          setShowPawTrail(false);
-          schedulePaws();
-        }, 6500);
-      }, delay);
-    }
-
-    schedulePaws();
-
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(hideTimer);
-    };
-  }, []);
-
-  // ==============================
-  // ЛЕТАЮЩЕЕ СЕРДЕЧКО
-  // ==============================
-
-  useEffect(() => {
-    let timer;
-    let hideTimer;
-
-    function scheduleHeart() {
-      const delay =
-        Math.floor(Math.random() * 30000) +
-        25000;
-
-      timer = setTimeout(() => {
-        setFlyingHeart(
-          Math.random() > 0.5
-            ? "left-to-right"
-            : "right-to-left"
-        );
-
-        hideTimer = setTimeout(() => {
-          setFlyingHeart(null);
-          scheduleHeart();
-        }, 8500);
-      }, delay);
-    }
-
-    scheduleHeart();
-
-    return () => {
-      clearTimeout(timer);
-      clearTimeout(hideTimer);
-    };
-  }, []);
-
-  function catchFlyingHeart() {
-    setFlyingHeart(null);
-    setHeartCaught(true);
-
-    setTimeout(() => {
-      setHeartCaught(false);
-    }, 1200);
-  }
-
-  // ==============================
-  // ИСКОРКИ ОТ ПАЛЬЦА / МЫШКИ
-  // ==============================
-
-  function createSparkle(event) {
-    const time = Date.now();
-
-    if (time - lastSparkleRef.current < 90) {
-      return;
-    }
-
-    lastSparkleRef.current = time;
-    sparkleIdRef.current += 1;
-
-    const id = sparkleIdRef.current;
-
-    const sparkle = {
-      id,
-      x: event.clientX,
-      y: event.clientY,
-      symbol:
-        id % 3 === 0
-          ? "♡"
-          : id % 2 === 0
-            ? "✦"
-            : "·",
-    };
-
-    setSparkles((current) =>
-      [...current.slice(-14), sparkle]
-    );
-
-    setTimeout(() => {
-      setSparkles((current) =>
-        current.filter((item) =>
-          item.id !== id
-        )
-      );
-    }, 900);
-  }
-
-  // ==============================
   // DOMIK
   // ==============================
 
@@ -709,10 +638,83 @@ export default function Home() {
         dailyMessages.length
     ];
 
+  // ==============================
+  // МАЛЕНЬКИЙ МИР КЭССИЧКИ
+  // Всё ниже меняется само по дате.
+  // ==============================
+
+  const minskDateKey =
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Europe/Minsk",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(now);
+
+  const worldSeed =
+    Number(
+      minskDateKey.replace(/\D/g, "")
+    ) || 1;
+
+  const warmNote =
+    warmNotes[
+      worldSeed % warmNotes.length
+    ];
+
+  const dragonDiary =
+    dragonDiaryEntries[
+      (worldSeed + 2) %
+        dragonDiaryEntries.length
+    ];
+
+  const todayPermission =
+    littlePermissions[
+      (worldSeed + 4) %
+        littlePermissions.length
+    ];
+
+  const flowerStage =
+    flowerStages[
+      worldSeed % flowerStages.length
+    ];
+
+  const wallMessage =
+    wallMessages[
+      (worldSeed + 1) %
+        wallMessages.length
+    ];
+
+  const polaroidCaption =
+    polaroidCaptions[
+      (worldSeed + 3) %
+        polaroidCaptions.length
+    ];
+
+  const todaysNews = [
+    tinyInternetNews[
+      worldSeed %
+        tinyInternetNews.length
+    ],
+    tinyInternetNews[
+      (worldSeed + 3) %
+        tinyInternetNews.length
+    ],
+    tinyInternetNews[
+      (worldSeed + 5) %
+        tinyInternetNews.length
+    ],
+  ];
+
+  const prettyMinskDate =
+    new Intl.DateTimeFormat("ru-RU", {
+      timeZone: "Europe/Minsk",
+      day: "numeric",
+      month: "long",
+    }).format(now);
+
   return (
     <main
-      className={`kessichka-page ${timeOfDay}`}
-      onPointerMove={createSparkle}
+      className={`kessichka-page ${timeOfDay} world-page`}
     >
       <style>
         {`
@@ -987,331 +989,554 @@ export default function Home() {
           }
         }
 
+
         /* =========================
-           ЖИВЫЕ ЭФФЕКТЫ
+           МАЛЕНЬКИЙ МИР КЭССИЧКИ
         ========================= */
 
-        .ambient-layer {
-          position: fixed;
+        .world-page {
+          display: block !important;
+          overflow-x: hidden !important;
+          overflow-y: visible !important;
+          padding-bottom: 150px !important;
+        }
+
+        .world-page > .kessichka-card {
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .kessichka-world {
+          position: relative;
+          width: min(100%, 980px);
+          min-height: 1250px;
+          margin: 54px auto 0;
+          padding: 30px 18px 80px;
+          isolation: isolate;
+        }
+
+        .world-glow {
+          position: absolute;
           inset: 0;
-          z-index: 30;
+          z-index: -2;
           pointer-events: none;
-          overflow: hidden;
+          background:
+            radial-gradient(circle at 18% 16%, rgba(255,90,150,.10), transparent 22%),
+            radial-gradient(circle at 80% 42%, rgba(135,105,255,.10), transparent 24%),
+            radial-gradient(circle at 35% 82%, rgba(255,190,220,.06), transparent 25%);
         }
 
-        .paw-trail {
-          position: fixed;
-          left: -30px;
-          bottom: 118px;
-          z-index: 1200;
-          width: calc(100vw + 60px);
-          height: 90px;
-          pointer-events: none;
-        }
-
-        .paw-print {
+        .dragon-path {
           position: absolute;
-          bottom: 0;
-          font-size: 22px;
-          opacity: 0;
-          filter: drop-shadow(0 4px 10px rgba(180,150,255,.25));
-          animation: pawAppear 4.8s ease forwards;
+          left: 50%;
+          top: 85px;
+          bottom: 105px;
+          width: 2px;
+          z-index: -1;
+          opacity: .22;
+          background:
+            repeating-linear-gradient(
+              to bottom,
+              rgba(255,180,210,.8) 0 6px,
+              transparent 6px 17px
+            );
+          transform: translateX(-50%) rotate(3deg);
         }
 
-        .paw-print:nth-child(1) { left: 3%; animation-delay: 0s; transform: rotate(-18deg); }
-        .paw-print:nth-child(2) { left: 13%; bottom: 22px; animation-delay: .28s; transform: rotate(13deg); }
-        .paw-print:nth-child(3) { left: 24%; animation-delay: .56s; transform: rotate(-13deg); }
-        .paw-print:nth-child(4) { left: 35%; bottom: 20px; animation-delay: .84s; transform: rotate(16deg); }
-        .paw-print:nth-child(5) { left: 46%; animation-delay: 1.12s; transform: rotate(-12deg); }
-        .paw-print:nth-child(6) { left: 57%; bottom: 22px; animation-delay: 1.4s; transform: rotate(14deg); }
-        .paw-print:nth-child(7) { left: 68%; animation-delay: 1.68s; transform: rotate(-14deg); }
-        .paw-print:nth-child(8) { left: 79%; bottom: 20px; animation-delay: 1.96s; transform: rotate(16deg); }
-        .paw-print:nth-child(9) { left: 89%; animation-delay: 2.24s; transform: rotate(-10deg); }
+        .world-piece {
+          position: relative;
+          width: min(78%, 390px);
+          border: 1px solid rgba(255,255,255,.09);
+          box-shadow: 0 24px 60px rgba(0,0,0,.25);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+        }
 
-        .paw-found-heart {
+        .sticky-note {
+          margin-left: 1%;
+          padding: 23px 21px 22px;
+          border-radius: 7px 18px 16px 11px;
+          background:
+            linear-gradient(
+              145deg,
+              rgba(255,224,234,.16),
+              rgba(255,120,160,.07)
+            );
+          transform: rotate(-2.3deg);
+        }
+
+        .sticky-note::before {
+          content: "📎";
           position: absolute;
-          right: 3%;
-          bottom: 5px;
-          font-size: 25px;
-          opacity: 0;
-          animation: pawHeart 2s ease 2.8s forwards;
+          top: -17px;
+          right: 22px;
+          font-size: 24px;
+          transform: rotate(14deg);
         }
 
-        @keyframes pawAppear {
-          0% { opacity: 0; transform: translateY(10px) scale(.6); }
-          15% { opacity: .85; }
-          58% { opacity: .85; }
-          100% { opacity: 0; transform: translateY(-4px) scale(1); }
+        .world-kicker {
+          margin: 0 0 9px;
+          color: #ff9ab7;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 2px;
+          text-transform: uppercase;
         }
 
-        @keyframes pawHeart {
-          0% { opacity: 0; transform: scale(.4); }
-          35% { opacity: 1; transform: scale(1.18); }
-          70% { opacity: 1; transform: scale(1); }
-          100% { opacity: 0; transform: translateY(-12px) scale(.9); }
+        .world-copy {
+          margin: 0;
+          color: rgba(255,255,255,.88);
+          font-size: 15px;
+          line-height: 1.65;
         }
 
-        .flying-heart {
-          position: fixed;
-          top: 36%;
-          z-index: 3000;
+        .flower-corner {
+          width: min(62%, 300px);
+          margin: 58px 1% 0 auto;
+          padding: 18px 20px;
+          border-radius: 24px 7px 21px 18px;
+          background:
+            linear-gradient(
+              145deg,
+              rgba(125,210,150,.10),
+              rgba(255,255,255,.035)
+            );
+          text-align: right;
+          transform: rotate(1.8deg);
+        }
+
+        .flower-stage {
+          display: block;
+          margin-bottom: 8px;
+          font-size: 52px;
+          line-height: 1;
+          filter: drop-shadow(0 12px 22px rgba(100,210,140,.17));
+        }
+
+        .flower-small {
+          margin: 0;
+          color: rgba(255,255,255,.55);
+          font-size: 12px;
+          line-height: 1.55;
+        }
+
+        .diary-piece {
+          width: min(76%, 430px);
+          margin: 80px auto 0 3%;
+          padding: 25px 23px;
+          border-radius: 26px 20px 7px 25px;
+          background:
+            linear-gradient(
+              145deg,
+              rgba(115,100,230,.13),
+              rgba(255,255,255,.035)
+            );
+          transform: rotate(1deg);
+        }
+
+        .diary-heading {
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          margin-bottom: 11px;
+          color: #fff;
+          font-size: 17px;
+          font-weight: 800;
+        }
+
+        .diary-meta {
+          margin-top: 12px;
+          color: rgba(255,190,215,.65);
+          font-size: 11px;
+        }
+
+        .polaroid-piece {
+          width: 230px;
+          margin: -52px 3% 0 auto;
+          padding: 11px 11px 17px;
           border: 0;
-          padding: 8px;
+          border-radius: 6px;
+          background: rgba(250,245,247,.92);
+          box-shadow: 0 25px 60px rgba(0,0,0,.32);
+          color: #31262c;
+          transform: rotate(5deg);
+        }
+
+        .polaroid-photo {
+          height: 180px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 2px;
+          background:
+            radial-gradient(circle at 35% 28%, rgba(255,190,220,.75), transparent 26%),
+            linear-gradient(145deg, #776a91, #2d2638 62%, #15131a);
+          font-size: 64px;
+          box-shadow: inset 0 0 40px rgba(0,0,0,.18);
+        }
+
+        .polaroid-caption {
+          margin: 11px 4px 0;
+          font-family: "Comic Sans MS", "Segoe Print", cursive;
+          font-size: 12px;
+          text-align: center;
+          transform: rotate(-1deg);
+        }
+
+        .thread-piece {
+          width: 92%;
+          margin: 88px auto 0;
+          padding: 23px 18px 25px;
+          border: 0;
+          box-shadow: none;
           background: transparent;
-          font-size: 34px;
-          cursor: pointer;
-          filter: drop-shadow(0 8px 18px rgba(255,80,145,.45));
-          -webkit-tap-highlight-color: transparent;
         }
 
-        .flying-heart.left-to-right {
-          left: -70px;
-          animation: flyHeartRight 8s linear forwards;
+        .thread-labels {
+          display: flex;
+          justify-content: space-between;
+          gap: 14px;
+          color: rgba(255,255,255,.78);
+          font-size: 12px;
+          font-weight: 700;
         }
 
-        .flying-heart.right-to-left {
-          right: -70px;
-          animation: flyHeartLeft 8s linear forwards;
+        .thread-line {
+          position: relative;
+          height: 1px;
+          margin: 19px 10px 15px;
+          background:
+            linear-gradient(
+              90deg,
+              rgba(255,90,145,.25),
+              rgba(255,150,190,.8),
+              rgba(150,120,255,.7),
+              rgba(255,90,145,.25)
+            );
+          box-shadow: 0 0 18px rgba(255,95,155,.18);
         }
 
-        @keyframes flyHeartRight {
-          0% { transform: translateX(0) translateY(0) rotate(-8deg); }
-          20% { transform: translateX(22vw) translateY(-45px) rotate(8deg); }
-          45% { transform: translateX(48vw) translateY(20px) rotate(-6deg); }
-          70% { transform: translateX(74vw) translateY(-35px) rotate(8deg); }
-          100% { transform: translateX(calc(100vw + 100px)) translateY(10px) rotate(0); }
+        .thread-line::before,
+        .thread-line::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          background: #ff8fb0;
+          box-shadow: 0 0 15px rgba(255,100,155,.65);
+          transform: translateY(-50%);
         }
 
-        @keyframes flyHeartLeft {
-          0% { transform: translateX(0) translateY(0) rotate(8deg); }
-          20% { transform: translateX(-22vw) translateY(-45px) rotate(-8deg); }
-          45% { transform: translateX(-48vw) translateY(20px) rotate(6deg); }
-          70% { transform: translateX(-74vw) translateY(-35px) rotate(-8deg); }
-          100% { transform: translateX(calc(-100vw - 100px)) translateY(10px) rotate(0); }
-        }
+        .thread-line::before { left: -2px; }
+        .thread-line::after { right: -2px; }
 
-        .heart-caught {
-          position: fixed;
+        .thread-heart {
+          position: absolute;
           left: 50%;
           top: 50%;
-          z-index: 50000;
-          pointer-events: none;
+          padding: 0 8px;
+          background: #120b11;
           transform: translate(-50%, -50%);
-          font-size: 46px;
-          animation: caughtHeart 1.2s ease forwards;
+          font-size: 18px;
         }
 
-        @keyframes caughtHeart {
-          0% { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
-          35% { opacity: 1; transform: translate(-50%, -50%) scale(1.45); }
-          100% { opacity: 0; transform: translate(-50%, -80%) scale(.9); }
+        .thread-note {
+          margin: 0;
+          color: rgba(255,255,255,.5);
+          font-size: 11px;
+          text-align: center;
         }
 
-        .pointer-sparkle {
-          position: fixed;
-          z-index: 2500;
-          pointer-events: none;
-          color: rgba(255,210,235,.95);
-          font-size: 16px;
-          text-shadow: 0 0 12px rgba(255,110,180,.8);
-          animation: sparkleFade .9s ease-out forwards;
+        .permission-piece {
+          width: min(69%, 350px);
+          margin: 58px 5% 0 auto;
+          padding: 22px 20px;
+          border-radius: 25px 8px 23px 18px;
+          background:
+            linear-gradient(
+              145deg,
+              rgba(255,140,175,.11),
+              rgba(255,255,255,.025)
+            );
+          transform: rotate(-1.5deg);
         }
 
-        @keyframes sparkleFade {
-          0% { opacity: 0; transform: translate(-50%, -50%) scale(.4); }
-          25% { opacity: 1; }
-          100% { opacity: 0; transform: translate(-50%, -90%) scale(1.15) rotate(18deg); }
+        .permission-main {
+          margin: 4px 0 0;
+          color: #fff;
+          font-size: 20px;
+          font-weight: 800;
+          line-height: 1.3;
         }
 
-        .weather-fx {
-          position: fixed;
-          inset: 0;
-          z-index: 25;
-          pointer-events: none;
+        .world-wall {
+          position: relative;
+          width: 94%;
+          min-height: 350px;
+          margin: 90px auto 0;
           overflow: hidden;
+          border: 1px solid rgba(255,255,255,.07);
+          border-radius: 34px;
+          background:
+            linear-gradient(rgba(255,255,255,.025), rgba(255,255,255,.015)),
+            repeating-linear-gradient(
+              0deg,
+              transparent 0 31px,
+              rgba(255,255,255,.018) 31px 32px
+            );
+          box-shadow:
+            inset 0 1px 0 rgba(255,255,255,.025),
+            0 30px 90px rgba(0,0,0,.2);
         }
 
-        .rain-drop {
+        .wall-title {
           position: absolute;
-          top: -80px;
-          width: 1px;
-          height: 34px;
-          background: linear-gradient(to bottom, transparent, rgba(190,215,255,.55));
-          animation: rainFall 1.25s linear infinite;
+          top: 24px;
+          left: 50%;
+          color: rgba(255,255,255,.35);
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 4px;
+          text-transform: uppercase;
+          transform: translateX(-50%);
+          white-space: nowrap;
         }
 
-        .rain-drop:nth-child(1) { left: 4%; animation-delay: -.2s; }
-        .rain-drop:nth-child(2) { left: 12%; animation-delay: -.8s; }
-        .rain-drop:nth-child(3) { left: 20%; animation-delay: -.45s; }
-        .rain-drop:nth-child(4) { left: 29%; animation-delay: -1.1s; }
-        .rain-drop:nth-child(5) { left: 38%; animation-delay: -.65s; }
-        .rain-drop:nth-child(6) { left: 47%; animation-delay: -.05s; }
-        .rain-drop:nth-child(7) { left: 56%; animation-delay: -.9s; }
-        .rain-drop:nth-child(8) { left: 64%; animation-delay: -.35s; }
-        .rain-drop:nth-child(9) { left: 73%; animation-delay: -1.15s; }
-        .rain-drop:nth-child(10) { left: 81%; animation-delay: -.55s; }
-        .rain-drop:nth-child(11) { left: 90%; animation-delay: -.15s; }
-        .rain-drop:nth-child(12) { left: 97%; animation-delay: -.75s; }
-
-        @keyframes rainFall {
-          to { transform: translate(-28px, calc(100vh + 150px)); opacity: .15; }
-        }
-
-        .snow-flake {
+        .wall-you {
           position: absolute;
-          top: -40px;
+          top: 82px;
+          left: 50%;
+          color: rgba(255,255,255,.8);
+          text-align: center;
+          transform: translateX(-50%) rotate(-1deg);
+        }
+
+        .wall-you-arrow {
+          display: block;
+          margin-top: 3px;
+          color: #ff88ab;
+          font-size: 23px;
+        }
+
+        .wall-note-a,
+        .wall-note-b {
+          position: absolute;
+          padding: 13px 14px;
+          color: #33242c;
+          font-family: "Comic Sans MS", "Segoe Print", cursive;
+          font-size: 12px;
+          line-height: 1.45;
+          box-shadow: 0 12px 28px rgba(0,0,0,.18);
+        }
+
+        .wall-note-a {
+          left: 7%;
+          top: 155px;
+          width: 140px;
+          background: #f6d8e3;
+          transform: rotate(-6deg);
+        }
+
+        .wall-note-b {
+          right: 7%;
+          top: 180px;
+          width: 145px;
+          background: #ddd7f3;
+          transform: rotate(5deg);
+        }
+
+        .wall-dragon {
+          position: absolute;
+          left: 48%;
+          bottom: 35px;
+          font-size: 40px;
+          transform: rotate(-5deg);
+          filter: drop-shadow(0 8px 15px rgba(0,0,0,.25));
+        }
+
+        .wall-flower {
+          position: absolute;
+          left: 18%;
+          bottom: 27px;
+          font-size: 27px;
+        }
+
+        .wall-star {
+          position: absolute;
+          right: 19%;
+          bottom: 45px;
+          color: #ffdbe6;
+          font-size: 20px;
+          opacity: .75;
+        }
+
+        .internet-piece {
+          width: 88%;
+          margin: 78px auto 0;
+          padding: 8px 0;
+          border: 0;
+          box-shadow: none;
+          background: transparent;
+        }
+
+        .internet-title {
+          margin: 0 0 24px;
+          color: rgba(255,255,255,.5);
+          font-size: 11px;
+          font-weight: 800;
+          letter-spacing: 3px;
+          text-align: center;
+          text-transform: uppercase;
+        }
+
+        .news-row {
+          display: grid;
+          grid-template-columns: 60px 1fr;
+          gap: 13px;
+          align-items: start;
+          margin-bottom: 17px;
+        }
+
+        .news-row:nth-child(odd) {
+          margin-left: 10%;
+        }
+
+        .news-time {
+          color: #ff84a9;
+          font-size: 11px;
+          font-variant-numeric: tabular-nums;
+          opacity: .7;
+        }
+
+        .news-copy {
+          position: relative;
+          margin: 0;
+          padding-left: 17px;
           color: rgba(255,255,255,.72);
-          font-size: 15px;
-          animation: snowFall 7s linear infinite;
+          font-size: 13px;
+          line-height: 1.55;
         }
 
-        .snow-flake:nth-child(1) { left: 5%; animation-delay: -1s; }
-        .snow-flake:nth-child(2) { left: 14%; animation-delay: -4s; font-size: 10px; }
-        .snow-flake:nth-child(3) { left: 23%; animation-delay: -2s; }
-        .snow-flake:nth-child(4) { left: 34%; animation-delay: -6s; font-size: 12px; }
-        .snow-flake:nth-child(5) { left: 43%; animation-delay: -3s; }
-        .snow-flake:nth-child(6) { left: 52%; animation-delay: -.5s; font-size: 9px; }
-        .snow-flake:nth-child(7) { left: 61%; animation-delay: -5s; }
-        .snow-flake:nth-child(8) { left: 70%; animation-delay: -2.5s; font-size: 11px; }
-        .snow-flake:nth-child(9) { left: 79%; animation-delay: -6.5s; }
-        .snow-flake:nth-child(10) { left: 88%; animation-delay: -1.5s; font-size: 10px; }
-        .snow-flake:nth-child(11) { left: 95%; animation-delay: -4.5s; }
-
-        @keyframes snowFall {
-          0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-          10% { opacity: .8; }
-          55% { transform: translate(25px, 55vh) rotate(170deg); }
-          100% { transform: translate(-15px, calc(100vh + 80px)) rotate(360deg); opacity: .1; }
-        }
-
-        .sun-glow-fx {
+        .news-copy::before {
+          content: "";
           position: absolute;
-          top: -18%;
-          right: -20%;
-          width: 70vw;
-          height: 70vw;
-          max-width: 650px;
-          max-height: 650px;
+          left: 0;
+          top: 6px;
+          width: 6px;
+          height: 6px;
           border-radius: 50%;
-          background: radial-gradient(circle, rgba(255,215,135,.11), transparent 68%);
-          animation: sunGlowMove 7s ease-in-out infinite;
+          background: rgba(255,125,170,.75);
+          box-shadow: 0 0 12px rgba(255,100,155,.35);
         }
 
-        @keyframes sunGlowMove {
-          0%,100% { transform: scale(.95); opacity: .45; }
-          50% { transform: scale(1.08); opacity: .85; }
+        .goodbye-piece {
+          width: min(80%, 480px);
+          margin: 94px auto 0;
+          padding: 28px 22px;
+          border: 0;
+          box-shadow: none;
+          background: transparent;
+          text-align: center;
         }
 
-        .storm-flash {
-          position: absolute;
-          inset: 0;
-          background: rgba(220,225,255,.13);
-          opacity: 0;
-          animation: stormFlash 8s linear infinite;
+        .goodbye-small {
+          margin: 0 0 9px;
+          color: rgba(255,255,255,.32);
+          font-size: 10px;
+          letter-spacing: 3px;
+          text-transform: uppercase;
         }
 
-        @keyframes stormFlash {
-          0%, 74%, 78%, 100% { opacity: 0; }
-          75% { opacity: .35; }
-          76% { opacity: .03; }
-          77% { opacity: .22; }
+        .goodbye-main {
+          margin: 0;
+          color: rgba(255,255,255,.86);
+          font-size: clamp(20px, 5vw, 30px);
+          font-weight: 700;
+          line-height: 1.4;
         }
 
-        @media (max-width: 480px) {
-          .paw-trail { bottom: 96px; }
-          .paw-print { font-size: 18px; }
-          .flying-heart { font-size: 30px; }
+        .goodbye-heart {
+          display: block;
+          margin-top: 14px;
+          font-size: 22px;
+          opacity: .75;
+        }
+
+        @media (max-width: 650px) {
+          .world-page {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+          }
+
+          .kessichka-world {
+            min-height: 1340px;
+            margin-top: 40px;
+            padding-left: 4px;
+            padding-right: 4px;
+          }
+
+          .world-piece {
+            width: 80%;
+          }
+
+          .sticky-note {
+            margin-left: 0;
+          }
+
+          .flower-corner {
+            width: 58%;
+            margin-right: 0;
+          }
+
+          .diary-piece {
+            width: 79%;
+            margin-left: 0;
+          }
+
+          .polaroid-piece {
+            width: 190px;
+            margin-top: -20px;
+            margin-right: 0;
+          }
+
+          .polaroid-photo {
+            height: 145px;
+            font-size: 52px;
+          }
+
+          .thread-piece {
+            width: 100%;
+          }
+
+          .permission-piece {
+            width: 76%;
+            margin-right: 0;
+          }
+
+          .world-wall {
+            width: 100%;
+            min-height: 330px;
+          }
+
+          .wall-note-a {
+            left: 4%;
+            width: 126px;
+          }
+
+          .wall-note-b {
+            right: 4%;
+            width: 126px;
+          }
+
+          .internet-piece {
+            width: 96%;
+          }
         }
 
         `}
       </style>
-
-      {/* =========================
-          ЖИВЫЕ ЭФФЕКТЫ
-      ========================= */}
-
-      <div className="ambient-layer">
-        {sparkles.map((sparkle) => (
-          <span
-            key={sparkle.id}
-            className="pointer-sparkle"
-            style={{
-              left: sparkle.x,
-              top: sparkle.y,
-            }}
-          >
-            {sparkle.symbol}
-          </span>
-        ))}
-      </div>
-
-      {showPawTrail && (
-        <div className="paw-trail">
-          {Array.from({ length: 9 }).map((_, index) => (
-            <span
-              key={index}
-              className="paw-print"
-            >
-              🐾
-            </span>
-          ))}
-
-          <span className="paw-found-heart">
-            ❤️
-          </span>
-        </div>
-      )}
-
-      {flyingHeart && (
-        <button
-          type="button"
-          className={`flying-heart ${flyingHeart}`}
-          onClick={catchFlyingHeart}
-          aria-label="Поймать сердечко"
-        >
-          💗
-        </button>
-      )}
-
-      {heartCaught && (
-        <div className="heart-caught">
-          💗 ✨ 💗
-        </div>
-      )}
-
-      {weather && !weather.error && (
-        <div className="weather-fx">
-          {[51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(
-            weather.weatherCode
-          ) &&
-            Array.from({ length: 12 }).map((_, index) => (
-              <span
-                key={`rain-${index}`}
-                className="rain-drop"
-              />
-            ))}
-
-          {[71, 73, 75, 77, 85, 86].includes(
-            weather.weatherCode
-          ) &&
-            Array.from({ length: 11 }).map((_, index) => (
-              <span
-                key={`snow-${index}`}
-                className="snow-flake"
-              >
-                ❄
-              </span>
-            ))}
-
-          {weather.weatherCode === 0 && (
-            <div className="sun-glow-fx" />
-          )}
-
-          {[95, 96, 99].includes(weather.weatherCode) && (
-            <div className="storm-flash" />
-          )}
-        </div>
-      )}
 
       <section className="kessichka-card">
 
@@ -1607,6 +1832,174 @@ export default function Home() {
         >
           Обсидик ❤️
         </p>
+
+      </section>
+
+      {/* =========================
+          МАЛЕНЬКИЙ МИР КЭССИЧКИ
+          Здесь специально нет одной
+          центральной колонки.
+      ========================= */}
+
+      <section className="kessichka-world">
+
+        <div className="world-glow" />
+        <div className="dragon-path" />
+
+        <article className="world-piece sticky-note">
+          <p className="world-kicker">
+            записка, оставленная тут
+          </p>
+
+          <p className="world-copy">
+            {warmNote}
+          </p>
+        </article>
+
+        <article className="world-piece flower-corner">
+          <span className="flower-stage">
+            {flowerStage}
+          </span>
+
+          <p className="world-kicker">
+            маленькая штука растёт сама
+          </p>
+
+          <p className="flower-small">
+            Сегодня — {prettyMinskDate}.
+            Завтра она может выглядеть
+            уже немного иначе.
+          </p>
+        </article>
+
+        <article className="world-piece diary-piece">
+          <div className="diary-heading">
+            <span>🐉</span>
+            <span>Дракошин дневник</span>
+          </div>
+
+          <p className="world-copy">
+            {dragonDiary}
+          </p>
+
+          <div className="diary-meta">
+            запись от {prettyMinskDate}
+          </div>
+        </article>
+
+        <article className="world-piece polaroid-piece">
+          <div className="polaroid-photo">
+            🐉
+          </div>
+
+          <p className="polaroid-caption">
+            {polaroidCaption}
+          </p>
+        </article>
+
+        <article className="world-piece thread-piece">
+          <div className="thread-labels">
+            <span>Обсидик</span>
+            <span>Кэссичка</span>
+          </div>
+
+          <div className="thread-line">
+            <span className="thread-heart">
+              ❤️
+            </span>
+          </div>
+
+          <p className="thread-note">
+            расстояние большое.
+            нить всё равно работает.
+          </p>
+        </article>
+
+        <article className="world-piece permission-piece">
+          <p className="world-kicker">
+            сегодня официально можно
+          </p>
+
+          <p className="permission-main">
+            {todayPermission}.
+          </p>
+        </article>
+
+        <section className="world-wall">
+          <div className="wall-title">
+            маленькая стена
+          </div>
+
+          <div className="wall-you">
+            YOU ARE HERE
+            <span className="wall-you-arrow">
+              ↓
+            </span>
+            ❤️
+          </div>
+
+          <div className="wall-note-a">
+            {wallMessage}
+          </div>
+
+          <div className="wall-note-b">
+            скучаю вообще-то
+            <br />
+            — Обсидик
+          </div>
+
+          <div className="wall-flower">
+            🌷
+          </div>
+
+          <div className="wall-dragon">
+            🐉
+          </div>
+
+          <div className="wall-star">
+            ✦
+          </div>
+        </section>
+
+        <section className="world-piece internet-piece">
+          <h2 className="internet-title">
+            наш маленький интернет
+          </h2>
+
+          {todaysNews.map((news, index) => (
+            <div
+              className="news-row"
+              key={`${news}-${index}`}
+            >
+              <div className="news-time">
+                {[
+                  "12:41",
+                  "15:08",
+                  "18:31",
+                ][index]}
+              </div>
+
+              <p className="news-copy">
+                {news}
+              </p>
+            </div>
+          ))}
+        </section>
+
+        <footer className="world-piece goodbye-piece">
+          <p className="goodbye-small">
+            перед тем как уйдёшь
+          </p>
+
+          <p className="goodbye-main">
+            Иди занимайся своими делами.
+            Здесь всё останется на месте.
+          </p>
+
+          <span className="goodbye-heart">
+            береги себя ❤️
+          </span>
+        </footer>
 
       </section>
 
