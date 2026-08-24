@@ -987,29 +987,35 @@ button {
 }
 
 /* =========================
-   ДРАКОША ХОДИТ ПО ЭКРАНУ
-   ПОКАДРОВАЯ АНИМАЦИЯ ЛАПОК
+   ДРАКОША ИДЁТ ПО ЭКРАНУ
+   НЕ ЛЕТИТ, А ТОПАЕТ
 ========================= */
 
 .drakosha-floating {
   left: 8px !important;
   right: auto !important;
 
-  --drakosha-distance: calc(100vw - 145px);
+  --drakosha-distance:
+    calc(100vw - 145px);
 
   animation: none;
 
+  /*
+    Вместо плавного скольжения
+    делаем движение ступеньками.
+  */
   transition:
-    transform 2.8s linear;
+    transform 2.8s steps(12, end);
 }
 
-/* ЛЕВЫЙ УГОЛ */
+/* ЛЕВАЯ СТОРОНА */
 
 .drakosha-floating.left {
-  transform: translateX(0);
+  transform:
+    translateX(0);
 }
 
-/* ПРАВЫЙ УГОЛ */
+/* ПРАВАЯ СТОРОНА */
 
 .drakosha-floating.right {
   transform:
@@ -1019,45 +1025,91 @@ button {
 }
 
 /* =========================
-   КОГДА ДРАКОША СТОИТ
+   КОГДА СТОИТ
 ========================= */
 
 .drakosha-floating:not(.walking)
 .drakosha-image {
   animation:
-    drakoshaIdleImage 3s
+    drakoshaIdle 3s
     ease-in-out infinite;
 }
 
-@keyframes drakoshaIdleImage {
+@keyframes drakoshaIdle {
   0%,
   100% {
-    transform: translateY(0);
+    transform:
+      translateY(0);
   }
 
   50% {
-    transform: translateY(-7px);
+    transform:
+      translateY(-4px);
   }
 }
 
 /* =========================
-   КОГДА ДРАКОША ИДЁТ
+   КОГДА ИДЁТ
 ========================= */
-
-/*
-  Здесь специально НЕТ тряски.
-  Лапки двигаются сменой walk_1 — walk_4.
-*/
 
 .drakosha-floating.walking
 .drakosha-image {
-  animation: none;
-  transform: none;
+  animation:
+    drakoshaBodyWalk
+    0.36s
+    steps(2, end)
+    infinite;
 }
+
+/*
+  Корпус слегка приседает
+  на каждом "шаге".
+*/
+
+@keyframes drakoshaBodyWalk {
+  0% {
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+
+  50% {
+    transform:
+      translateY(5px)
+      rotate(2deg);
+  }
+
+  100% {
+    transform:
+      translateY(0)
+      rotate(-2deg);
+  }
+}
+
+/* =========================
+   ОБЛАЧКО ПРИ ХОДЬБЕ
+========================= */
 
 .drakosha-floating.walking
 .drakosha-bubble {
-  animation: none;
+  animation:
+    drakoshaBubbleWalk
+    0.36s
+    steps(2, end)
+    infinite;
+}
+
+@keyframes drakoshaBubbleWalk {
+  0%,
+  100% {
+    transform:
+      translateY(0);
+  }
+
+  50% {
+    transform:
+      translateY(3px);
+  }
 }
 
 /* =========================
