@@ -317,64 +317,84 @@ export default function Home() {
   }, []);
 
   // ==========================================
-  // ДРАКОША ХОДИТ ТУДА-СЮДА
-  // ==========================================
+ 
+// ==========================================
+// ЖИВОЙ ДРАКОША
+// ==========================================
 
-  useEffect(() => {
-    let waitTimer;
-    let walkTimer;
+useEffect(() => {
+  let waitTimer;
+  let walkTimer;
 
-    function scheduleMove() {
-      const delay =
-        Math.floor(Math.random() * 15000) +
-        15000;
+  function startWaiting() {
+    const delay =
+      Math.floor(Math.random() * 20000) +
+      20000;
 
-      waitTimer = setTimeout(() => {
-        setDrakoshaWalking(true);
+    waitTimer = setTimeout(() => {
+      setDrakoshaWalking(true);
 
-        setDrakoshaSide((current) =>
-          current === "right"
-            ? "left"
-            : "right"
+      let currentPosition =
+        drakoshaDirection === "left"
+          ? 16
+          : 0;
+
+      let currentFrame = 1;
+
+      walkTimer = setInterval(() => {
+        currentFrame =
+          currentFrame >= 8
+            ? 1
+            : currentFrame + 1;
+
+        setDrakoshaFrame(currentFrame);
+
+        if (drakoshaDirection === "left") {
+          currentPosition -= 1;
+        } else {
+          currentPosition += 1;
+        }
+
+        setDrakoshaPosition(
+          currentPosition
         );
 
-        walkTimer = setTimeout(() => {
+        
+        const finishedLeft =
+          drakoshaDirection === "left" &&
+          currentPosition <= 0;
+
+        const finishedRight =
+          drakoshaDirection === "right" &&
+          currentPosition >= 16;
+
+        if (
+          finishedLeft ||
+          finishedRight
+        ) {
+          clearInterval(walkTimer);
+
           setDrakoshaWalking(false);
+          setDrakoshaFrame(1);
 
-          scheduleMove();
-        }, 2800);
-      }, delay);
-    }
+          setDrakoshaDirection(
+            drakoshaDirection === "left"
+              ? "right"
+              : "left"
+          );
+        }
+      }, 180);
+    }, delay);
+  }
 
-    scheduleMove();
+  startWaiting();
 
-    return () => {
-      clearTimeout(waitTimer);
-      clearTimeout(walkTimer);
-    };
-  }, []);
-
-  // ==========================================
-  // 8 КАДРОВ НАСТОЯЩЕЙ ХОДЬБЫ
-  // ==========================================
-
-  useEffect(() => {
-    if (!drakoshaWalking) {
-      setDrakoshaFrame(1);
-      return;
-    }
-
-    const frameTimer = setInterval(() => {
-  setDrakoshaFrame((current) =>
-    current >= 8 ? 1 : current + 1
-  );
-}, 350);
-
-    return () => {
-      clearInterval(frameTimer);
-    };
-  }, [drakoshaWalking]);
-
+  return () => {
+    clearTimeout(waitTimer);
+    clearInterval(walkTimer);
+  };
+}, [drakoshaDirection]);
+ 
   // ==========================================
   // ВРЕМЯ И РАСПИСАНИЕ
   // ==========================================
@@ -589,37 +609,39 @@ export default function Home() {
             ДРАКОША
         ===================================== */}
 
-        <div
-          className={`drakosha-floating ${drakoshaSide} ${
-            drakoshaWalking
-              ? "walking"
-              : ""
-          }`}
-        >
+       <div
+  className={`drakosha-floating ${
+    drakoshaWalking
+      ? "walking"
+      : "idle"
+  }`}
+  style={{
+    "--drakosha-position":
+      drakoshaPosition,
+  }}
+>
           <div className="drakosha-bubble">
             Тыкни 👀
           </div>
 
-          <img
-            src={
-              drakoshaWalking
-                ? `/drakosha/${
-                    drakoshaSide === "right"
-                      ? "right"
-                      : "left"
-                  }_${drakoshaFrame}.png`
-                : "/drakosha.png"
-            }
-            alt="Дракоша"
-            className="drakosha-image"
-            onClick={() => {
-              setShowKiss(true);
+         <img
+  src={
+    drakoshaWalking
+      ? `/drakosha/${
+          drakoshaDirection
+        }_${drakoshaFrame}.png`
+      : "/drakosha.png"
+  }
+  alt="Дракоша"
+  className="drakosha-image"
+  onClick={() => {
+    setShowKiss(true);
 
-              setTimeout(() => {
-                setShowKiss(false);
-              }, 1500);
-            }}
-          />
+    setTimeout(() => {
+      setShowKiss(false);
+    }, 1500);
+  }}
+/>
         </div>
 
         {/* PUSH */}
