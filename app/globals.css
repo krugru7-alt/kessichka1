@@ -1061,41 +1061,77 @@ button {
 
 
 /* =========================
-   КОГДА ДРАКОША ИДЁТ
+   ЖИВОЙ ДРАКОША
 ========================= */
 
-/*
-  Никакой тряски.
-  Лапки анимируются сменой
-  right_1 - right_8
-  и
-  left_1 - left_8
-*/
+.drakosha-floating {
+  position: fixed;
+
+  left: 8px !important;
+  right: auto !important;
+  bottom: 8px;
+
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  transform:
+    translateX(
+      calc(
+        (100vw - 145px) /
+        16 *
+        var(--drakosha-position)
+      )
+    );
+
+  transition: none !important;
+  animation: none !important;
+}
+
+
+/* =========================
+   КОГДА СТОИТ
+========================= */
+
+.drakosha-floating.idle
+.drakosha-image {
+  animation:
+    drakoshaBreathing
+    3.2s
+    ease-in-out
+    infinite;
+}
+
+@keyframes drakoshaBreathing {
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translateY(-2px)
+      scale(1.015);
+  }
+}
+
+
+/* =========================
+   КОГДА ИДЁТ
+========================= */
 
 .drakosha-floating.walking
 .drakosha-image {
-  animation:
-    drakoshaRealStep 0.35s
-    ease-in-out
-    infinite !important;
-}
-
-@keyframes drakoshaRealStep {
-  0% {
-    transform: translateY(0);
-  }
-
-  45% {
-    transform: translateY(-3px);
-  }
-
-  100% {
-    transform: translateY(0);
-  }
+  animation: none !important;
+  transform: none !important;
 }
 
 
-/* Облачко тоже не трясём */
+/* Облачко во время ходьбы не трясём */
 
 .drakosha-floating.walking
 .drakosha-bubble {
@@ -1111,10 +1147,15 @@ button {
 
   .drakosha-floating {
     left: 4px !important;
-    right: auto !important;
 
-    --drakosha-distance:
-      calc(100vw - 108px);
+    transform:
+      translateX(
+        calc(
+          (100vw - 108px) /
+          16 *
+          var(--drakosha-position)
+        )
+      );
   }
 
 }
