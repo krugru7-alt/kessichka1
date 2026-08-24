@@ -985,133 +985,43 @@ button {
     font-size: 10px;
   }
 }
-/* =========================
-   ДРАКОША ПЕРЕБИРАЕТСЯ
-   СЛЕВА НАПРАВО
-========================= */
 
-
-
-
-
-/* Пока Дракоша идёт,
-   обычное парение выключаем */
-
-.drakosha-floating.walking {
-  animation: none;
-}
-
-/* Топ-топ лапками */
-
-.drakosha-floating.walking
-.drakosha-image {
-  animation:
-    drakoshaWalkSteps
-    0.3s
-    ease-in-out
-    infinite;
-}
-
-/* Облачко тоже немного качается */
-
-.drakosha-floating.walking
-.drakosha-bubble {
-  animation:
-    drakoshaBubbleWalk
-    0.3s
-    ease-in-out
-    infinite;
-}
-
-@keyframes drakoshaWalkSteps {
-  0% {
-    transform:
-      translateY(0)
-      rotate(-4deg);
-  }
-
-  25% {
-    transform:
-      translateY(-5px)
-      rotate(4deg);
-  }
-
-  50% {
-    transform:
-      translateY(0)
-      rotate(-4deg);
-  }
-
-  75% {
-    transform:
-      translateY(-5px)
-      rotate(4deg);
-  }
-
-  100% {
-    transform:
-      translateY(0)
-      rotate(-4deg);
-  }
-}
-
-@keyframes drakoshaBubbleWalk {
-  0%,
-  100% {
-    transform:
-      translateY(0)
-      rotate(-2deg);
-  }
-
-  50% {
-    transform:
-      translateY(-3px)
-      rotate(2deg);
-  }
-}
-
-/* Телефон */
-
-@media (max-width: 480px) {
-  .drakosha-floating.right {
-    right: 4px;
-    left: auto;
-  }
-
-  .drakosha-floating.left {
-    left: 4px;
-    right: auto;
-  }
-}
 /* =========================
    ДРАКОША ХОДИТ ПО ЭКРАНУ
+   И ПЕРЕБИРАЕТ ЛАПКАМИ
 ========================= */
 
 /*
-  Дракоша всегда физически стоит слева.
-  В правый угол мы переносим его transform-ом.
-  Благодаря этому браузер может плавно
-  анимировать весь путь.
+  ВАЖНО:
+  старое оформление сайта выше не меняется.
+  Здесь только переопределяется движение Дракоши.
 */
 
 .drakosha-floating {
   left: 8px !important;
   right: auto !important;
 
-  --drakosha-distance:
-    calc(100vw - 145px);
+  --drakosha-distance: calc(100vw - 145px);
 
   transition:
     transform 2.8s linear;
+
+  /*
+    Когда Дракоша просто сидит,
+    сохраняем его лёгкое парение.
+  */
+  animation:
+    drakoshaFloat 3s
+    ease-in-out infinite;
 }
 
-/* Слева */
+/* ЛЕВЫЙ УГОЛ */
 
 .drakosha-floating.left {
   transform: translateX(0);
 }
 
-/* Справа */
+/* ПРАВЫЙ УГОЛ */
 
 .drakosha-floating.right {
   transform:
@@ -1120,10 +1030,25 @@ button {
     );
 }
 
-
 /* =========================
-   ТОП-ТОП ЛАПКАМИ
+   ВО ВРЕМЯ ХОДЬБЫ
 ========================= */
+
+/*
+  Отключаем обычное парение контейнера,
+  чтобы оно не конфликтовало
+  с перемещением по экрану.
+*/
+
+.drakosha-floating.walking {
+  animation: none;
+}
+
+/*
+  Сам Дракоша покачивается вверх-вниз
+  и влево-вправо — получается эффект
+  "топ-топ" лапками.
+*/
 
 .drakosha-floating.walking
 .drakosha-image {
@@ -1134,8 +1059,10 @@ button {
     infinite;
 }
 
-
-/* Пока идёт — облачко тоже трясётся */
+/*
+  Облачко тоже слегка качается,
+  пока Дракоша идёт.
+*/
 
 .drakosha-floating.walking
 .drakosha-bubble {
@@ -1146,12 +1073,9 @@ button {
     infinite;
 }
 
-
-/*
-  Покачивание создаёт ощущение,
-  будто он переносит вес с лапки
-  на лапку.
-*/
+/* =========================
+   ТОП-ТОП ЛАПКАМИ
+========================= */
 
 @keyframes drakoshaTopTop {
   0% {
@@ -1190,6 +1114,9 @@ button {
   }
 }
 
+/* =========================
+   ОБЛАЧКО ПРИ ХОДЬБЕ
+========================= */
 
 @keyframes drakoshaWalkingBubble {
   0%,
@@ -1206,7 +1133,6 @@ button {
   }
 }
 
-
 /* =========================
    ТЕЛЕФОН
 ========================= */
@@ -1214,6 +1140,7 @@ button {
 @media (max-width: 480px) {
   .drakosha-floating {
     left: 4px !important;
+    right: auto !important;
 
     --drakosha-distance:
       calc(100vw - 108px);
