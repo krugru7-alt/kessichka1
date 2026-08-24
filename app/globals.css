@@ -917,3 +917,122 @@ button {
 
   color: rgba(255, 255, 255, 0.55);
 }
+/* =========================
+   ЧМОК ОТ ДРАКОШИ
+========================= */
+
+.kiss-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 9999;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 80, 140, 0.35),
+      rgba(20, 5, 15, 0.95)
+    );
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  animation: kissFade 1.5s ease forwards;
+
+  pointer-events: none;
+}
+
+.kiss-mark {
+  font-size: clamp(100px, 35vw, 220px);
+
+  animation: kissPop 0.55s ease-out;
+}
+
+.kiss-title {
+  margin-top: -10px;
+
+  font-size: clamp(50px, 18vw, 110px);
+  font-weight: 900;
+
+  color: white;
+
+  text-shadow:
+    0 0 30px rgba(255, 50, 120, 0.8);
+
+  animation: kissPop 0.65s ease-out;
+}
+
+.kiss-subtitle {
+  margin-top: 10px;
+
+  font-size: 18px;
+
+  color: rgba(255, 220, 235, 0.95);
+}
+
+.kiss-hearts {
+  position: absolute;
+
+  top: 12%;
+
+  font-size: 28px;
+
+  letter-spacing: 12px;
+
+  animation: heartsFloat 1.4s ease-in-out;
+}
+
+@keyframes kissPop {
+  0% {
+    transform: scale(0.2) rotate(-10deg);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.15) rotate(3deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes kissFade {
+  0% {
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes heartsFloat {
+  0% {
+    transform: translateY(30px) scale(0.8);
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-60px) scale(1.2);
+    opacity: 0;
+  }
+}
