@@ -132,6 +132,7 @@ export default function Home() {
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
   const [now, setNow] = useState(new Date());
+  const [showKiss, setShowKiss] = useState(false);
 
   // ==========================================
   // PUSH УВЕДОМЛЕНИЯ
@@ -522,10 +523,17 @@ export default function Home() {
   </p>
 
   <img
-    src="/drakosha.png"
-    alt="Дракоша"
-    className="drakosha-image"
-  />
+  src="/drakosha.png"
+  alt="Дракоша"
+  className="drakosha-image"
+  onClick={() => {
+    setShowKiss(true);
+
+    setTimeout(() => {
+      setShowKiss(false);
+    }, 1500);
+  }}
+/>
 
   <p className="drakosha-text">
     Тыкни на меня 👀
@@ -561,6 +569,25 @@ export default function Home() {
         </p>
 
       </section>
+          {showKiss && (
+  <div className="kiss-overlay">
+    <div className="kiss-hearts">
+      ❤️ 💗 💕 ❤️ 💗
+    </div>
+
+    <div className="kiss-mark">
+      💋
+    </div>
+
+    <div className="kiss-title">
+      ЧМОК!
+    </div>
+
+    <div className="kiss-subtitle">
+      поймала тьмок ❤️
+    </div>
+  </div>
+)}
     </main>
   );
 }
