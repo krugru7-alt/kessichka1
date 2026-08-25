@@ -16,8 +16,8 @@ const items = [
   },
   {
     href: "/room",
-    icon: "⌑",
-    label: "Уголок",
+    icon: "◌",
+    label: "Следы",
   },
   {
     href: "/for-you",
