@@ -116,17 +116,17 @@ export default function HomePage() {
 
         <div className="portal-grid">
           <Link
-            className="portal-card dragon-card"
-            href="/dragon"
+            className="portal-card flip-card"
+            href="/flip"
           >
-            <span className="portal-icon">🐉</span>
+            <span className="portal-icon">↻</span>
 
             <div>
-              <small>кто-то опять что-то делает</small>
-              <b>Дракоша</b>
+              <small>только не делай этого</small>
+              <b>Не переворачивай</b>
               <p>
-                Домик, дневник и очень важные
-                драконьи дела.
+                Наклоняй телефон, тряси его и
+                попробуй найти все странности.
               </p>
             </div>
 
