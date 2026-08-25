@@ -10,9 +10,9 @@ const items = [
     label: "Главная",
   },
   {
-    href: "/dragon",
-    icon: "🐉",
-    label: "Дракоша",
+    href: "/flip",
+    icon: "↻",
+    label: "Не переворачивай",
   },
   {
     href: "/for-you",
@@ -39,9 +39,7 @@ export default function BottomNav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`nav-item ${
-              active ? "active" : ""
-            }`}
+            className={`nav-item ${active ? "active" : ""}`}
           >
             <span className="nav-icon">
               {item.icon}
