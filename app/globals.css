@@ -4769,4 +4769,770 @@ body:has(.traces-page) .topbar {
     animation: none !important;
   }
 }
+/* =====================================================
+   НЕ ПЕРЕВОРАЧИВАЙ
+   app/flip/page.js
+===================================================== */
+
+.dontflip-page {
+  width: min(100%, 920px);
+  min-height: calc(100svh - 90px);
+
+  margin: 0 auto;
+  padding: 0 8px 96px;
+}
+
+.dontflip-stage {
+  position: relative;
+
+  min-height: calc(100svh - 148px);
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 231, 224, .07);
+
+  border-radius: 30px;
+
+  background:
+    radial-gradient(
+      circle at 18% 14%,
+      rgba(180, 92, 111, .18),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 82% 76%,
+      rgba(124, 85, 114, .15),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 52% 48%,
+      rgba(255, 205, 187, .035),
+      transparent 34%
+    ),
+    linear-gradient(
+      155deg,
+      #2a2025 0%,
+      #211a1f 48%,
+      #19171b 100%
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    inset 0 -40px 80px rgba(0,0,0,.10),
+    0 28px 70px rgba(0,0,0,.22);
+
+  isolation: isolate;
+}
+
+.dontflip-stage::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  opacity: .18;
+
+  pointer-events: none;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(255, 234, 227, .25) 0 .7px,
+      transparent .9px
+    );
+
+  background-size:
+    28px 28px;
+}
+
+.dontflip-stage::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  z-index: 1;
+
+  width: 520px;
+  height: 520px;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(225, 135, 150, .055),
+      transparent 68%
+    );
+
+  filter: blur(8px);
+}
+
+.dontflip-canvas {
+  position: absolute;
+  inset: 0;
+
+  z-index: 6;
+
+  width: 100%;
+  height: 100%;
+
+  touch-action: manipulation;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.dontflip-header {
+  position: relative;
+
+  z-index: 15;
+
+  padding:
+    24px 21px 0;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  pointer-events: none;
+}
+
+.dontflip-header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.dontflip-header small {
+  color:
+    rgba(255, 220, 211, .34);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: .21em;
+}
+
+.dontflip-header h1 {
+  margin: 0;
+
+  max-width: 260px;
+
+  color:
+    rgba(255, 242, 237, .93);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(29px, 7vw, 45px);
+
+  font-weight: 400;
+
+  line-height: .98;
+
+  letter-spacing: -.035em;
+}
+
+.dontflip-found {
+  margin-top: 7px;
+
+  color:
+    rgba(255, 226, 218, .23);
+
+  font-size: 8px;
+
+  letter-spacing: .06em;
+
+  white-space: nowrap;
+}
+
+/* =====================================================
+   ПЕРВАЯ ФРАЗА
+===================================================== */
+
+.dontflip-intro {
+  position: absolute;
+
+  left: 50%;
+  top: 51%;
+
+  z-index: 12;
+
+  transform:
+    translate(-50%, -50%);
+
+  width: min(80%, 320px);
+
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+
+  text-align: center;
+
+  pointer-events: none;
+
+  animation:
+    flipIntroFloat
+    3.3s ease-in-out infinite;
+}
+
+.dontflip-intro p {
+  margin: 0;
+
+  color:
+    rgba(255, 237, 231, .52);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(15px, 4.2vw, 20px);
+
+  letter-spacing: -.015em;
+}
+
+.dontflip-intro small {
+  color:
+    rgba(255, 216, 208, .20);
+
+  font-size: 8px;
+
+  letter-spacing: .10em;
+}
+
+/* =====================================================
+   РАЗРЕШЕНИЕ НА ДВИЖЕНИЕ
+===================================================== */
+
+.motion-permission {
+  position: absolute;
+
+  left: 50%;
+  bottom: 13%;
+
+  z-index: 30;
+
+  transform:
+    translateX(-50%);
+
+  width: min(82%, 330px);
+
+  padding:
+    13px 15px;
+
+  display: grid;
+  grid-template-columns:
+    34px 1fr;
+  grid-template-areas:
+    "icon title"
+    "icon text";
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 2px;
+
+  border:
+    1px solid
+    rgba(255, 231, 224, .09);
+
+  border-radius:
+    18px;
+
+  color:
+    rgba(255, 239, 234, .80);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.055),
+      rgba(255,255,255,.018)
+    );
+
+  backdrop-filter:
+    blur(14px);
+
+  -webkit-backdrop-filter:
+    blur(14px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 14px 40px rgba(0,0,0,.16);
+
+  text-align: left;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.motion-permission span {
+  grid-area: icon;
+
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(218, 128, 145, .11);
+
+  color:
+    rgba(255, 208, 200, .68);
+
+  font-size: 18px;
+}
+
+.motion-permission b {
+  grid-area: title;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: .01em;
+}
+
+.motion-permission small {
+  grid-area: text;
+
+  color:
+    rgba(255, 226, 218, .31);
+
+  font-size: 8px;
+
+  line-height: 1.35;
+}
+
+/* =====================================================
+   РЕАКЦИИ
+===================================================== */
+
+.dontflip-message {
+  position: absolute;
+
+  left: 50%;
+  bottom: 21%;
+
+  z-index: 25;
+
+  transform:
+    translateX(-50%);
+
+  width: max-content;
+  max-width: 78%;
+
+  padding:
+    8px 11px;
+
+  border:
+    1px solid
+    rgba(255, 229, 221, .055);
+
+  border-radius:
+    999px;
+
+  color:
+    rgba(255, 235, 229, .56);
+
+  background:
+    rgba(37, 29, 34, .45);
+
+  backdrop-filter:
+    blur(10px);
+
+  -webkit-backdrop-filter:
+    blur(10px);
+
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.12);
+
+  font-size: 9px;
+
+  letter-spacing:
+    .02em;
+
+  text-align: center;
+
+  pointer-events: none;
+
+  animation:
+    flipMessage
+    2.3s ease both;
+}
+
+/* =====================================================
+   ТИХОЕ СОСТОЯНИЕ / "ЗАСНУЛ"
+===================================================== */
+
+.dontflip-stage.is-quiet::after {
+  background:
+    radial-gradient(
+      circle,
+      rgba(232, 174, 164, .10),
+      rgba(194, 121, 145, .035) 38%,
+      transparent 69%
+    );
+
+  animation:
+    quietGlowBreath
+    4.8s ease-in-out infinite;
+}
+
+.quiet-sleep {
+  position: absolute;
+
+  right: 17%;
+  bottom: 27%;
+
+  z-index: 18;
+
+  width: 50px;
+  height: 48px;
+
+  pointer-events: none;
+}
+
+.quiet-sleep span {
+  position: absolute;
+
+  color:
+    rgba(255, 226, 218, .28);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  animation:
+    sleepyZ
+    3s ease-in-out infinite;
+}
+
+.quiet-sleep span:nth-child(1) {
+  left: 4px;
+  bottom: 2px;
+
+  font-size: 11px;
+}
+
+.quiet-sleep span:nth-child(2) {
+  left: 19px;
+  bottom: 16px;
+
+  font-size: 9px;
+
+  animation-delay: .5s;
+}
+
+.quiet-sleep span:nth-child(3) {
+  left: 32px;
+  bottom: 29px;
+
+  font-size: 7px;
+
+  animation-delay: 1s;
+}
+
+/* =====================================================
+   ПОТЕРЯВШИЙСЯ ОБЪЕКТ
+===================================================== */
+
+.missing-mark {
+  position: absolute;
+
+  left: 50%;
+  top: 46%;
+
+  z-index: 13;
+
+  transform:
+    translate(-50%, -50%);
+
+  color:
+    rgba(255, 224, 217, .13);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 44px;
+
+  pointer-events: none;
+
+  animation:
+    missingBlink
+    1.5s ease-in-out infinite;
+}
+
+/* =====================================================
+   МАЛЕНЬКИЕ "СЛЕДЫ" НАЙДЕННЫХ СЕКРЕТОВ
+===================================================== */
+
+.tiny-memory {
+  position: absolute;
+
+  z-index: 10;
+
+  color:
+    rgba(255, 213, 206, .18);
+
+  font-size: 16px;
+
+  text-shadow:
+    0 0 12px
+    rgba(235, 145, 157, .18);
+
+  pointer-events: none;
+
+  animation:
+    tinyMemoryBreath
+    4.4s ease-in-out infinite;
+}
+
+.memory-one {
+  left: 8%;
+  bottom: 11%;
+}
+
+.memory-two {
+  right: 9%;
+  top: 31%;
+
+  animation-delay: .8s;
+}
+
+.memory-three {
+  left: 57%;
+  top: 19%;
+
+  animation-delay: 1.5s;
+}
+
+/* =====================================================
+   СЕКРЕТНАЯ ВСПЫШКА
+===================================================== */
+
+.dontflip-stage.secret-flash {
+  animation:
+    secretStageFlash
+    .9s ease both;
+}
+
+/* =====================================================
+   АНИМАЦИИ
+===================================================== */
+
+@keyframes flipIntroFloat {
+  0%,
+  100% {
+    opacity: .58;
+
+    transform:
+      translate(-50%, -50%)
+      translateY(0);
+  }
+
+  50% {
+    opacity: .88;
+
+    transform:
+      translate(-50%, -50%)
+      translateY(-5px);
+  }
+}
+
+@keyframes flipMessage {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(6px)
+      scale(.97);
+  }
+
+  18% {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(1);
+  }
+
+  75% {
+    opacity: .88;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(-6px)
+      scale(.985);
+  }
+}
+
+@keyframes quietGlowBreath {
+  0%,
+  100% {
+    opacity: .48;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.94);
+  }
+
+  50% {
+    opacity: .92;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1.06);
+  }
+}
+
+@keyframes sleepyZ {
+  0%,
+  100% {
+    opacity: .16;
+
+    transform:
+      translateY(3px);
+  }
+
+  50% {
+    opacity: .56;
+
+    transform:
+      translateY(-3px);
+  }
+}
+
+@keyframes missingBlink {
+  0%,
+  100% {
+    opacity: .12;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.95);
+  }
+
+  50% {
+    opacity: .32;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1.04);
+  }
+}
+
+@keyframes tinyMemoryBreath {
+  0%,
+  100% {
+    opacity: .18;
+
+    transform:
+      scale(.85);
+  }
+
+  50% {
+    opacity: .45;
+
+    transform:
+      scale(1.10);
+  }
+}
+
+@keyframes secretStageFlash {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.035),
+      inset 0 -40px 80px rgba(0,0,0,.10),
+      0 28px 70px rgba(0,0,0,.22);
+  }
+
+  35% {
+    box-shadow:
+      inset 0 0 80px rgba(237, 161, 160, .13),
+      0 28px 70px rgba(0,0,0,.22);
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 430px) {
+  .dontflip-page {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .dontflip-stage {
+    min-height:
+      calc(100svh - 145px);
+
+    border-radius:
+      26px;
+  }
+
+  .dontflip-header {
+    padding:
+      21px 17px 0;
+  }
+
+  .dontflip-header h1 {
+    max-width: 210px;
+
+    font-size:
+      clamp(27px, 8.4vw, 38px);
+  }
+
+  .motion-permission {
+    bottom: 11%;
+  }
+
+  .dontflip-message {
+    bottom: 18%;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .dontflip-intro,
+  .quiet-sleep span,
+  .tiny-memory,
+  .dontflip-stage.is-quiet::after,
+  .dontflip-stage.secret-flash {
+    animation: none !important;
+  }
+}
 
