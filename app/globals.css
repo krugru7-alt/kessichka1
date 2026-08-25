@@ -8521,799 +8521,747 @@ body:has(.traces-page) .topbar {
     animation: none !important;
   }
 }
-"use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  getCurrentScheduleItem,
-  getCurrentDay,
-  dayNames,
-} from "../schedule";
 
-const MOODS = [
-  {
-    id: "okay",
-    icon: "◌",
-    label: "нормально",
-    title: "Ну и хорошо.",
-    text: "Пусть сегодня всё идёт без лишней суеты.",
-    action: "оставить как есть",
-  },
-  {
-    id: "tired",
-    icon: "⌁",
-    label: "устала",
-    title: "Тогда сегодня помедленнее.",
-    text: "Ничего страшного, если не хочется быть продуктивной каждую секунду.",
-    action: "сделать потише",
-  },
-  {
-    id: "annoyed",
-    icon: "×",
-    label: "всё бесит",
-    title: "Понял. Убираем лишнее.",
-    text: "Здесь хотя бы можно немного повредничать без последствий.",
-    action: "убрать всё",
-  },
-  {
-    id: "sad",
-    icon: "·",
-    label: "грустно",
-    title: "Я побуду здесь тихо.",
-    text: "Не обязательно сейчас что-то объяснять или исправлять.",
-    action: "оставить огонёк",
-  },
-  {
-    id: "bored",
-    icon: "↝",
-    label: "скучно",
-    title: "Так. Это уже поправимо.",
-    text: "Здесь есть несколько вещей, которые появляются не сразу.",
-    action: "пошевелить сайт",
-  },
-  {
-    id: "sleepy",
-    icon: "☾",
-    label: "не спится",
-    title: "Ну конечно.",
-    text: "Ладно. Сделаем здесь немного тише, чем снаружи.",
-    action: "приглушить всё",
-  },
-  {
-    id: "good",
-    icon: "✦",
-    label: "хорошо",
-    title: "Вот это мне нравится.",
-    text: "Тогда ничего не исправляем. Просто сохраним этот момент.",
-    action: "зафиксировать",
-  },
-];
+/* =====================================================
+   ИСПРАВЛЕНИЕ: интерактивные сцены раздела «Для тебя»
+   JavaScript вынесен в app/for-you/page.js
+===================================================== */
 
-const ANNOYED_BITS = [
-  { id: 1, text: "лишнее", x: 18, y: 22 },
-  { id: 2, text: "ещё одно дело", x: 68, y: 31 },
-  { id: 3, text: "ну конечно", x: 28, y: 62 },
-  { id: 4, text: "не сегодня", x: 73, y: 69 },
-];
+/* =====================================================
+   ДЛЯ ТЕБЯ — ИНТЕРАКТИВНЫЕ СЦЕНЫ
+   дополнение к mood styles
+===================================================== */
 
-const BORED_LINES = [
-  "сайт задумался",
-  "ничего полезного не происходит",
-  "можно ткнуть ещё раз",
-  "кажется, что-то шевельнулось",
-  "ладно, вот тебе ✦",
-];
+.mood-special {
+  position: relative;
+  z-index: 12;
 
-function getMinskDateKey() {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Minsk",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
+  min-height: 220px;
+
+  margin-top: 18px;
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 231, 224, .055);
+
+  border-radius: 22px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.026),
+      rgba(255,255,255,.008)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.02);
+
+  touch-action: manipulation;
 }
 
-export default function ForYouPage() {
-  const tiredHoldRef = useRef(null);
-  const boredTimerRef = useRef(null);
-
-  const [ready, setReady] = useState(false);
-  const [moodId, setMoodId] = useState(null);
-  const [reaction, setReaction] = useState("");
-
-  const [quiet, setQuiet] = useState(false);
-
-  const [annoyedBits, setAnnoyedBits] = useState(
-    ANNOYED_BITS.map((item) => item.id)
-  );
-  const [annoyedClean, setAnnoyedClean] = useState(false);
-
-  const [sadLights, setSadLights] = useState([]);
-  const [sadSecret, setSadSecret] = useState(false);
-
-  const [boredCount, setBoredCount] = useState(0);
-  const [boredLine, setBoredLine] = useState("");
-  const [boredDot, setBoredDot] = useState(null);
-
-  const [nightMode, setNightMode] = useState(false);
-  const [nightTapCount, setNightTapCount] = useState(0);
-  const [nightSecret, setNightSecret] = useState(false);
-
-  const [goodSaved, setGoodSaved] = useState(false);
-  const [goodSparks, setGoodSparks] = useState([]);
-
-  const dateKey = useMemo(() => getMinskDateKey(), []);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(
-        `kessi-mood-${dateKey}`
-      );
-
-      if (
-        saved &&
-        MOODS.some((mood) => mood.id === saved)
-      ) {
-        setMoodId(saved);
-      }
-
-      setGoodSaved(
-        localStorage.getItem(
-          `kessi-good-${dateKey}`
-        ) === "1"
-      );
-    } catch {}
-
-    setReady(true);
-
-    return () => {
-      window.clearTimeout(tiredHoldRef.current);
-      window.clearTimeout(boredTimerRef.current);
-      window.clearTimeout(showReaction.timer);
-    };
-  }, [dateKey]);
-
-  const mood =
-    MOODS.find((item) => item.id === moodId) || null;
-
-  function resetMoodState() {
-    setReaction("");
-    setQuiet(false);
-
-    setAnnoyedBits(
-      ANNOYED_BITS.map((item) => item.id)
-    );
-    setAnnoyedClean(false);
-
-    setSadLights([]);
-    setSadSecret(false);
-
-    setBoredCount(0);
-    setBoredLine("");
-    setBoredDot(null);
-
-    setNightMode(false);
-    setNightTapCount(0);
-    setNightSecret(false);
-
-    setGoodSparks([]);
-  }
-
-  function chooseMood(id) {
-    resetMoodState();
-    setMoodId(id);
-
-    try {
-      localStorage.setItem(
-        `kessi-mood-${dateKey}`,
-        id
-      );
-    } catch {}
-  }
-
-  function changeMood() {
-    resetMoodState();
-    setMoodId(null);
-
-    try {
-      localStorage.removeItem(
-        `kessi-mood-${dateKey}`
-      );
-    } catch {}
-  }
-
-  function showReaction(text, ms = 2300) {
-    setReaction(text);
-
-    window.clearTimeout(showReaction.timer);
-
-    showReaction.timer =
-      window.setTimeout(() => {
-        setReaction("");
-      }, ms);
-  }
-
-  function mainAction() {
-    if (!mood) return;
-
-    if (mood.id === "okay") {
-      showReaction(
-        "тогда просто оставим всё спокойно."
-      );
-    }
-
-    if (mood.id === "tired") {
-      setQuiet(true);
-      showReaction("готово. потише.");
-    }
-
-    if (mood.id === "annoyed") {
-      setAnnoyedClean(true);
-      setAnnoyedBits([]);
-      showReaction("всё убрал.");
-    }
-
-    if (mood.id === "sad") {
-      if (sadLights.length === 0) {
-        setSadLights([
-          { id: Date.now(), x: 50, y: 50 },
-        ]);
-      }
-
-      showReaction("пусть пока просто горит.");
-    }
-
-    if (mood.id === "bored") {
-      boredInteract();
-    }
-
-    if (mood.id === "sleepy") {
-      setNightMode(true);
-      showReaction("теперь совсем тихо.");
-    }
-
-    if (mood.id === "good") {
-      saveGoodMoment();
-    }
-  }
-
-  /* ===================================================
-     УСТАЛА
-  =================================================== */
-
-  function startTiredHold() {
-    window.clearTimeout(tiredHoldRef.current);
-
-    tiredHoldRef.current =
-      window.setTimeout(() => {
-        setQuiet(true);
-
-        showReaction(
-          "вот так. можно ничего не делать.",
-          3000
-        );
-      }, 1800);
-  }
-
-  function stopTiredHold() {
-    window.clearTimeout(tiredHoldRef.current);
-  }
-
-  /* ===================================================
-     ВСЁ БЕСИТ
-  =================================================== */
-
-  function removeAnnoyedBit(id) {
-    setAnnoyedBits((current) =>
-      current.filter((item) => item !== id)
-    );
-
-    const left =
-      annoyedBits.filter((item) => item !== id)
-        .length;
-
-    if (left === 0) {
-      showReaction("вот. уже меньше.");
-    }
-  }
-
-  /* ===================================================
-     ГРУСТНО
-  =================================================== */
-
-  function addSadLight(event) {
-    const rect =
-      event.currentTarget.getBoundingClientRect();
-
-    const x =
-      ((event.clientX - rect.left) /
-        rect.width) *
-      100;
-
-    const y =
-      ((event.clientY - rect.top) /
-        rect.height) *
-      100;
-
-    setSadLights((current) => [
-      ...current.slice(-7),
-      {
-        id: Date.now() + Math.random(),
-        x,
-        y,
-      },
-    ]);
-
-    if (sadLights.length >= 4 && !sadSecret) {
-      setSadSecret(true);
-
-      window.setTimeout(() => {
-        showReaction(
-          "смотри, уже не так пусто.",
-          2800
-        );
-      }, 400);
-    }
-  }
-
-  /* ===================================================
-     СКУЧНО
-  =================================================== */
-
-  function boredInteract() {
-    const next = boredCount + 1;
-    setBoredCount(next);
-
-    setBoredLine(
-      BORED_LINES[
-        Math.min(
-          BORED_LINES.length - 1,
-          next - 1
-        )
-      ]
-    );
-
-    if (next === 3) {
-      setBoredDot({
-        x: 20 + Math.random() * 60,
-        y: 28 + Math.random() * 38,
-      });
-
-      showReaction(
-        "кажется, что-то появилось."
-      );
-    }
-
-    if (next >= 5) {
-      setBoredCount(0);
-      showReaction(
-        "ладно. ты победила скуку на секунд десять."
-      );
-    }
-
-    window.clearTimeout(boredTimerRef.current);
-
-    boredTimerRef.current =
-      window.setTimeout(() => {
-        if (next < 3) {
-          setBoredLine("");
-        }
-      }, 3500);
-  }
-
-  function catchBoredDot() {
-    setBoredDot({
-      x: 16 + Math.random() * 68,
-      y: 24 + Math.random() * 46,
-    });
-
-    showReaction("неа.");
-
-    if (boredCount >= 4) {
-      setBoredDot(null);
-      showReaction("ладно, поймала.");
-    }
-  }
-
-  /* ===================================================
-     НЕ СПИТСЯ
-  =================================================== */
-
-  function tapNight() {
-    const next = nightTapCount + 1;
-    setNightTapCount(next);
-
-    if (next === 3) {
-      showReaction("тише.");
-    }
-
-    if (next >= 7 && !nightSecret) {
-      setNightSecret(true);
-      showReaction(
-        "семь раз. серьёзно?",
-        2600
-      );
-    }
-  }
-
-  /* ===================================================
-     ХОРОШО
-  =================================================== */
-
-  function saveGoodMoment() {
-    setGoodSaved(true);
-
-    try {
-      localStorage.setItem(
-        `kessi-good-${dateKey}`,
-        "1"
-      );
-    } catch {}
-
-    setGoodSparks([
-      { id: 1, x: 27, y: 43 },
-      { id: 2, x: 72, y: 36 },
-      { id: 3, x: 56, y: 66 },
-      { id: 4, x: 38, y: 73 },
-    ]);
-
-    showReaction("сохранил.");
-  }
-
-  let schedule = null;
-  let day = null;
-
-  try {
-    schedule = getCurrentScheduleItem();
-    day = getCurrentDay();
-  } catch {}
-
-  if (!ready) {
-    return (
-      <main className="mood-page mood-loading">
-        <div className="mood-loading-dot" />
-      </main>
-    );
-  }
-
-  if (!mood) {
-    return (
-      <main className="mood-page mood-picker-page">
-        <section className="mood-picker">
-          <div className="mood-picker-copy">
-            <small>ДЛЯ ТЕБЯ</small>
-
-            <h1>Как ты сегодня?</h1>
-
-            <p>
-              Выбери первое, что подходит.
-              Дальше сайт сам подстроится.
-            </p>
-          </div>
-
-          <div className="mood-grid">
-            {MOODS.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`mood-choice mood-choice-${item.id}`}
-                onClick={() =>
-                  chooseMood(item.id)
-                }
-              >
-                <span>{item.icon}</span>
-                <b>{item.label}</b>
-              </button>
-            ))}
-          </div>
-
-          <div className="mood-picker-note">
-            выбор сохранится только на сегодня
-          </div>
-        </section>
-      </main>
-    );
-  }
-
-  return (
-    <main
-      className={`mood-page mood-${mood.id} ${
-        quiet ? "is-quiet" : ""
-      } ${
-        annoyedClean ? "is-clean" : ""
-      } ${
-        nightMode ? "is-night-deep" : ""
-      } ${
-        sadSecret ? "has-sad-secret" : ""
-      }`}
-    >
-      <section className="mood-world">
-        <div
-          className="mood-background"
-          aria-hidden="true"
-        >
-          <span className="mood-orb orb-a" />
-          <span className="mood-orb orb-b" />
-          <span className="mood-orb orb-c" />
-        </div>
-
-        <header className="mood-header">
-          <div>
-            <small>ДЛЯ ТЕБЯ</small>
-            <h1>{mood.label}</h1>
-          </div>
-
-          <button
-            type="button"
-            className="change-mood"
-            onClick={changeMood}
-          >
-            настроение изменилось?
-          </button>
-        </header>
-
-        <section className="mood-main-card">
-          <span className="mood-main-icon">
-            {mood.icon}
-          </span>
-
-          <div>
-            <h2>{mood.title}</h2>
-            <p>{mood.text}</p>
-          </div>
-        </section>
-
-        {/* НОРМАЛЬНО */}
-        {mood.id === "okay" && (
-          <section className="mood-special mood-special-okay">
-            <button
-              type="button"
-              className="mood-main-action"
-              onClick={mainAction}
-            >
-              {mood.action}
-            </button>
-
-            <span className="okay-line">
-              сегодня без спецэффектов
-            </span>
-          </section>
-        )}
-
-        {/* УСТАЛА */}
-        {mood.id === "tired" && (
-          <section className="mood-special mood-special-tired">
-            <button
-              type="button"
-              className="tired-hold"
-              onPointerDown={startTiredHold}
-              onPointerUp={stopTiredHold}
-              onPointerCancel={stopTiredHold}
-              onPointerLeave={stopTiredHold}
-            >
-              <span />
-              <b>подержи немного</b>
-              <small>
-                ничего делать не надо
-              </small>
-            </button>
-          </section>
-        )}
-
-        {/* ВСЁ БЕСИТ */}
-        {mood.id === "annoyed" && (
-          <section className="mood-special mood-special-annoyed">
-            {!annoyedClean &&
-              ANNOYED_BITS.map((bit) =>
-                annoyedBits.includes(bit.id) ? (
-                  <button
-                    key={bit.id}
-                    type="button"
-                    className="annoyed-bit"
-                    style={{
-                      left: `${bit.x}%`,
-                      top: `${bit.y}%`,
-                    }}
-                    onClick={() =>
-                      removeAnnoyedBit(bit.id)
-                    }
-                  >
-                    {bit.text}
-                  </button>
-                ) : null
-              )}
-
-            {!annoyedClean && (
-              <button
-                type="button"
-                className="mood-main-action annoyed-clear-all"
-                onClick={mainAction}
-              >
-                убрать вообще всё
-              </button>
-            )}
-
-            {annoyedClean && (
-              <div className="annoyed-empty">
-                <p>всё. чисто.</p>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAnnoyedClean(false);
-                    setAnnoyedBits(
-                      ANNOYED_BITS.map(
-                        (item) => item.id
-                      )
-                    );
-                  }}
-                >
-                  ладно, верни
-                </button>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ГРУСТНО */}
-        {mood.id === "sad" && (
-          <section
-            className="mood-special mood-special-sad"
-            onPointerDown={addSadLight}
-          >
-            <span className="sad-hint">
-              можно просто потыкать сюда
-            </span>
-
-            {sadLights.map((light) => (
-              <span
-                key={light.id}
-                className="sad-created-light"
-                style={{
-                  left: `${light.x}%`,
-                  top: `${light.y}%`,
-                }}
-              />
-            ))}
-
-            {sadSecret && (
-              <span className="sad-secret-copy">
-                уже не так пусто
-              </span>
-            )}
-          </section>
-        )}
-
-        {/* СКУЧНО */}
-        {mood.id === "bored" && (
-          <section className="mood-special mood-special-bored">
-            <button
-              type="button"
-              className="mood-main-action"
-              onClick={boredInteract}
-            >
-              что-нибудь
-            </button>
-
-            {boredLine && (
-              <div className="bored-result">
-                {boredLine}
-              </div>
-            )}
-
-            {boredDot && (
-              <button
-                type="button"
-                className="bored-runaway-dot"
-                style={{
-                  left: `${boredDot.x}%`,
-                  top: `${boredDot.y}%`,
-                }}
-                onClick={catchBoredDot}
-                aria-label="Поймать"
-              >
-                ·
-              </button>
-            )}
-          </section>
-        )}
-
-        {/* НЕ СПИТСЯ */}
-        {mood.id === "sleepy" && (
-          <section
-            className="mood-special mood-special-sleepy"
-            onPointerDown={tapNight}
-          >
-            <button
-              type="button"
-              className="mood-main-action sleepy-button"
-              onClick={(event) => {
-                event.stopPropagation();
-                mainAction();
-              }}
-            >
-              {mood.action}
-            </button>
-
-            <div className="night-particles">
-              <span />
-              <span />
-              <span />
-              <span />
-              <span />
-            </div>
-
-            {nightSecret && (
-              <div className="night-secret">
-                <span>☾</span>
-                <small>
-                  ладно. ещё немного не спим.
-                </small>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ХОРОШО */}
-        {mood.id === "good" && (
-          <section className="mood-special mood-special-good">
-            <button
-              type="button"
-              className="mood-main-action"
-              onClick={saveGoodMoment}
-            >
-              {goodSaved
-                ? "уже сохранено"
-                : mood.action}
-            </button>
-
-            {goodSparks.map((spark) => (
-              <span
-                key={spark.id}
-                className="good-spark"
-                style={{
-                  left: `${spark.x}%`,
-                  top: `${spark.y}%`,
-                }}
-              >
-                ✦
-              </span>
-            ))}
-
-            {goodSaved && (
-              <div className="good-saved-mark">
-                <span>✦</span>
-
-                <small>
-                  этот момент остался здесь
-                </small>
-              </div>
-            )}
-          </section>
-        )}
-
-        {schedule && !annoyedClean && (
-          <section className="mood-next-hello">
-            <div>
-              <small>следующий привет</small>
-
-              <b>
-                {dayNames?.[day] || ""} ·{" "}
-                {schedule.time}
-              </b>
-            </div>
-
-            <span>{schedule.title}</span>
-          </section>
-        )}
-
-        {reaction && (
-          <div className="mood-reaction">
-            {reaction}
-          </div>
-        )}
-      </section>
-    </main>
-  );
+/* =====================================================
+   НОРМАЛЬНО
+===================================================== */
+
+.mood-special-okay {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 18px;
+
+  padding: 26px;
 }
 
+.okay-line {
+  color:
+    rgba(255, 227, 219, .18);
+
+  font-size: 8px;
+
+  letter-spacing:
+    .045em;
+}
+
+/* =====================================================
+   УСТАЛА — УДЕРЖИВАНИЕ
+===================================================== */
+
+.mood-special-tired {
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+}
+
+.tired-hold {
+  position: relative;
+
+  width: min(76vw, 250px);
+  aspect-ratio: 1 / 1;
+
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 7px;
+
+  border: 0;
+  border-radius: 50%;
+
+  color:
+    rgba(255, 238, 232, .67);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,.045),
+      rgba(255,255,255,.016) 48%,
+      transparent 72%
+    );
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tired-hold::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 14%;
+
+  border:
+    1px solid rgba(255, 230, 223, .06);
+
+  border-radius: 50%;
+
+  animation:
+    tiredRing
+    4.5s ease-in-out infinite;
+}
+
+.tired-hold span {
+  width: 11px;
+  height: 11px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(230, 180, 173, .52);
+
+  box-shadow:
+    0 0 18px rgba(224, 151, 155, .22);
+
+  transition:
+    transform 1.7s ease,
+    box-shadow 1.7s ease;
+}
+
+.tired-hold:active span {
+  transform:
+    scale(1.75);
+
+  box-shadow:
+    0 0 24px rgba(231, 170, 164, .32),
+    0 0 54px rgba(220, 147, 156, .13);
+}
+
+.tired-hold b {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.tired-hold small {
+  color:
+    rgba(255, 228, 220, .22);
+
+  font-size: 8px;
+}
+
+.mood-tired.is-quiet .mood-special-tired {
+  background:
+    rgba(255,255,255,.004);
+
+  border-color:
+    rgba(255,255,255,.022);
+}
+
+.mood-tired.is-quiet .tired-hold {
+  opacity: .44;
+
+  transform:
+    scale(.96);
+
+  transition:
+    opacity .8s ease,
+    transform .8s ease;
+}
+
+/* =====================================================
+   ВСЁ БЕСИТ — УБИРАЕМ ЛИШНЕЕ
+===================================================== */
+
+.mood-special-annoyed {
+  min-height: 280px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(117, 45, 59, .055),
+      rgba(255,255,255,.006)
+    );
+}
+
+.annoyed-bit {
+  position: absolute;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(-2deg);
+
+  padding:
+    8px 10px;
+
+  border:
+    1px solid rgba(236, 143, 151, .09);
+
+  border-radius:
+    999px;
+
+  color:
+    rgba(255, 226, 220, .42);
+
+  background:
+    rgba(118, 50, 64, .10);
+
+  font-size: 8px;
+
+  cursor: pointer;
+
+  transition:
+    transform .16s ease,
+    opacity .16s ease,
+    background .16s ease;
+
+  -webkit-tap-highlight-color: transparent;
+
+  animation:
+    annoyedBitFloat
+    4s ease-in-out infinite;
+}
+
+.annoyed-bit:nth-of-type(even) {
+  transform:
+    translate(-50%, -50%)
+    rotate(2deg);
+
+  animation-delay: .7s;
+}
+
+.annoyed-bit:active {
+  transform:
+    translate(-50%, -50%)
+    scale(.85)
+    rotate(7deg);
+
+  opacity: .45;
+}
+
+.annoyed-clear-all {
+  position: absolute;
+
+  left: 50%;
+  bottom: 20px;
+
+  transform:
+    translateX(-50%);
+}
+
+.mood-special-annoyed .annoyed-empty {
+  min-height: 278px;
+}
+
+/* =====================================================
+   ГРУСТНО — ОГОНЬКИ ОТ ПРИКОСНОВЕНИЯ
+===================================================== */
+
+.mood-special-sad {
+  min-height: 300px;
+
+  cursor: crosshair;
+
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(121, 120, 153, .055),
+      transparent 55%
+    ),
+    rgba(255,255,255,.005);
+
+  touch-action: none;
+}
+
+.sad-hint {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  color:
+    rgba(255, 228, 221, .16);
+
+  font-size: 8px;
+
+  letter-spacing:
+    .035em;
+
+  pointer-events: none;
+}
+
+.sad-created-light {
+  position: absolute;
+
+  width: 8px;
+  height: 8px;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 216, 200, .84);
+
+  box-shadow:
+    0 0 16px rgba(237, 169, 159, .46),
+    0 0 34px rgba(237, 169, 159, .24),
+    0 0 70px rgba(178, 130, 159, .11);
+
+  pointer-events: none;
+
+  animation:
+    sadCreatedLight
+    .55s ease both,
+    sadCreatedBreath
+    3.8s ease-in-out .55s infinite;
+}
+
+.sad-secret-copy {
+  position: absolute;
+
+  left: 50%;
+  bottom: 22px;
+
+  transform:
+    translateX(-50%);
+
+  color:
+    rgba(255, 229, 222, .28);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 11px;
+
+  pointer-events: none;
+
+  animation:
+    sadSecretIn
+    1.2s ease both;
+}
+
+/* =====================================================
+   СКУЧНО — УБЕГАЮЩАЯ ТОЧКА
+===================================================== */
+
+.mood-special-bored {
+  min-height: 290px;
+
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 16px;
+
+  padding-top: 28px;
+
+  background:
+    radial-gradient(
+      circle at 30% 25%,
+      rgba(162, 91, 153, .06),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 78% 70%,
+      rgba(212, 117, 139, .05),
+      transparent 28%
+    ),
+    rgba(255,255,255,.006);
+}
+
+.mood-special-bored .bored-result {
+  margin-top: 0;
+}
+
+.bored-runaway-dot {
+  position: absolute;
+
+  width: 48px;
+  height: 48px;
+
+  transform:
+    translate(-50%, -50%);
+
+  border: 0;
+  border-radius: 50%;
+
+  color:
+    rgba(255, 223, 214, .82);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(224, 135, 151, .12),
+      transparent 67%
+    );
+
+  font-size: 28px;
+
+  text-shadow:
+    0 0 12px rgba(236, 151, 159, .35);
+
+  cursor: pointer;
+
+  transition:
+    left .28s cubic-bezier(.2,.8,.2,1),
+    top .28s cubic-bezier(.2,.8,.2,1);
+
+  -webkit-tap-highlight-color: transparent;
+
+  animation:
+    boredDotPulse
+    1.8s ease-in-out infinite;
+}
+
+/* =====================================================
+   НЕ СПИТСЯ — НОЧНОЙ ЭКРАН
+===================================================== */
+
+.mood-special-sleepy {
+  min-height: 300px;
+
+  display: grid;
+  place-items: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 44%,
+      rgba(114, 112, 160, .055),
+      transparent 36%
+    ),
+    rgba(255,255,255,.004);
+
+  touch-action: manipulation;
+}
+
+.sleepy-button {
+  position: relative;
+  z-index: 6;
+}
+
+.mood-special-sleepy .night-particles {
+  z-index: 2;
+}
+
+.night-secret {
+  position: absolute;
+
+  left: 50%;
+  bottom: 26px;
+
+  transform:
+    translateX(-50%);
+
+  z-index: 8;
+
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+
+  color:
+    rgba(234, 222, 232, .38);
+
+  pointer-events: none;
+
+  animation:
+    nightSecretIn
+    1.3s ease both;
+}
+
+.night-secret span {
+  font-size: 20px;
+
+  text-shadow:
+    0 0 15px rgba(164, 157, 204, .23);
+}
+
+.night-secret small {
+  font-size: 8px;
+}
+
+/* =====================================================
+   ХОРОШО — СОХРАНЕНИЕ МОМЕНТА
+===================================================== */
+
+.mood-special-good {
+  min-height: 290px;
+
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 18px;
+
+  padding-top: 28px;
+
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(220, 140, 120, .055),
+      transparent 34%
+    ),
+    rgba(255,255,255,.006);
+}
+
+.good-spark {
+  position: absolute;
+
+  transform:
+    translate(-50%, -50%);
+
+  color:
+    rgba(255, 221, 203, .62);
+
+  font-size: 16px;
+
+  text-shadow:
+    0 0 14px rgba(238, 166, 146, .31);
+
+  pointer-events: none;
+
+  animation:
+    goodSparkIn
+    .75s ease both,
+    goodSparkFloat
+    4.6s ease-in-out .75s infinite;
+}
+
+.good-spark:nth-of-type(2) {
+  animation-delay:
+    .12s,
+    1.0s;
+}
+
+.good-spark:nth-of-type(3) {
+  animation-delay:
+    .22s,
+    1.3s;
+}
+
+.good-spark:nth-of-type(4) {
+  animation-delay:
+    .32s,
+    1.6s;
+}
+
+.mood-special-good .good-saved-mark {
+  margin-top: 0;
+}
+
+/* =====================================================
+   АНИМАЦИИ
+===================================================== */
+
+@keyframes tiredRing {
+  0%,
+  100% {
+    opacity: .30;
+    transform: scale(.95);
+  }
+
+  50% {
+    opacity: .62;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes annoyedBitFloat {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+
+  50% {
+    margin-top: -4px;
+  }
+}
+
+@keyframes sadCreatedLight {
+  from {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      scale(.35);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+}
+
+@keyframes sadCreatedBreath {
+  0%,
+  100% {
+    opacity: .48;
+    filter: brightness(.90);
+  }
+
+  50% {
+    opacity: 1;
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes sadSecretIn {
+  from {
+    opacity: 0;
+    transform:
+      translateX(-50%)
+      translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+}
+
+@keyframes boredDotPulse {
+  0%,
+  100% {
+    filter: brightness(.84);
+    transform:
+      translate(-50%, -50%)
+      scale(.88);
+  }
+
+  50% {
+    filter: brightness(1.16);
+    transform:
+      translate(-50%, -50%)
+      scale(1.10);
+  }
+}
+
+@keyframes nightSecretIn {
+  from {
+    opacity: 0;
+    transform:
+      translateX(-50%)
+      translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+}
+
+@keyframes goodSparkIn {
+  from {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      scale(.35);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+}
+
+@keyframes goodSparkFloat {
+  0%,
+  100% {
+    margin-top: 0;
+    opacity: .42;
+  }
+
+  50% {
+    margin-top: -7px;
+    opacity: .82;
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 430px) {
+  .mood-special {
+    min-height: 210px;
+    border-radius: 19px;
+  }
+
+  .mood-special-annoyed,
+  .mood-special-bored,
+  .mood-special-good {
+    min-height: 260px;
+  }
+
+  .mood-special-sad,
+  .mood-special-sleepy {
+    min-height: 275px;
+  }
+
+  .tired-hold {
+    width: min(68vw, 225px);
+  }
+
+  .annoyed-bit {
+    padding:
+      7px 9px;
+
+    font-size: 7px;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .tired-hold::before,
+  .annoyed-bit,
+  .sad-created-light,
+  .bored-runaway-dot,
+  .night-secret,
+  .good-spark {
+    animation: none !important;
+  }
+}
