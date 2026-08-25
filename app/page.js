@@ -44,7 +44,7 @@ const redButtonPhrases = [
 
 
 const warmNotes = [
-  "Не забывай: есть человек, которому очень важно, как прошёл твой день. ❤️",
+  "Не забывай: где-то далеко есть человек, которому очень важно, как прошёл твой день. ❤️",
   "Сегодня ничего не обязано быть идеально. Главное — береги себя.",
   "Если день шумный, вот тебе маленький тихий уголок. 🌷",
   "Записка без повода: ты очень-очень ценная буська.",
@@ -87,7 +87,7 @@ const wallMessages = [
 ];
 
 const polaroidCaptions = [
-  "маленькое место для тебя ❤️",
+  "somewhere far away ❤️",
   "маленький хороший день",
   "дракоша был здесь",
   "для памяти",
@@ -97,7 +97,7 @@ const polaroidCaptions = [
 
 const roomDeskNotes = [
   "Я тут оставил тебе место, где можно просто побыть. Никаких дел. ❤️",
-  "Если день оказался громким — посиди здесь минутку. Я рядом. ❤️",
+  "Если день оказался громким — посиди здесь минутку. Я рядом мысленно.",
   "Напоминание со стола: поесть, выдохнуть и не требовать от себя невозможного.",
   "Эта записка ничего не просит. Просто тьмок и немного тепла. 💋",
   "Сегодня разрешается быть сонной буськой и всё равно быть прекрасной.",
@@ -106,37 +106,12 @@ const roomDeskNotes = [
 
 const roomObjects = [
   "🎧",
+  "🕯️",
   "🧸",
   "☕",
   "📎",
   "🎀",
   "🪩",
-];
-
-const ticketPrizes = [
-  "🎟️ Билет на вкусняшку без чувства вины",
-  "🎟️ Билет на 20 минут полного ничегонеделания",
-  "🎟️ Билет на один дополнительный тьмок 💋",
-  "🎟️ Билет на любимую песню погромче",
-  "🎟️ Билет на уютный вечер",
-  "🎟️ Билет на маленькую радость сегодня",
-];
-
-const drawerFinds = [
-  "🍬 конфета. Кто её сюда положил — неизвестно.",
-  "💌 крошечная записка: «ты буська».",
-  "🧦 подозрительный носок Дракоши.",
-  "🎀 ленточка. Просто красивая.",
-  "💗 запасное сердечко. На всякий случай.",
-  "🪙 монетка удачи. Сегодня твоя.",
-];
-
-const dragonStashFinds = [
-  "🐉 Дракоша спрятал здесь три тьмока и никому не признаётся.",
-  "🍪 Найдена половина печеньки. Вторая половина уже подозрительно исчезла.",
-  "🎮 Очень важная драконья штука. Назначение засекречено.",
-  "💎 Камушек, который Дракоша объявил сокровищем.",
-  "📎 Скрепка. Почему она в тайнике — вопросов больше, чем ответов.",
 ];
 
 function urlBase64ToUint8Array(base64String) {
@@ -307,18 +282,10 @@ export default function Home() {
   );
   const [lampOn, setLampOn] = useState(false);
   const [garlandMode, setGarlandMode] = useState(0);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerFind, setDrawerFind] = useState("пока закрыто");
-  const [mysteryBoxCount, setMysteryBoxCount] = useState(0);
-  const [mysteryBoxText, setMysteryBoxText] = useState("НЕ ТРОГАТЬ 👀");
-  const [mysteryBoxOpen, setMysteryBoxOpen] = useState(false);
-  const [ticketText, setTicketText] = useState("дёрни рычаг");
-  const [ticketPulling, setTicketPulling] = useState(false);
-  const [stashOpen, setStashOpen] = useState(false);
-  const [stashText, setStashText] = useState("тайник закрыт");
-  const [doorCount, setDoorCount] = useState(0);
-  const [doorText, setDoorText] = useState("куда собралась? 👀");
-  const [doorOpen, setDoorOpen] = useState(false);
+  const [threadMessage, setThreadMessage] = useState(
+    "расстояние большое. нить всё равно работает."
+  );
+  const [threadPulse, setThreadPulse] = useState(false);
 
   // ==============================
   // PUSH
@@ -676,80 +643,15 @@ export default function Home() {
     }
   }
 
-  function openDrawer() {
-    const find = drawerFinds[Math.floor(Math.random() * drawerFinds.length)];
-    setDrawerFind(find);
-    setDrawerOpen((current) => !current);
-  }
-
-  function touchMysteryBox() {
-    const next = mysteryBoxCount + 1;
-    setMysteryBoxCount(next);
-    setMysteryBoxOpen(true);
-
-    const reactions = [
-      "Я же написал не трогать.",
-      "Коробка делает вид, что ничего не произошло.",
-      "Изнутри кто-то сказал: «эй».",
-      "🐉 Дракоша: ЭТО МОЁ.",
-      "💗 Ладно. Внутри было сердечко. Забирай.",
-    ];
-
-    setMysteryBoxText(
-      reactions[Math.min(next - 1, reactions.length - 1)]
+  function touchThread() {
+    setThreadPulse(true);
+    setThreadMessage(
+      threadMessage.includes("долетел")
+        ? "расстояние большое. нить всё равно работает."
+        : "тьмок по ниточке успешно долетел ❤️"
     );
 
-    setTimeout(() => {
-      setMysteryBoxOpen(false);
-    }, 1800);
-  }
-
-  function pullTicket() {
-    if (ticketPulling) return;
-
-    setTicketPulling(true);
-    setTicketText("дёрни рычаг");
-
-    setTimeout(() => {
-      setTicketText(
-        ticketPrizes[Math.floor(Math.random() * ticketPrizes.length)]
-      );
-    }, 650);
-
-    setTimeout(() => {
-      setTicketPulling(false);
-    }, 1500);
-  }
-
-  function openStash() {
-    setStashOpen((current) => !current);
-
-    if (!stashOpen) {
-      setTimeout(() => {
-        setStashText(
-          dragonStashFinds[
-            Math.floor(Math.random() * dragonStashFinds.length)
-          ]
-        );
-      }, 450);
-    }
-  }
-
-  function touchDoor() {
-    const next = doorCount + 1;
-    setDoorCount(next);
-    setDoorOpen((current) => !current);
-
-    const messages = [
-      "Куда собралась? 👀",
-      "Ну ладно... но ненадолго.",
-      "Дракоша сказал закрыть дверь, тепло уходит 🐉",
-      "Возвращайся потом ❤️",
-    ];
-
-    setDoorText(
-      messages[Math.min(next - 1, messages.length - 1)]
-    );
+    setTimeout(() => setThreadPulse(false), 900);
   }
 
   const timeOfDay =
@@ -867,8 +769,10 @@ export default function Home() {
 
   return (
     <main
-      className={`kessichka-page ${timeOfDay} world-page`}
+      className={`kessichka-page ${timeOfDay} world-page ${lampOn ? "room-light-on" : ""}`}
     >
+      <div className="room-light-overlay" aria-hidden="true" />
+
       <style>
         {`
 
@@ -1149,9 +1053,40 @@ export default function Home() {
 
         .world-page {
           display: block !important;
+          position: relative;
           overflow-x: hidden !important;
           overflow-y: visible !important;
           padding-bottom: 130px !important;
+          transition: background .7s ease, filter .7s ease;
+        }
+
+        /* ТЁПЛЫЙ СВЕТ ОТ ЛАМПЫ НА ВЕСЬ САЙТ */
+        .room-light-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 900;
+          pointer-events: none;
+          opacity: 0;
+          background:
+            radial-gradient(circle at 48% 78%, rgba(255,224,170,.42), transparent 34%),
+            radial-gradient(circle at 52% 45%, rgba(255,190,125,.20), transparent 56%),
+            linear-gradient(180deg, rgba(255,220,175,.08), rgba(255,169,104,.10));
+          mix-blend-mode: screen;
+          transition: opacity .7s ease;
+        }
+
+        .world-page.room-light-on .room-light-overlay {
+          opacity: .88;
+        }
+
+        .world-page > .kessichka-card,
+        .world-page .kessichka-room {
+          transition: filter .7s ease, box-shadow .7s ease;
+        }
+
+        .world-page.room-light-on > .kessichka-card,
+        .world-page.room-light-on .kessichka-room {
+          filter: brightness(1.12) saturate(1.04);
         }
 
         .world-page > .kessichka-card {
@@ -1371,75 +1306,107 @@ export default function Home() {
         .nook-toy { position:absolute; right:95px; bottom:37px; font-size:23px; transform:rotate(-10deg); }
         .nook-diary { position:absolute; right:25px; top:70px; width:43%; margin:0; color:rgba(255,255,255,.72); font-size:12px; line-height:1.65; }
 
-        /* ИНТЕРАКТИВНЫЕ ШТУКИ КОМНАТЫ */
-        .room-discovery-zone { width:min(94%,860px); margin:90px auto 0; display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
-        .room-discovery { position:relative; min-height:190px; padding:22px; border:1px solid rgba(255,255,255,.08); border-radius:28px; background:rgba(255,255,255,.035); box-shadow:0 22px 60px rgba(0,0,0,.14); overflow:hidden; }
-        .room-discovery:nth-child(even){ transform:translateY(32px) rotate(.7deg); }
-        .room-discovery:nth-child(odd){ transform:rotate(-.6deg); }
-        .discovery-kicker{margin:0 0 8px;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;opacity:.38}
-        .discovery-title{margin:0 0 12px;font-size:18px;font-weight:800}
-        .discovery-text{min-height:42px;margin:0 0 15px;font-size:12px;line-height:1.6;opacity:.66}
-        .discovery-object{display:block;margin:8px auto 12px;font-size:52px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.22));transition:transform .2s ease}
-        .room-discovery:active .discovery-object{transform:scale(.92) rotate(-3deg)}
-        .discovery-button{border:0;border-radius:14px;padding:10px 14px;background:rgba(255,255,255,.09);color:#fff;font-weight:750;font-size:11px;cursor:pointer}
-        /* ЯЩИК — реально выезжает */
-        .drawer-visual{position:relative;width:118px;height:76px;margin:8px auto 14px;perspective:500px}
-        .drawer-cabinet{position:absolute;inset:0;border-radius:12px;background:linear-gradient(145deg,#5d4052,#332634);box-shadow:inset 0 0 0 5px rgba(0,0,0,.13),0 14px 28px rgba(0,0,0,.23)}
-        .drawer-front{position:absolute;left:12px;right:12px;top:22px;height:38px;border-radius:7px;background:linear-gradient(145deg,#8a6175,#654758);box-shadow:0 8px 18px rgba(0,0,0,.22);transition:transform .55s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
-        .drawer-front::after{content:"•";position:absolute;left:50%;top:6px;transform:translateX(-50%);color:#e8bdcd;font-size:17px}
-        .drawer-visual.open .drawer-front{transform:translateY(30px) translateZ(28px)}
-        .drawer-find-pop{position:absolute;left:50%;top:15px;transform:translate(-50%,10px) scale(.4);opacity:0;font-size:28px;transition:all .45s ease .25s}
-        .drawer-visual.open .drawer-find-pop{transform:translate(-50%,-12px) scale(1);opacity:1}
-        .drawer-open{animation:drawerText .45s ease}
-        @keyframes drawerText{0%{transform:translateY(10px);opacity:.2}100%{transform:translateY(0);opacity:1}}
-
-        /* КОРОБКА — крышка откидывается */
-        .mystery-box-visual{position:relative;width:110px;height:82px;margin:5px auto 14px;perspective:500px}
-        .box-body{position:absolute;left:12px;right:12px;bottom:0;height:54px;border-radius:6px 6px 12px 12px;background:linear-gradient(145deg,#9b6f48,#6b4b31);box-shadow:0 12px 24px rgba(0,0,0,.22)}
-        .box-lid{position:absolute;left:5px;right:5px;top:10px;height:24px;border-radius:7px;background:linear-gradient(145deg,#b48559,#795536);transform-origin:left bottom;transition:transform .5s cubic-bezier(.2,.8,.2,1);box-shadow:0 6px 12px rgba(0,0,0,.18)}
-        .mystery-box-visual.open .box-lid{transform:rotateZ(-17deg) rotateY(-36deg) translateY(-8px)}
-        .box-surprise{position:absolute;left:50%;top:30px;opacity:0;transform:translate(-50%,8px) scale(.3);font-size:31px;transition:all .45s ease .25s}
-        .mystery-box-visual.open .box-surprise{opacity:1;transform:translate(-50%,-15px) scale(1.1)}
-
-        /* БИЛЕТНЫЙ АППАРАТ — рычаг и выдача */
-        .ticket-machine{position:relative;width:125px;height:128px;margin:4px auto 10px}
-        .machine-body{position:absolute;left:16px;right:16px;top:13px;height:92px;border-radius:18px;background:linear-gradient(145deg,#7b667e,#403444);box-shadow:inset 0 0 0 5px rgba(255,255,255,.035),0 15px 30px rgba(0,0,0,.24)}
-        .machine-slot{position:absolute;left:38px;right:38px;bottom:26px;height:7px;border-radius:5px;background:#19131b;box-shadow:inset 0 2px 5px rgba(0,0,0,.5)}
-        .machine-lever{position:absolute;right:3px;top:28px;width:8px;height:51px;border-radius:8px;background:#c7a0ad;transform-origin:50% 8px;transition:transform .28s ease}
-        .machine-lever::after{content:"";position:absolute;left:50%;bottom:-10px;width:18px;height:18px;border-radius:50%;background:#e7b7c6;transform:translateX(-50%);box-shadow:0 5px 12px rgba(0,0,0,.25)}
-        .ticket-machine.pulling .machine-lever{animation:leverPull .65s ease}
-        @keyframes leverPull{0%{transform:rotate(0)}45%{transform:rotate(42deg)}100%{transform:rotate(0)}}
-        .ticket-paper{position:relative;margin:0 auto;padding:11px 12px;width:88%;border-radius:8px;background:#f3e6d5;color:#493b38;font-size:11px;font-weight:700;transform:translateY(-28px) rotate(-1deg);opacity:0;box-shadow:0 8px 18px rgba(0,0,0,.18)}
-        .ticket-paper.ticket-out{animation:ticketOut .65s cubic-bezier(.2,.8,.2,1) forwards}
-        @keyframes ticketOut{0%{opacity:0;transform:translateY(-42px) scaleY(.35) rotate(-1deg)}35%{opacity:1}100%{opacity:1;transform:translateY(0) scaleY(1) rotate(-1deg)}}
-
-        /* ТАЙНИК — люк открывается */
-        .stash-visual{position:relative;width:112px;height:88px;margin:5px auto 13px;perspective:500px}
-        .stash-hole{position:absolute;left:15px;right:15px;bottom:5px;height:45px;border-radius:50%;background:radial-gradient(ellipse,#08070a 0 48%,#2f2630 50% 70%,transparent 72%);filter:drop-shadow(0 10px 15px rgba(0,0,0,.35))}
-        .stash-hatch{position:absolute;left:18px;right:18px;bottom:21px;height:39px;border-radius:50%;background:linear-gradient(145deg,#574450,#352b36);transform-origin:left center;transition:transform .55s cubic-bezier(.2,.8,.2,1);box-shadow:0 6px 15px rgba(0,0,0,.25)}
-        .stash-visual.open .stash-hatch{transform:rotateY(-72deg) translateX(-4px)}
-        .stash-treasure{position:absolute;left:50%;bottom:25px;opacity:0;transform:translate(-50%,8px) scale(.4);font-size:31px;transition:all .45s ease .28s}
-        .stash-visual.open .stash-treasure{opacity:1;transform:translate(-50%,-12px) scale(1)}
-
-        /* ДВЕРЬ — реально открывается */
-        .room-door-zone{width:min(72%,520px);margin:100px auto 20px;text-align:center;perspective:900px}
-        .door-frame{position:relative;width:160px;height:220px;margin:0 auto 16px;border-radius:78px 78px 14px 14px;background:linear-gradient(145deg,#241a24,#120f14);box-shadow:0 25px 55px rgba(0,0,0,.3),inset 0 0 0 7px rgba(255,255,255,.025);overflow:visible}
-        .room-door{position:absolute;inset:7px;border-radius:70px 70px 10px 10px;background:linear-gradient(145deg,rgba(112,73,96,.94),rgba(53,35,54,.98));border:2px solid rgba(255,255,255,.08);box-shadow:inset 0 0 0 8px rgba(0,0,0,.12);cursor:pointer;transform-origin:left center;transition:transform .7s cubic-bezier(.2,.75,.2,1),box-shadow .7s ease;transform-style:preserve-3d}
-        .room-door.open{transform:rotateY(-67deg);box-shadow:18px 15px 35px rgba(0,0,0,.38)}
-        .room-door::after{content:"•";position:absolute;right:20px;top:100px;color:#f2c3a5;font-size:24px;text-shadow:0 0 10px rgba(255,200,160,.4)}
-        .door-behind{position:absolute;inset:18px 14px 12px;border-radius:58px 58px 8px 8px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 38%,rgba(255,120,175,.16),transparent 35%),linear-gradient(180deg,#160f17,#08070a);color:#ffd7e5;font-size:31px;opacity:.8}
-        .door-sign{position:absolute;left:50%;top:42px;transform:translateX(-50%) rotate(-3deg);width:82px;padding:7px 5px;background:#ead8c9;color:#5a4448;font-size:9px;font-weight:800;border-radius:4px;box-shadow:0 5px 12px rgba(0,0,0,.2)}
-        .door-message{margin:0;font-size:12px;opacity:.6;transition:transform .3s ease,opacity .3s ease}
-        .room-door-zone:active .door-message{transform:translateY(2px);opacity:.9}
-        @media(max-width:650px){.room-discovery-zone{grid-template-columns:1fr;gap:18px}.room-discovery:nth-child(even),.room-discovery:nth-child(odd){transform:none}.room-discovery{min-height:165px}.room-door-zone{margin-top:70px}}
-
-        /* НОЧНИК И ФИНАЛ */
-        .room-lamp-zone {
-          position:relative; width:min(76%,500px); min-height:250px; margin:90px auto 0; text-align:center;
+        /* НИТЬ */
+        .room-thread {
+          width:90%; margin:90px auto 0; color:rgba(255,255,255,.6);
         }
-        .lamp-glow { position:absolute; left:50%; bottom:18px; width:260px; height:190px; border-radius:50%; background:radial-gradient(ellipse, rgba(255,182,202,.18), transparent 68%); transform:translateX(-50%); opacity:.35; }
-        .world-page.night .lamp-glow, .world-page.evening .lamp-glow { opacity:.9; filter:blur(3px); }
-        .room-lamp { position:relative; z-index:2; display:block; margin:0 auto 18px; font-size:64px; filter:drop-shadow(0 0 24px rgba(255,180,210,.3)); }
+        .thread-labels { display:flex; justify-content:space-between; font-size:11px; font-weight:700; }
+        .thread-line { position:relative; height:1px; margin:18px 8px 12px; background:linear-gradient(90deg,rgba(255,100,150,.2),rgba(255,145,190,.85),rgba(145,120,255,.75),rgba(255,100,150,.2)); box-shadow:0 0 20px rgba(255,100,160,.18); }
+        .thread-line::before,.thread-line::after { content:"";position:absolute;top:50%;width:8px;height:8px;border-radius:50%;background:#ff8eb0;box-shadow:0 0 14px rgba(255,100,160,.6);transform:translateY(-50%); }
+        .thread-line::before{left:-1px}.thread-line::after{right:-1px}
+        .thread-heart { position:absolute; left:50%; top:50%; padding:0 7px; background:#120b11; transform:translate(-50%,-50%); }
+        .thread-note { margin:0; text-align:center; font-size:11px; opacity:.45; }
+
+        /* ЛАМПА И ФИНАЛ */
+        .room-lamp-zone {
+          position:relative;
+          width:min(76%,500px);
+          min-height:300px;
+          margin:90px auto 0;
+          padding-top:15px;
+          text-align:center;
+          border-radius:45px;
+          cursor:pointer;
+          -webkit-tap-highlight-color:transparent;
+          transition:background .6s ease, box-shadow .6s ease;
+        }
+
+        .vibe-lamp {
+          position:relative;
+          z-index:2;
+          width:110px;
+          height:155px;
+          margin:0 auto 20px;
+        }
+
+        .vibe-lamp-glow {
+          position:absolute;
+          left:50%;
+          top:-75px;
+          width:320px;
+          height:270px;
+          transform:translateX(-50%);
+          border-radius:50%;
+          background:radial-gradient(circle, rgba(255,210,140,.42), rgba(255,176,92,.14) 42%, transparent 70%);
+          filter:blur(10px);
+          opacity:0;
+          transition:opacity .65s ease;
+          pointer-events:none;
+        }
+
+        .vibe-lamp-shade {
+          position:absolute;
+          left:18px;
+          top:8px;
+          width:76px;
+          height:48px;
+          border-radius:48% 48% 18px 18px;
+          background:linear-gradient(180deg,#29242d,#17151b);
+          transform:rotate(-8deg);
+          box-shadow:inset 0 -5px 12px rgba(0,0,0,.35);
+          transition:background .6s ease, box-shadow .6s ease;
+        }
+
+        .vibe-lamp-neck {
+          position:absolute;
+          left:53px;
+          top:48px;
+          width:6px;
+          height:77px;
+          border-radius:8px;
+          background:#1c1920;
+          transform:rotate(-5deg);
+          transform-origin:bottom;
+        }
+
+        .vibe-lamp-base {
+          position:absolute;
+          left:25px;
+          bottom:9px;
+          width:64px;
+          height:13px;
+          border-radius:50%;
+          background:#17151b;
+          box-shadow:0 8px 18px rgba(0,0,0,.28);
+        }
+
+        .room-lamp-zone.lamp-on {
+          background:radial-gradient(ellipse at 50% 40%, rgba(255,194,117,.13), transparent 68%);
+          box-shadow:0 20px 110px rgba(255,155,85,.12);
+        }
+
+        .room-lamp-zone.lamp-on .vibe-lamp-glow {
+          opacity:1;
+        }
+
+        .room-lamp-zone.lamp-on .vibe-lamp-shade {
+          background:linear-gradient(180deg,#ffd99a,#d58a47);
+          box-shadow:
+            0 0 24px rgba(255,196,113,.95),
+            0 0 70px rgba(255,158,79,.48),
+            inset 0 -8px 16px rgba(157,84,26,.20);
+        }
+
         .room-goodbye { position:relative; z-index:2; margin:0; color:rgba(255,255,255,.85); font-size:clamp(20px,5vw,29px); font-weight:700; line-height:1.45; }
         .room-goodbye-small { position:relative; z-index:2; margin:10px 0 0; color:rgba(255,255,255,.38); font-size:11px; }
 
@@ -1487,13 +1454,6 @@ export default function Home() {
           65% { transform:translate(-50%,-50%) scale(.9); }
         }
 
-        .room-lamp-zone { cursor:pointer; transition:background .45s ease, box-shadow .45s ease; border-radius:45px; padding-top:15px; }
-        .room-lamp-zone.lamp-on {
-          background:radial-gradient(ellipse at 50% 45%, rgba(255,181,105,.12), transparent 68%);
-          box-shadow:0 20px 90px rgba(255,145,90,.08);
-        }
-        .room-lamp-zone.lamp-on .lamp-glow { opacity:1 !important; background:radial-gradient(ellipse, rgba(255,196,120,.34), transparent 68%); }
-        .room-lamp-zone.lamp-on .room-lamp { filter:drop-shadow(0 0 36px rgba(255,194,105,.8)); }
         .lamp-hint { position:relative; z-index:2; margin:7px 0 0; color:rgba(255,255,255,.28); font-size:9px; }
 
         @media (max-width:650px) {
@@ -1959,127 +1919,57 @@ export default function Home() {
           <p className="nook-reaction">{nookMessage}</p>
         </section>
 
-        {/* ИНТЕРАКТИВНЫЕ НАХОДКИ */}
-        <section className="room-discovery-zone">
-          <article className="room-discovery" onClick={openDrawer}>
-            <p className="discovery-kicker">стол • ящик №1</p>
-            <h3 className="discovery-title">Ящик стола</h3>
-
-            <div className={`drawer-visual ${drawerOpen ? "open" : ""}`}>
-              <div className="drawer-cabinet" />
-              <div className="drawer-front" />
-              <div className="drawer-find-pop">💌</div>
-            </div>
-
-            <p className={`discovery-text ${drawerOpen ? "drawer-open" : ""}`}>
-              {drawerOpen
-                ? drawerFind
-                : "Внутри что-то лежит. Каждый раз может попасться другое."}
-            </p>
-
-            <button className="discovery-button" type="button">
-              {drawerOpen ? "задвинуть ящик" : "выдвинуть ящик"}
-            </button>
-          </article>
-
-          <article className="room-discovery" onClick={touchMysteryBox}>
-            <p className="discovery-kicker">под столом • подозрительно</p>
-            <h3 className="discovery-title">Коробка «не трогать»</h3>
-
-            <div className={`mystery-box-visual ${mysteryBoxOpen ? "open" : ""}`}>
-              <div className="box-body" />
-              <div className="box-lid" />
-              <div className="box-surprise">
-                {mysteryBoxCount >= 5 ? "💗" : mysteryBoxCount === 4 ? "🐉" : "✨"}
-              </div>
-            </div>
-
-            <p className="discovery-text">{mysteryBoxText}</p>
-            <button className="discovery-button" type="button">
-              всё равно потрогать
-            </button>
-          </article>
-
-          <article className="room-discovery">
-            <p className="discovery-kicker">аппарат • один билетик</p>
-            <h3 className="discovery-title">Билетик на сегодня</h3>
-
-            <div className={`ticket-machine ${ticketPulling ? "pulling" : ""}`}>
-              <div className="machine-body" />
-              <div className="machine-slot" />
-              <div className="machine-lever" />
-            </div>
-
-            <p className="discovery-text">
-              Потяни рычаг — аппарат решит, что тебе сегодня официально положено.
-            </p>
-
-            <button
-              className="discovery-button"
-              type="button"
-              onClick={pullTicket}
-              disabled={ticketPulling}
-            >
-              {ticketPulling ? "аппарат думает..." : "дёрнуть рычаг"}
-            </button>
-
-            {ticketText !== "дёрни рычаг" && (
-              <div className="ticket-paper ticket-out">
-                {ticketText}
-              </div>
-            )}
-          </article>
-
-          <article className="room-discovery" onClick={openStash}>
-            <p className="discovery-kicker">за уголком Дракоши • секретно</p>
-            <h3 className="discovery-title">Тайник Дракоши</h3>
-
-            <div className={`stash-visual ${stashOpen ? "open" : ""}`}>
-              <div className="stash-hole" />
-              <div className="stash-hatch" />
-              <div className="stash-treasure">🐉✨</div>
-            </div>
-
-            <p className="discovery-text">
-              {stashOpen
-                ? stashText
-                : "Он утверждает, что никакого тайника здесь нет. Очень убедительно."}
-            </p>
-
-            <button className="discovery-button" type="button">
-              {stashOpen ? "закрыть тайник" : "открыть тайник"}
-            </button>
-          </article>
-        </section>
-
-        {/* ДВЕРЬ КОМНАТЫ */}
-        <section className="room-door-zone">
-          <div className="door-frame">
-            <div className="door-behind">{doorOpen ? "❤️" : "✦"}</div>
-            <div
-              className={`room-door ${doorOpen ? "open" : ""}`}
-              onClick={touchDoor}
-            >
-              <div className="door-sign">КОМНАТА КЭССИЧКИ</div>
-            </div>
+        {/* НИТЬ */}
+        <section className="room-thread">
+          <div className="thread-labels">
+            <span>Обсидик</span>
+            <span>Кэссичка</span>
           </div>
-          <p className="door-message">{doorText}</p>
+          <div className="thread-line">
+            <span
+              className={`thread-heart ${threadPulse ? "pulse" : ""}`}
+              onClick={touchThread}
+            >
+              ❤️
+            </span>
+          </div>
+          <p className="thread-note">
+            {threadMessage}
+          </p>
         </section>
 
-        {/* НОЧНИК */}
+        {/* ЛАМПА — включает тёплый свет на весь сайт */}
         <footer
           className={`room-lamp-zone ${lampOn ? "lamp-on" : ""}`}
           onClick={() => setLampOn((current) => !current)}
+          role="button"
+          tabIndex={0}
+          aria-pressed={lampOn}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              setLampOn((current) => !current);
+            }
+          }}
         >
-          <div className="lamp-glow" />
-          <span className="room-lamp">{lampOn ? "💡" : "🌑"}</span>
+          <div className="vibe-lamp" aria-hidden="true">
+            <div className="vibe-lamp-glow" />
+            <div className="vibe-lamp-shade" />
+            <div className="vibe-lamp-neck" />
+            <div className="vibe-lamp-base" />
+          </div>
+
           <p className="room-goodbye">
             Возвращайся сюда иногда. Здесь тебя всегда ждут.
           </p>
           <p className="room-goodbye-small">
-            {lampOn ? "теперь тут немного теплее ✨" : "береги себя, бус ❤️"}
+            {lampOn
+              ? "свет включён — теперь тут совсем уютно ✨"
+              : "береги себя, бус ❤️"}
           </p>
-          <p className="lamp-hint">тыкни на ночник</p>
+          <p className="lamp-hint">
+            {lampOn ? "тыкни, чтобы выключить свет" : "тыкни на лампу"}
+          </p>
         </footer>
       </section>
 
