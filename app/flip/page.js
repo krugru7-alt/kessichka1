@@ -62,6 +62,9 @@ export default function PobaluysyaPage() {
   const bgDragRef = useRef(null);
   const inactivityRef = useRef(null);
   const motionCooldownRef = useRef(0);
+  const tinyHoldRef = useRef(null);
+  const idleSecretRef = useRef(null);
+  const manualFixRef = useRef(0);
 
   const [message, setMessage] = useState("");
   const [wrongCount, setWrongCount] = useState(0);
@@ -71,11 +74,58 @@ export default function PobaluysyaPage() {
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [isRepairing, setIsRepairing] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
+  const [visits, setVisits] = useState(1);
+  const [secrets, setSecrets] = useState([]);
+  const [secretPeek, setSecretPeek] = useState(false);
+  const [luckySpark, setLuckySpark] = useState(null);
+  const [screenSurprise, setScreenSurprise] = useState(false);
 
   function say(text, ms = 1800) {
     setMessage(text);
     window.clearTimeout(say.timer);
     say.timer = window.setTimeout(() => setMessage(""), ms);
+  }
+
+  function unlockSecret(id, text = "") {
+    setSecrets((current) => {
+      if (current.includes(id)) return current;
+
+      const next = [...current, id];
+
+      try {
+        localStorage.setItem(
+          "kessi-pobaluysya-secrets",
+          JSON.stringify(next)
+        );
+      } catch {}
+
+      return next;
+    });
+
+    if (text) {
+      say(text, 2200);
+    }
+  }
+
+  function launchScreenSurprise() {
+    if (screenSurprise) return;
+
+    setScreenSurprise(true);
+
+    window.clearTimeout(launchScreenSurprise.timer);
+    launchScreenSurprise.timer = window.setTimeout(() => {
+      setScreenSurprise(false);
+    }, 5200);
+  }
+
+  function scheduleIdleSecret(delay = 14000) {
+    window.clearTimeout(idleSecretRef.current);
+
+    idleSecretRef.current = window.setTimeout(() => {
+      if (visits < 2 || secrets.includes("quiet-peek")) return;
+
+      setSecretPeek(true);
+    }, delay);
   }
 
   function scheduleRepair(delay = 6500) {
@@ -109,6 +159,8 @@ export default function PobaluysyaPage() {
 
   function touchActivity() {
     setHasPlayed(true);
+    setSecretPeek(false);
+    scheduleIdleSecret();
     setIsRepairing(false);
 
     for (const piece of piecesRef.current) {
@@ -183,6 +235,38 @@ export default function PobaluysyaPage() {
         `translate(-50%, -50%) rotate(${piece.angle}rad)`;
     }
   }
+
+  useEffect(() => {
+    try {
+      const oldVisits = Number(
+        localStorage.getItem("kessi-pobaluysya-visits") || "0"
+      );
+      const nextVisits = oldVisits + 1;
+
+      localStorage.setItem(
+        "kessi-pobaluysya-visits",
+        String(nextVisits)
+      );
+
+      setVisits(nextVisits);
+
+      const savedSecrets = JSON.parse(
+        localStorage.getItem("kessi-pobaluysya-secrets") || "[]"
+      );
+
+      if (Array.isArray(savedSecrets)) {
+        setSecrets(savedSecrets);
+      }
+    } catch {}
+
+    scheduleIdleSecret(15000);
+
+    return () => {
+      window.clearTimeout(tinyHoldRef.current);
+      window.clearTimeout(idleSecretRef.current);
+      window.clearTimeout(launchScreenSurprise.timer);
+    };
+  }, []);
 
   useEffect(() => {
     buildPieces();
@@ -277,6 +361,9 @@ export default function PobaluysyaPage() {
       window.removeEventListener("resize", onResize);
       window.clearTimeout(inactivityRef.current);
       window.clearTimeout(say.timer);
+      window.clearTimeout(tinyHoldRef.current);
+      window.clearTimeout(idleSecretRef.current);
+      window.clearTimeout(launchScreenSurprise.timer);
     };
   }, []);
 
@@ -305,6 +392,21 @@ export default function PobaluysyaPage() {
       piece.vx += (Math.random() - 0.5) * strength;
       piece.vy += (Math.random() - 0.5) * strength;
       piece.va += (Math.random() - 0.5) * 0.16;
+    }
+
+    if (
+      visits >= 2 &&
+      !secrets.includes("lucky") &&
+      Math.random() < 0.12
+    ) {
+      setLuckySpark({
+        x: 18 + Math.random() * 64,
+        y: 28 + Math.random() * 42,
+      });
+
+      window.setTimeout(() => {
+        setLuckySpark(null);
+      }, 5200);
     }
 
     say(
@@ -397,6 +499,9 @@ export default function PobaluysyaPage() {
       lastX: event.clientX,
       lastY: event.clientY,
       lastT: performance.now(),
+      startX: event.clientX,
+      startY: event.clientY,
+      startT: performance.now(),
     };
 
     piece.dragging = true;
@@ -405,6 +510,30 @@ export default function PobaluysyaPage() {
     piece.vy = 0;
 
     event.currentTarget.classList.add("is-grabbed");
+
+    if (id === "tiny") {
+      window.clearTimeout(tinyHoldRef.current);
+
+      tinyHoldRef.current = window.setTimeout(() => {
+        const currentPiece = piecesRef.current.find(
+          (item) => item.id === "tiny"
+        );
+
+        if (!currentPiece?.dragging) return;
+
+        currentPiece.vx = 0;
+        currentPiece.vy = 0;
+
+        unlockSecret(
+          "tiny-hold",
+          "ладно. я тут посижу."
+        );
+
+        try {
+          navigator.vibrate?.(16);
+        } catch {}
+      }, 1700);
+    }
   }
 
   function pieceMove(event, id) {
@@ -431,6 +560,16 @@ export default function PobaluysyaPage() {
 
     piece.angle += (event.movementX || 0) * 0.002;
 
+    if (
+      id === "tiny" &&
+      Math.hypot(
+        event.clientX - drag.startX,
+        event.clientY - drag.startY
+      ) > 18
+    ) {
+      window.clearTimeout(tinyHoldRef.current);
+    }
+
     drag.lastX = event.clientX;
     drag.lastY = event.clientY;
     drag.lastT = now;
@@ -445,6 +584,53 @@ export default function PobaluysyaPage() {
     if (piece) {
       piece.dragging = false;
       piece.va += piece.vx * 0.008;
+    }
+
+    window.clearTimeout(tinyHoldRef.current);
+
+    const elapsed = performance.now() - drag.startT;
+    const moved = Math.hypot(
+      event.clientX - drag.startX,
+      event.clientY - drag.startY
+    );
+
+    if (
+      piece &&
+      piece.kind === "letter" &&
+      Math.hypot(
+        piece.homeX - piece.x,
+        piece.homeY - piece.y
+      ) < 28 &&
+      moved > 18
+    ) {
+      manualFixRef.current += 1;
+
+      if (manualFixRef.current >= 3) {
+        manualFixRef.current = 0;
+
+        unlockSecret(
+          "manual-fix",
+          "ты даже собираешь меня обратно :)"
+        );
+
+        window.setTimeout(() => {
+          launchScreenSurprise();
+        }, 650);
+      }
+    }
+
+    if (
+      id === "tiny" &&
+      elapsed < 320 &&
+      moved < 12 &&
+      visits >= 3
+    ) {
+      unlockSecret(
+        "recognized",
+        secrets.includes("recognized")
+          ? "ага. снова ты."
+          : "о. я тебя уже узнаю."
+      );
     }
 
     event.currentTarget.classList.remove("is-grabbed");
@@ -703,6 +889,60 @@ export default function PobaluysyaPage() {
             </button>
           )}
 
+          {secretPeek && (
+            <button
+              type="button"
+              className="quiet-secret-peek"
+              onClick={(event) => {
+                event.stopPropagation();
+                setSecretPeek(false);
+                unlockSecret(
+                  "quiet-peek",
+                  "о. ты всё-таки заметила."
+                );
+              }}
+              aria-label="Секрет"
+            >
+              <span>·</span>
+            </button>
+          )}
+
+          {luckySpark && (
+            <button
+              type="button"
+              className="lucky-spark"
+              style={{
+                left: `${luckySpark.x}%`,
+                top: `${luckySpark.y}%`,
+              }}
+              onClick={(event) => {
+                event.stopPropagation();
+                setLuckySpark(null);
+                unlockSecret(
+                  "lucky",
+                  "нашлось что-то хорошее."
+                );
+
+                if (secrets.length >= 2) {
+                  window.setTimeout(() => {
+                    launchScreenSurprise();
+                  }, 420);
+                }
+              }}
+              aria-label="Редкая пасхалка"
+            >
+              ✦
+            </button>
+          )}
+
+          {secrets.length >= 4 && (
+            <div className="secret-warmth" aria-hidden="true">
+              <span>·</span>
+              <span>·</span>
+              <span>·</span>
+            </div>
+          )}
+
           {message && (
             <div className="play-message">
               {message}
@@ -714,6 +954,38 @@ export default function PobaluysyaPage() {
           </div>
         </div>
       </section>
+
+      {screenSurprise && (
+        <div
+          className="screen-surprise"
+          aria-hidden="true"
+        >
+          <div className="surprise-trail">
+            <span>✦</span>
+            <span>·</span>
+            <span>✦</span>
+            <span>·</span>
+            <span>✦</span>
+          </div>
+
+          <div className="screen-buddy">
+            <span className="buddy-ear buddy-ear-left" />
+            <span className="buddy-ear buddy-ear-right" />
+
+            <div className="buddy-face">
+              <i className="buddy-eye buddy-eye-left" />
+              <i className="buddy-eye buddy-eye-right" />
+              <i className="buddy-mouth" />
+            </div>
+
+            <span className="buddy-tail" />
+          </div>
+
+          <div className="surprise-copy">
+            я тут на секундочку
+          </div>
+        </div>
+      )}
     </main>
   );
 }
