@@ -3509,36 +3509,6 @@ body:has(.traces-page) .topbar {
    app/room/page.js
 ===================================================== */
 
-body:has(.there-page) .weather-effects,
-body:has(.there-page) .buddy,
-body:has(.there-page) .global-light {
-  display: none !important;
-}
-
-body:has(.there-page) .site-shell {
-  background:
-    radial-gradient(
-      circle at 18% 12%,
-      rgba(142, 78, 91, .16),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 82% 78%,
-      rgba(103, 72, 91, .14),
-      transparent 32%
-    ),
-    linear-gradient(
-      155deg,
-      #211a1e 0%,
-      #2a2025 48%,
-      #201a20 100%
-    ) !important;
-}
-
-body:has(.there-page) .site-ambient {
-  opacity: .24;
-}
-
 .there-page {
   width: min(100%, 900px);
   min-height: calc(100svh - 90px);
