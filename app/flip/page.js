@@ -2,751 +2,717 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const ITEMS = [
-  { id: "a", r: 13, symbol: "•", mass: 1.0 },
-  { id: "b", r: 18, symbol: "◌", mass: 1.1 },
-  { id: "c", r: 14, symbol: "✦", mass: 0.85 },
-  { id: "d", r: 11, symbol: "·", mass: 0.75 },
-  { id: "e", r: 16, symbol: "⌁", mass: 1.25 },
-  { id: "little", r: 12, symbol: "°", mass: 0.72, special: true },
+const TITLE = "Побалуйся";
+
+const EXTRA_PIECES = [
+  {
+    id: "card-1",
+    kind: "card",
+    text: "можешь двигать",
+    sub: "да, прямо это",
+    homeX: 24,
+    homeY: 44,
+    w: 128,
+    h: 72,
+  },
+  {
+    id: "card-2",
+    kind: "card",
+    text: "не всё обязано",
+    sub: "стоять ровно",
+    homeX: 71,
+    homeY: 58,
+    w: 132,
+    h: 72,
+  },
+  {
+    id: "line",
+    kind: "line",
+    text: "────────",
+    homeX: 50,
+    homeY: 72,
+    w: 120,
+    h: 28,
+  },
+  {
+    id: "tiny",
+    kind: "tiny",
+    text: "·",
+    homeX: 82,
+    homeY: 31,
+    w: 42,
+    h: 42,
+    stubborn: true,
+  },
 ];
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
-export default function DontFlipPage() {
-  const canvasRef = useRef(null);
+export default function PobaluysyaPage() {
   const stageRef = useRef(null);
+  const worldRef = useRef(null);
+  const pieceElsRef = useRef(new Map());
+  const piecesRef = useRef([]);
   const frameRef = useRef(null);
-  const objectsRef = useRef([]);
-  const sizeRef = useRef({ w: 0, h: 0, dpr: 1 });
+  const activeDragRef = useRef(null);
+  const pointersRef = useRef(new Map());
+  const pinchStartRef = useRef(null);
+  const bgDragRef = useRef(null);
+  const inactivityRef = useRef(null);
+  const motionCooldownRef = useRef(0);
 
-  const gravityRef = useRef({ x: 0, y: 0.72 });
-  const targetGravityRef = useRef({ x: 0, y: 0.72 });
-
-  const lastMotionRef = useRef({ x: 0, y: 0, z: 0, t: 0 });
-  const lastAlphaRef = useRef(null);
-  const rotationAccumRef = useRef(0);
-  const lastOrientationSideRef = useRef("normal");
-
-  const upsideTimerRef = useRef(null);
-  const sidewaysTimerRef = useRef(null);
-  const quietTimerRef = useRef(null);
-  const messageTimerRef = useRef(null);
-  const returnTimerRef = useRef(null);
-
+  const [message, setMessage] = useState("");
+  const [wrongCount, setWrongCount] = useState(0);
+  const [wrongPos, setWrongPos] = useState({ x: 50, y: 84 });
+  const [worldScale, setWorldScale] = useState(1);
   const [permissionNeeded, setPermissionNeeded] = useState(false);
   const [permissionGranted, setPermissionGranted] = useState(false);
-  const [message, setMessage] = useState("");
-  const [hint, setHint] = useState(true);
-  const [found, setFound] = useState([]);
-  const [visits, setVisits] = useState(1);
-  const [quietGlow, setQuietGlow] = useState(false);
-  const [clinging, setClinging] = useState(false);
-  const [specialMissing, setSpecialMissing] = useState(false);
-  const [secretFlash, setSecretFlash] = useState(false);
+  const [isRepairing, setIsRepairing] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false);
 
-  function unlock(id) {
-    setFound((current) => {
-      if (current.includes(id)) return current;
-      const next = [...current, id];
-      try {
-        localStorage.setItem(
-          "kessi-dontflip-found",
-          JSON.stringify(next)
-        );
-      } catch {}
-      return next;
-    });
-  }
-
-  function say(text, ms = 2300) {
+  function say(text, ms = 1800) {
     setMessage(text);
-    window.clearTimeout(messageTimerRef.current);
-    messageTimerRef.current = window.setTimeout(() => {
-      setMessage("");
-    }, ms);
+    window.clearTimeout(say.timer);
+    say.timer = window.setTimeout(() => setMessage(""), ms);
   }
 
-  function pulseSecret() {
-    setSecretFlash(true);
-    window.setTimeout(() => setSecretFlash(false), 900);
+  function scheduleRepair(delay = 6500) {
+    window.clearTimeout(inactivityRef.current);
+
+    inactivityRef.current = window.setTimeout(() => {
+      setIsRepairing(true);
+
+      for (const piece of piecesRef.current) {
+        piece.dragging = false;
+
+        const lag = piece.stubborn ? 1150 : 0;
+
+        window.setTimeout(() => {
+          piece.repairing = true;
+        }, lag);
+      }
+
+      setWorldScale(1);
+      setWrongPos({ x: 50, y: 84 });
+
+      window.setTimeout(() => {
+        setIsRepairing(false);
+
+        if (hasPlayed) {
+          say("ну всё. почти как было.", 2100);
+        }
+      }, 2400);
+    }, delay);
   }
 
-  function initObjects(w, h) {
-    objectsRef.current = ITEMS.map((item, index) => ({
-      ...item,
-      x: w * (0.23 + (index % 3) * 0.26) + (Math.random() - 0.5) * 24,
-      y: h * (0.30 + Math.floor(index / 3) * 0.22) + (Math.random() - 0.5) * 20,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      spin: (Math.random() - 0.5) * 0.015,
-      angle: Math.random() * Math.PI * 2,
-      sleeping: false,
-      hidden: false,
-    }));
+  function touchActivity() {
+    setHasPlayed(true);
+    setIsRepairing(false);
+
+    for (const piece of piecesRef.current) {
+      piece.repairing = false;
+    }
+
+    scheduleRepair();
+  }
+
+  function buildPieces() {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const rect = stage.getBoundingClientRect();
+    const titleWidth = Math.min(rect.width * 0.72, 380);
+    const startX = rect.width * 0.5 - titleWidth * 0.5;
+    const letterGap = titleWidth / Math.max(1, TITLE.length - 1);
+
+    const titlePieces = [...TITLE].map((letter, index) => {
+      const x = startX + letterGap * index;
+      const y = rect.height * 0.24;
+
+      return {
+        id: `letter-${index}`,
+        kind: "letter",
+        text: letter,
+        homeX: x,
+        homeY: y,
+        x,
+        y,
+        vx: 0,
+        vy: 0,
+        angle: 0,
+        va: 0,
+        w: 50,
+        h: 62,
+        dragging: false,
+        repairing: false,
+      };
+    });
+
+    const extras = EXTRA_PIECES.map((item) => {
+      const x = rect.width * (item.homeX / 100);
+      const y = rect.height * (item.homeY / 100);
+
+      return {
+        ...item,
+        homeX: x,
+        homeY: y,
+        x,
+        y,
+        vx: 0,
+        vy: 0,
+        angle: 0,
+        va: 0,
+        dragging: false,
+        repairing: false,
+      };
+    });
+
+    piecesRef.current = [...titlePieces, ...extras];
+    syncPieces();
+  }
+
+  function syncPieces() {
+    for (const piece of piecesRef.current) {
+      const el = pieceElsRef.current.get(piece.id);
+      if (!el) continue;
+
+      el.style.transform =
+        `translate3d(${piece.x}px, ${piece.y}px, 0) ` +
+        `translate(-50%, -50%) rotate(${piece.angle}rad)`;
+    }
   }
 
   useEffect(() => {
-    try {
-      const saved = JSON.parse(
-        localStorage.getItem("kessi-dontflip-found") || "[]"
-      );
-      if (Array.isArray(saved)) setFound(saved);
+    buildPieces();
 
-      const oldVisits = Number(
-        localStorage.getItem("kessi-dontflip-visits") || "0"
-      );
-      const nextVisits = oldVisits + 1;
-      localStorage.setItem(
-        "kessi-dontflip-visits",
-        String(nextVisits)
-      );
-      setVisits(nextVisits);
-    } catch {}
+    const onResize = () => buildPieces();
+    window.addEventListener("resize", onResize);
 
-    const motionPermission =
-      typeof DeviceMotionEvent !== "undefined" &&
-      typeof DeviceMotionEvent.requestPermission === "function";
+    let last = performance.now();
 
-    const orientationPermission =
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function";
+    function tick(now) {
+      const stage = stageRef.current;
 
-    setPermissionNeeded(motionPermission || orientationPermission);
+      if (stage) {
+        const rect = stage.getBoundingClientRect();
+        const dt = Math.min(2, (now - last) / 16.67);
+        last = now;
 
-    if (!motionPermission && !orientationPermission) {
-      setPermissionGranted(true);
+        for (const piece of piecesRef.current) {
+          if (!piece.dragging) {
+            if (piece.repairing) {
+              piece.vx += (piece.homeX - piece.x) * 0.038 * dt;
+              piece.vy += (piece.homeY - piece.y) * 0.038 * dt;
+              piece.va += (0 - piece.angle) * 0.030 * dt;
+            }
+
+            piece.x += piece.vx * dt;
+            piece.y += piece.vy * dt;
+            piece.angle += piece.va * dt;
+
+            piece.vx *= Math.pow(piece.repairing ? 0.84 : 0.982, dt);
+            piece.vy *= Math.pow(piece.repairing ? 0.84 : 0.982, dt);
+            piece.va *= Math.pow(piece.repairing ? 0.80 : 0.975, dt);
+
+            const halfW = (piece.w || 46) * 0.5;
+            const halfH = (piece.h || 46) * 0.5;
+
+            if (piece.x < halfW) {
+              piece.x = halfW;
+              piece.vx = Math.abs(piece.vx) * 0.58;
+              piece.va += 0.02;
+            }
+
+            if (piece.x > rect.width - halfW) {
+              piece.x = rect.width - halfW;
+              piece.vx = -Math.abs(piece.vx) * 0.58;
+              piece.va -= 0.02;
+            }
+
+            if (piece.y < halfH) {
+              piece.y = halfH;
+              piece.vy = Math.abs(piece.vy) * 0.58;
+            }
+
+            if (piece.y > rect.height - halfH) {
+              piece.y = rect.height - halfH;
+              piece.vy = -Math.abs(piece.vy) * 0.54;
+            }
+
+            if (
+              piece.repairing &&
+              Math.hypot(piece.homeX - piece.x, piece.homeY - piece.y) < 2 &&
+              Math.abs(piece.vx) < 0.1 &&
+              Math.abs(piece.vy) < 0.1
+            ) {
+              piece.x = piece.homeX;
+              piece.y = piece.homeY;
+              piece.angle = 0;
+              piece.vx = 0;
+              piece.vy = 0;
+              piece.va = 0;
+              piece.repairing = false;
+            }
+          }
+
+          const el = pieceElsRef.current.get(piece.id);
+
+          if (el) {
+            el.style.transform =
+              `translate3d(${piece.x}px, ${piece.y}px, 0) ` +
+              `translate(-50%, -50%) rotate(${piece.angle}rad)`;
+          }
+        }
+      }
+
+      frameRef.current = requestAnimationFrame(tick);
     }
+
+    frameRef.current = requestAnimationFrame(tick);
 
     return () => {
       cancelAnimationFrame(frameRef.current);
-      window.clearTimeout(upsideTimerRef.current);
-      window.clearTimeout(sidewaysTimerRef.current);
-      window.clearTimeout(quietTimerRef.current);
-      window.clearTimeout(messageTimerRef.current);
-      window.clearTimeout(returnTimerRef.current);
+      window.removeEventListener("resize", onResize);
+      window.clearTimeout(inactivityRef.current);
+      window.clearTimeout(say.timer);
     };
   }, []);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const stage = stageRef.current;
-    if (!canvas || !stage) return;
+    const motionNeedsPermission =
+      typeof DeviceMotionEvent !== "undefined" &&
+      typeof DeviceMotionEvent.requestPermission === "function";
 
-    const ctx = canvas.getContext("2d");
+    setPermissionNeeded(motionNeedsPermission);
 
-    function resize() {
-      const rect = stage.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-      sizeRef.current = {
-        w: rect.width,
-        h: rect.height,
-        dpr,
-      };
-
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      if (!objectsRef.current.length) {
-        initObjects(rect.width, rect.height);
-      } else {
-        for (const obj of objectsRef.current) {
-          obj.x = clamp(obj.x, obj.r, rect.width - obj.r);
-          obj.y = clamp(obj.y, obj.r, rect.height - obj.r);
-        }
-      }
+    if (!motionNeedsPermission) {
+      attachMotion();
+      setPermissionGranted(true);
     }
-
-    resize();
-    window.addEventListener("resize", resize);
-
-    let last = performance.now();
-
-    function draw(now) {
-      const dt = Math.min(2.2, (now - last) / 16.67);
-      last = now;
-
-      const { w, h } = sizeRef.current;
-
-      gravityRef.current.x +=
-        (targetGravityRef.current.x - gravityRef.current.x) * 0.08;
-      gravityRef.current.y +=
-        (targetGravityRef.current.y - gravityRef.current.y) * 0.08;
-
-      ctx.clearRect(0, 0, w, h);
-
-      const bg = ctx.createRadialGradient(
-        w * 0.5,
-        h * 0.44,
-        0,
-        w * 0.5,
-        h * 0.44,
-        Math.max(w, h) * 0.8
-      );
-      bg.addColorStop(0, "rgba(125,80,91,0.12)");
-      bg.addColorStop(0.5, "rgba(48,36,43,0.04)");
-      bg.addColorStop(1, "rgba(10,10,12,0)");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, w, h);
-
-      const objs = objectsRef.current;
-
-      for (const obj of objs) {
-        if (obj.hidden) continue;
-
-        if (clinging && obj.special) {
-          const targetX = w * 0.68;
-          const targetY = obj.r + 8;
-          obj.vx *= 0.80;
-          obj.vy *= 0.80;
-          obj.x += (targetX - obj.x) * 0.075;
-          obj.y += (targetY - obj.y) * 0.075;
-        } else if (obj.sleeping) {
-          obj.vx *= 0.90;
-          obj.vy *= 0.90;
-        } else {
-          obj.vx += gravityRef.current.x * 0.23 * obj.mass * dt;
-          obj.vy += gravityRef.current.y * 0.23 * obj.mass * dt;
-
-          obj.vx *= Math.pow(0.992, dt);
-          obj.vy *= Math.pow(0.992, dt);
-
-          obj.x += obj.vx * dt;
-          obj.y += obj.vy * dt;
-          obj.angle += obj.spin * dt;
-        }
-
-        if (!clinging || !obj.special) {
-          if (obj.x - obj.r < 0) {
-            obj.x = obj.r;
-            obj.vx = Math.abs(obj.vx) * 0.62;
-          }
-
-          if (obj.x + obj.r > w) {
-            obj.x = w - obj.r;
-            obj.vx = -Math.abs(obj.vx) * 0.62;
-          }
-
-          if (obj.y - obj.r < 0) {
-            obj.y = obj.r;
-            obj.vy = Math.abs(obj.vy) * 0.62;
-          }
-
-          if (obj.y + obj.r > h) {
-            obj.y = h - obj.r;
-            obj.vy = -Math.abs(obj.vy) * 0.56;
-          }
-        }
-      }
-
-      // простые столкновения
-      for (let i = 0; i < objs.length; i++) {
-        const a = objs[i];
-        if (a.hidden) continue;
-
-        for (let j = i + 1; j < objs.length; j++) {
-          const b = objs[j];
-          if (b.hidden) continue;
-
-          const dx = b.x - a.x;
-          const dy = b.y - a.y;
-          const dist = Math.hypot(dx, dy) || 0.001;
-          const minDist = a.r + b.r + 2;
-
-          if (dist < minDist) {
-            const nx = dx / dist;
-            const ny = dy / dist;
-            const overlap = minDist - dist;
-
-            a.x -= nx * overlap * 0.5;
-            a.y -= ny * overlap * 0.5;
-            b.x += nx * overlap * 0.5;
-            b.y += ny * overlap * 0.5;
-
-            const rel = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
-
-            if (rel < 0) {
-              const impulse = -rel * 0.62;
-              a.vx -= impulse * nx;
-              a.vy -= impulse * ny;
-              b.vx += impulse * nx;
-              b.vy += impulse * ny;
-            }
-          }
-        }
-      }
-
-      for (const obj of objs) {
-        if (obj.hidden) continue;
-
-        const glow = ctx.createRadialGradient(
-          obj.x,
-          obj.y,
-          1,
-          obj.x,
-          obj.y,
-          obj.r * 2.4
-        );
-
-        if (obj.special) {
-          glow.addColorStop(0, "rgba(255,224,210,0.34)");
-          glow.addColorStop(0.35, "rgba(220,139,151,0.14)");
-          glow.addColorStop(1, "rgba(220,139,151,0)");
-        } else {
-          glow.addColorStop(0, "rgba(255,238,230,0.15)");
-          glow.addColorStop(0.38, "rgba(190,124,145,0.07)");
-          glow.addColorStop(1, "rgba(190,124,145,0)");
-        }
-
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(obj.x, obj.y, obj.r * 2.4, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.save();
-        ctx.translate(obj.x, obj.y);
-        ctx.rotate(obj.angle);
-
-        ctx.fillStyle = obj.special
-          ? "rgba(238,180,174,0.91)"
-          : "rgba(229,218,216,0.76)";
-
-        ctx.beginPath();
-        ctx.arc(0, 0, obj.r, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = "rgba(255,255,255,0.12)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        ctx.fillStyle = obj.special
-          ? "rgba(79,48,56,0.82)"
-          : "rgba(57,48,52,0.76)";
-        ctx.font = `${Math.max(10, obj.r)}px Georgia, serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(obj.symbol, 0, 0);
-
-        ctx.restore();
-      }
-
-      frameRef.current = requestAnimationFrame(draw);
-    }
-
-    frameRef.current = requestAnimationFrame(draw);
 
     return () => {
-      cancelAnimationFrame(frameRef.current);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("devicemotion", handleMotion);
     };
-  }, [clinging]);
+  }, []);
 
-  function rotateMotionForScreen(x, y) {
-    const angle =
-      window.screen?.orientation?.angle ??
-      window.orientation ??
-      0;
+  function scatter(strength = 8) {
+    touchActivity();
 
-    if (angle === 90) return { x: -y, y: x };
-    if (angle === -90 || angle === 270) return { x: y, y: -x };
-    if (angle === 180) return { x: -x, y: -y };
+    for (const piece of piecesRef.current) {
+      piece.repairing = false;
+      piece.vx += (Math.random() - 0.5) * strength;
+      piece.vy += (Math.random() - 0.5) * strength;
+      piece.va += (Math.random() - 0.5) * 0.16;
+    }
 
-    return { x, y };
+    say(
+      Math.random() > 0.5
+        ? "эй. это вообще-то интерфейс."
+        : "ладно, собирай теперь."
+    );
+
+    try {
+      navigator.vibrate?.(18);
+    } catch {}
   }
 
   function handleMotion(event) {
-    const acc = event.accelerationIncludingGravity;
-    if (!acc) return;
+    const a = event.acceleration;
+    if (!a) return;
 
-    const rawX = Number(acc.x || 0);
-    const rawY = Number(acc.y || 0);
-    const rawZ = Number(acc.z || 0);
+    const power =
+      Math.abs(a.x || 0) +
+      Math.abs(a.y || 0) +
+      Math.abs(a.z || 0);
 
-    const rotated = rotateMotionForScreen(rawX, rawY);
-
-    // Координата Y устройства направлена вверх,
-    // а на экране вниз, поэтому знак меняем.
-    targetGravityRef.current.x = clamp(-rotated.x / 9.81, -1.3, 1.3);
-    targetGravityRef.current.y = clamp(rotated.y / 9.81, -1.3, 1.3);
-
-    const now = performance.now();
-    const last = lastMotionRef.current;
-
-    if (last.t) {
-      const impulse =
-        Math.abs(rawX - last.x) +
-        Math.abs(rawY - last.y) +
-        Math.abs(rawZ - last.z);
-
-      if (impulse > 13 && now - last.t < 170) {
-        triggerShake();
-      }
-    }
-
-    lastMotionRef.current = {
-      x: rawX,
-      y: rawY,
-      z: rawZ,
-      t: now,
-    };
-
-    const gx = targetGravityRef.current.x;
-    const gy = targetGravityRef.current.y;
-
-    detectPose(gx, gy, rawZ);
-  }
-
-  function handleOrientation(event) {
-    const alpha = event.alpha;
-
-    if (typeof alpha === "number") {
-      if (lastAlphaRef.current !== null) {
-        let delta = alpha - lastAlphaRef.current;
-
-        if (delta > 180) delta -= 360;
-        if (delta < -180) delta += 360;
-
-        if (Math.abs(delta) < 45) {
-          rotationAccumRef.current += Math.abs(delta);
-        }
-
-        if (rotationAccumRef.current > 315) {
-          rotationAccumRef.current = 0;
-          unlock("spin360");
-          say("ладно, полный круг засчитан");
-          pulseSecret();
-
-          for (const obj of objectsRef.current) {
-            obj.vx += (Math.random() - 0.5) * 3.4;
-            obj.vy += (Math.random() - 0.5) * 3.4;
-          }
-        }
-      }
-
-      lastAlphaRef.current = alpha;
-    }
-  }
-
-  function detectPose(gx, gy, rawZ) {
-    const upside = gy < -0.72;
-    const sideways = Math.abs(gx) > 0.78 && Math.abs(gy) < 0.65;
-    const nearlyFlat =
-      Math.abs(gx) < 0.22 &&
-      Math.abs(gy) < 0.22 &&
-      Math.abs(rawZ) > 7.2;
-
-    const side = upside ? "upside" : sideways ? "side" : "normal";
-
-    if (
-      lastOrientationSideRef.current !== side &&
-      ((lastOrientationSideRef.current === "normal" && side === "upside") ||
-        (lastOrientationSideRef.current === "upside" && side === "normal"))
-    ) {
-      const old = lastOrientationSideRef.current;
-      lastOrientationSideRef.current = side;
-
-      if (old !== "normal" || side !== "normal") {
-        flipCountRef.current = (flipCountRef.current || 0) + 1;
-      }
-    } else {
-      lastOrientationSideRef.current = side;
-    }
-
-    if (upside) {
-      if (!upsideTimerRef.current) {
-        upsideTimerRef.current = window.setTimeout(() => {
-          setClinging(true);
-          unlock("upside");
-          say("ну я старалась", 2600);
-
-          window.setTimeout(() => {
-            setClinging(false);
-          }, 3200);
-        }, 1900);
-      }
-    } else {
-      window.clearTimeout(upsideTimerRef.current);
-      upsideTimerRef.current = null;
-    }
-
-    if (sideways) {
-      if (!sidewaysTimerRef.current) {
-        sidewaysTimerRef.current = window.setTimeout(() => {
-          const little = objectsRef.current.find((o) => o.special);
-
-          if (little) {
-            little.vy -= 3.8;
-            little.vx -= Math.sign(gx) * 2.0;
-          }
-
-          unlock("sideways");
-          say("не выдавай меня");
-        }, 4300);
-      }
-    } else {
-      window.clearTimeout(sidewaysTimerRef.current);
-      sidewaysTimerRef.current = null;
-    }
-
-    if (nearlyFlat) {
-      if (!quietTimerRef.current) {
-        quietTimerRef.current = window.setTimeout(() => {
-          setQuietGlow(true);
-          unlock("quiet");
-
-          const little = objectsRef.current.find((o) => o.special);
-          if (little) {
-            little.sleeping = true;
-          }
-
-          say("тихо. он уснул.", 2800);
-        }, 7000);
-      }
-    } else {
-      window.clearTimeout(quietTimerRef.current);
-      quietTimerRef.current = null;
-
-      if (quietGlow) {
-        setQuietGlow(false);
-        const little = objectsRef.current.find((o) => o.special);
-        if (little) little.sleeping = false;
-      }
-    }
-  }
-
-  const flipCountRef = useRef(0);
-
-  useEffect(() => {
-    if (flipCountRef.current >= 5) {
-      flipCountRef.current = 0;
-      unlock("manyflips");
-      say("ты точно решила проверить всё? 👀");
-    }
-  });
-
-  function triggerShake() {
     const now = Date.now();
-    if (triggerShake.last && now - triggerShake.last < 1200) return;
-    triggerShake.last = now;
 
-    setHint(false);
-    unlock("shake");
-
-    try {
-      navigator.vibrate?.(22);
-    } catch {}
-
-    for (const obj of objectsRef.current) {
-      obj.vx += (Math.random() - 0.5) * 7;
-      obj.vy += (Math.random() - 0.5) * 7;
-    }
-
-    const little = objectsRef.current.find((o) => o.special);
-
-    if (little) {
-      little.hidden = true;
-      setSpecialMissing(true);
-
-      say("кажется, кто-то потерялся");
-
-      window.clearTimeout(returnTimerRef.current);
-      returnTimerRef.current = window.setTimeout(() => {
-        little.hidden = false;
-
-        const { w, h } = sizeRef.current;
-        little.x = Math.max(little.r, w * 0.5);
-        little.y = little.r + 20;
-        little.vx = 0;
-        little.vy = 0.3;
-
-        setSpecialMissing(false);
-        say("а. вот он.");
-      }, 2600);
+    if (power > 18 && now - motionCooldownRef.current > 1300) {
+      motionCooldownRef.current = now;
+      scatter(11);
     }
   }
 
-  function attachListeners() {
+  function attachMotion() {
     window.removeEventListener("devicemotion", handleMotion);
-    window.removeEventListener("deviceorientation", handleOrientation);
-
     window.addEventListener("devicemotion", handleMotion, {
       passive: true,
     });
-
-    window.addEventListener("deviceorientation", handleOrientation, {
-      passive: true,
-    });
-
-    setPermissionGranted(true);
   }
-
-  useEffect(() => {
-    if (permissionGranted && !permissionNeeded) {
-      attachListeners();
-
-      return () => {
-        window.removeEventListener("devicemotion", handleMotion);
-        window.removeEventListener("deviceorientation", handleOrientation);
-      };
-    }
-  }, [permissionGranted, permissionNeeded]);
 
   async function enableMotion() {
     try {
-      let motion = "granted";
-      let orientation = "granted";
-
       if (
         typeof DeviceMotionEvent !== "undefined" &&
         typeof DeviceMotionEvent.requestPermission === "function"
       ) {
-        motion = await DeviceMotionEvent.requestPermission();
+        const result = await DeviceMotionEvent.requestPermission();
+
+        if (result !== "granted") {
+          say("ладно. без тряски так без тряски.");
+          return;
+        }
       }
 
-      if (
-        typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function"
-      ) {
-        orientation = await DeviceOrientationEvent.requestPermission();
-      }
-
-      if (motion !== "granted" || orientation !== "granted") {
-        say("без доступа телефон не сможет всё уронить");
-        return;
-      }
-
-      attachListeners();
+      attachMotion();
+      setPermissionGranted(true);
       setPermissionNeeded(false);
-      setHint(false);
-      say("только не переворачивай");
+      say("теперь можешь потрясти");
     } catch {
-      say("не получилось включить движение");
+      say("что-то не дало включить движение");
     }
   }
 
-  function handleCanvasTap(event) {
-    setHint(false);
+  function registerPieceRef(id, el) {
+    if (el) {
+      pieceElsRef.current.set(id, el);
+    } else {
+      pieceElsRef.current.delete(id);
+    }
+  }
 
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+  function pieceDown(event, id) {
+    event.stopPropagation();
 
-    const little = objectsRef.current.find(
-      (obj) => obj.special && !obj.hidden
-    );
+    const piece = piecesRef.current.find((item) => item.id === id);
+    const stage = stageRef.current;
 
-    if (
-      little &&
-      Math.hypot(x - little.x, y - little.y) < little.r + 24
-    ) {
-      unlock("littleTap");
+    if (!piece || !stage) return;
 
-      if (visits >= 3) {
-        say("я тебя уже знаю");
-      } else {
-        say("не трогай. я занят.");
-      }
+    touchActivity();
 
-      little.vx += (Math.random() - 0.5) * 4;
-      little.vy -= 2.4;
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {}
+
+    const rect = stage.getBoundingClientRect();
+
+    activeDragRef.current = {
+      id,
+      pointerId: event.pointerId,
+      offsetX: event.clientX - rect.left - piece.x,
+      offsetY: event.clientY - rect.top - piece.y,
+      lastX: event.clientX,
+      lastY: event.clientY,
+      lastT: performance.now(),
+    };
+
+    piece.dragging = true;
+    piece.repairing = false;
+    piece.vx = 0;
+    piece.vy = 0;
+
+    event.currentTarget.classList.add("is-grabbed");
+  }
+
+  function pieceMove(event, id) {
+    const drag = activeDragRef.current;
+    const stage = stageRef.current;
+
+    if (!drag || drag.id !== id || !stage) return;
+
+    const piece = piecesRef.current.find((item) => item.id === id);
+    if (!piece) return;
+
+    const rect = stage.getBoundingClientRect();
+    const now = performance.now();
+    const elapsed = Math.max(8, now - drag.lastT);
+
+    const nextX = event.clientX - rect.left - drag.offsetX;
+    const nextY = event.clientY - rect.top - drag.offsetY;
+
+    piece.vx = ((event.clientX - drag.lastX) / elapsed) * 16.67;
+    piece.vy = ((event.clientY - drag.lastY) / elapsed) * 16.67;
+
+    piece.x = clamp(nextX, 20, rect.width - 20);
+    piece.y = clamp(nextY, 20, rect.height - 20);
+
+    piece.angle += (event.movementX || 0) * 0.002;
+
+    drag.lastX = event.clientX;
+    drag.lastY = event.clientY;
+    drag.lastT = now;
+  }
+
+  function pieceUp(event, id) {
+    const drag = activeDragRef.current;
+    if (!drag || drag.id !== id) return;
+
+    const piece = piecesRef.current.find((item) => item.id === id);
+
+    if (piece) {
+      piece.dragging = false;
+      piece.va += piece.vx * 0.008;
+    }
+
+    event.currentTarget.classList.remove("is-grabbed");
+    activeDragRef.current = null;
+
+    scheduleRepair();
+  }
+
+  function stagePointerDown(event) {
+    if (event.target !== stageRef.current && event.target !== worldRef.current) {
       return;
     }
 
-    for (const obj of objectsRef.current) {
-      const dx = obj.x - x;
-      const dy = obj.y - y;
-      const dist = Math.hypot(dx, dy) || 1;
+    touchActivity();
 
-      if (dist < 120) {
-        const strength = (120 - dist) / 120;
-        obj.vx += (dx / dist) * strength * 3.0;
-        obj.vy += (dy / dist) * strength * 3.0;
-      }
+    pointersRef.current.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {}
+
+    if (pointersRef.current.size === 1) {
+      bgDragRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+      };
+    }
+
+    if (pointersRef.current.size === 2) {
+      const values = [...pointersRef.current.values()];
+      pinchStartRef.current = {
+        distance: Math.hypot(
+          values[1].x - values[0].x,
+          values[1].y - values[0].y
+        ),
+        scale: worldScale,
+      };
     }
   }
 
+  function stagePointerMove(event) {
+    if (!pointersRef.current.has(event.pointerId)) return;
+
+    pointersRef.current.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    const stage = stageRef.current;
+
+    if (pointersRef.current.size === 2 && pinchStartRef.current) {
+      const values = [...pointersRef.current.values()];
+      const distance = Math.hypot(
+        values[1].x - values[0].x,
+        values[1].y - values[0].y
+      );
+
+      const ratio =
+        distance / Math.max(1, pinchStartRef.current.distance);
+
+      setWorldScale(
+        clamp(pinchStartRef.current.scale * ratio, 0.82, 1.18)
+      );
+
+      return;
+    }
+
+    if (
+      stage &&
+      bgDragRef.current &&
+      bgDragRef.current.pointerId === event.pointerId
+    ) {
+      const dx = event.clientX - bgDragRef.current.startX;
+      const dy = event.clientY - bgDragRef.current.startY;
+
+      stage.style.setProperty("--bg-x", `${clamp(dx * 0.08, -18, 18)}px`);
+      stage.style.setProperty("--bg-y", `${clamp(dy * 0.08, -18, 18)}px`);
+    }
+  }
+
+  function stagePointerUp(event) {
+    pointersRef.current.delete(event.pointerId);
+
+    if (pointersRef.current.size < 2) {
+      pinchStartRef.current = null;
+    }
+
+    if (
+      bgDragRef.current &&
+      bgDragRef.current.pointerId === event.pointerId
+    ) {
+      bgDragRef.current = null;
+
+      if (stageRef.current) {
+        stageRef.current.style.setProperty("--bg-x", "0px");
+        stageRef.current.style.setProperty("--bg-y", "0px");
+      }
+    }
+
+    scheduleRepair();
+  }
+
+  function wrongButton() {
+    touchActivity();
+
+    const next = wrongCount + 1;
+    setWrongCount(next);
+
+    if (next === 1) {
+      say("я бы не нажимал ещё раз");
+    } else if (next === 2) {
+      setWrongPos({
+        x: 25 + Math.random() * 50,
+        y: 72 + Math.random() * 12,
+      });
+      say("ну зачем");
+    } else if (next === 3) {
+      setWrongPos({
+        x: 18 + Math.random() * 64,
+        y: 68 + Math.random() * 16,
+      });
+      say("теперь поймай");
+    } else {
+      setWrongCount(0);
+      setWrongPos({ x: 50, y: 84 });
+
+      if (stageRef.current) {
+        stageRef.current.classList.remove("screen-pop");
+        void stageRef.current.offsetWidth;
+        stageRef.current.classList.add("screen-pop");
+
+        window.setTimeout(() => {
+          stageRef.current?.classList.remove("screen-pop");
+        }, 700);
+      }
+
+      say("настойчивая.", 2100);
+      scatter(5);
+    }
+  }
+
+  const renderPieces = [
+    ...[...TITLE].map((letter, index) => ({
+      id: `letter-${index}`,
+      kind: "letter",
+      text: letter,
+    })),
+    ...EXTRA_PIECES,
+  ];
+
   return (
-    <main className="dontflip-page">
+    <main className="pobaluysya-page">
       <section
         ref={stageRef}
-        className={`dontflip-stage ${
-          quietGlow ? "is-quiet" : ""
-        } ${secretFlash ? "secret-flash" : ""}`}
+        className={`pobaluysya-stage ${
+          isRepairing ? "is-repairing" : ""
+        }`}
+        onPointerDown={stagePointerDown}
+        onPointerMove={stagePointerMove}
+        onPointerUp={stagePointerUp}
+        onPointerCancel={stagePointerUp}
       >
-        <canvas
-          ref={canvasRef}
-          className="dontflip-canvas"
-          onPointerDown={handleCanvasTap}
-        />
+        <div
+          ref={worldRef}
+          className="pobaluysya-world"
+          style={{
+            transform: `scale(${worldScale})`,
+          }}
+        >
+          <div className="play-grid" aria-hidden="true" />
+          <div className="play-glow glow-a" aria-hidden="true" />
+          <div className="play-glow glow-b" aria-hidden="true" />
 
-        <header className="dontflip-header">
-          <div>
+          <div className="play-top-copy">
             <small>ДЛЯ КЭССИЧКИ</small>
-            <h1>Не переворачивай</h1>
+            <span>
+              {isRepairing ? "сам чинится…" : "трогать можно"}
+            </span>
           </div>
 
-          <span className="dontflip-found">
-            {found.length ? `${found.length} странностей` : "всё нормально"}
-          </span>
-        </header>
+          {renderPieces.map((piece) => (
+            <div
+              key={piece.id}
+              ref={(el) => registerPieceRef(piece.id, el)}
+              className={`play-piece play-${piece.kind} ${
+                piece.stubborn ? "is-stubborn" : ""
+              }`}
+              onPointerDown={(event) =>
+                pieceDown(event, piece.id)
+              }
+              onPointerMove={(event) =>
+                pieceMove(event, piece.id)
+              }
+              onPointerUp={(event) =>
+                pieceUp(event, piece.id)
+              }
+              onPointerCancel={(event) =>
+                pieceUp(event, piece.id)
+              }
+            >
+              {piece.kind === "card" ? (
+                <>
+                  <b>{piece.text}</b>
+                  <small>{piece.sub}</small>
+                </>
+              ) : (
+                piece.text
+              )}
+            </div>
+          ))}
 
-        {hint && (
-          <div className="dontflip-intro">
-            <p>не переворачивай телефон</p>
-            <small>серьёзно</small>
-          </div>
-        )}
-
-        {permissionNeeded && !permissionGranted && (
           <button
-            className="motion-permission"
             type="button"
-            onClick={enableMotion}
+            className={`wrong-button wrong-${wrongCount}`}
+            style={{
+              left: `${wrongPos.x}%`,
+              top: `${wrongPos.y}%`,
+            }}
+            onClick={(event) => {
+              event.stopPropagation();
+              wrongButton();
+            }}
           >
-            <span>↻</span>
-            <b>Разрешить движение</b>
-            <small>
-              чтобы сайт чувствовал наклоны телефона
-            </small>
+            {wrongCount < 3 ? "не нажимай" : "·"}
           </button>
-        )}
 
-        {message && (
-          <div className="dontflip-message">
-            {message}
+          <button
+            type="button"
+            className="scatter-button"
+            onClick={(event) => {
+              event.stopPropagation();
+              scatter(9);
+            }}
+          >
+            перемешать
+          </button>
+
+          {permissionNeeded && !permissionGranted && (
+            <button
+              type="button"
+              className="motion-play-button"
+              onClick={(event) => {
+                event.stopPropagation();
+                enableMotion();
+              }}
+            >
+              <span>↝</span>
+              <div>
+                <b>включить встряску</b>
+                <small>чтобы сайт реагировал на телефон</small>
+              </div>
+            </button>
+          )}
+
+          {message && (
+            <div className="play-message">
+              {message}
+            </div>
+          )}
+
+          <div className="play-hint">
+            хватай · кидай · тяни двумя пальцами
           </div>
-        )}
-
-        {quietGlow && (
-          <div className="quiet-sleep">
-            <span>ᶻ</span>
-            <span>ᶻ</span>
-            <span>ᶻ</span>
-          </div>
-        )}
-
-        {specialMissing && (
-          <div className="missing-mark">?</div>
-        )}
-
-        {found.includes("upside") && (
-          <span className="tiny-memory memory-one">·</span>
-        )}
-
-        {found.includes("shake") && (
-          <span className="tiny-memory memory-two">·</span>
-        )}
-
-        {found.includes("spin360") && (
-          <span className="tiny-memory memory-three">·</span>
-        )}
+        </div>
       </section>
     </main>
   );
