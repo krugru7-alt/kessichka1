@@ -15,11 +15,6 @@ const items = [
     label: "Дракоша",
   },
   {
-    href: "/room",
-    icon: "◌",
-    label: "Там",
-  },
-  {
     href: "/for-you",
     icon: "♥",
     label: "Для тебя",
