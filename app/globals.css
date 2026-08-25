@@ -5535,4 +5535,978 @@ body:has(.traces-page) .topbar {
     animation: none !important;
   }
 }
+/* =====================================================
+   ПОБАЛУЙСЯ
+   "ломающийся" интерфейс
+   app/flip/page.js
+===================================================== */
+
+.pobaluysya-page {
+  width: min(100%, 920px);
+  min-height: calc(100svh - 90px);
+
+  margin: 0 auto;
+  padding: 0 8px 96px;
+}
+
+.pobaluysya-stage {
+  --bg-x: 0px;
+  --bg-y: 0px;
+
+  position: relative;
+
+  min-height: calc(100svh - 148px);
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 231, 224, .075);
+
+  border-radius: 30px;
+
+  background:
+    radial-gradient(
+      circle at 16% 12%,
+      rgba(189, 89, 111, .16),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 84% 78%,
+      rgba(118, 81, 113, .14),
+      transparent 34%
+    ),
+    linear-gradient(
+      155deg,
+      #2b2025 0%,
+      #211b20 48%,
+      #19171b 100%
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 28px 70px rgba(0,0,0,.22);
+
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  isolation: isolate;
+}
+
+.pobaluysya-stage::before {
+  content: "";
+
+  position: absolute;
+  inset: -30px;
+
+  z-index: 0;
+
+  transform:
+    translate(
+      var(--bg-x),
+      var(--bg-y)
+    );
+
+  background:
+    radial-gradient(
+      circle at 30% 38%,
+      rgba(244, 169, 166, .08),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 72% 66%,
+      rgba(178, 116, 151, .07),
+      transparent 26%
+    );
+
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1);
+
+  pointer-events: none;
+}
+
+.pobaluysya-stage::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  opacity: .18;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(255, 235, 229, .20) 0 .65px,
+      transparent .9px
+    );
+
+  background-size:
+    24px 24px;
+
+  pointer-events: none;
+}
+
+/* =====================================================
+   МИР
+===================================================== */
+
+.pobaluysya-world {
+  position: absolute;
+  inset: 0;
+
+  z-index: 3;
+
+  overflow: hidden;
+
+  transform-origin: 50% 50%;
+
+  transition:
+    transform .18s cubic-bezier(.2,.8,.2,1);
+}
+
+.pobaluysya-stage.is-repairing .pobaluysya-world {
+  transition:
+    transform .48s cubic-bezier(.2,.9,.2,1);
+}
+
+.play-grid {
+  position: absolute;
+  inset: 0;
+
+  opacity: .16;
+
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.025) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    46px 46px;
+
+  pointer-events: none;
+}
+
+.play-glow {
+  position: absolute;
+
+  width: 260px;
+  height: 260px;
+
+  border-radius: 50%;
+
+  filter: blur(42px);
+
+  opacity: .18;
+
+  pointer-events: none;
+}
+
+.glow-a {
+  left: -90px;
+  top: 21%;
+
+  background:
+    rgba(218, 112, 133, .46);
+}
+
+.glow-b {
+  right: -100px;
+  bottom: 9%;
+
+  background:
+    rgba(163, 108, 151, .37);
+}
+
+/* =====================================================
+   ВЕРХНЯЯ ПОДПИСЬ
+===================================================== */
+
+.play-top-copy {
+  position: absolute;
+
+  left: 18px;
+  right: 18px;
+  top: 20px;
+
+  z-index: 40;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  pointer-events: none;
+}
+
+.play-top-copy small {
+  color:
+    rgba(255, 218, 209, .31);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: .21em;
+}
+
+.play-top-copy span {
+  color:
+    rgba(255, 230, 222, .22);
+
+  font-size: 8px;
+
+  letter-spacing: .055em;
+}
+
+/* =====================================================
+   ВСЕ ПЕРЕТАСКИВАЕМЫЕ ЧАСТИ
+===================================================== */
+
+.play-piece {
+  position: absolute;
+
+  left: 0;
+  top: 0;
+
+  z-index: 15;
+
+  display: grid;
+  place-items: center;
+
+  cursor: grab;
+
+  will-change: transform;
+
+  touch-action: none;
+
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    filter .18s ease,
+    box-shadow .18s ease,
+    opacity .18s ease;
+}
+
+.play-piece.is-grabbed {
+  z-index: 50;
+
+  cursor: grabbing;
+
+  filter:
+    brightness(1.08)
+    drop-shadow(
+      0 14px 22px
+      rgba(0,0,0,.18)
+    );
+}
+
+/* =====================================================
+   БУКВЫ ЗАГОЛОВКА
+===================================================== */
+
+.play-letter {
+  width: 50px;
+  height: 62px;
+
+  color:
+    rgba(255, 239, 233, .91);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(31px, 8vw, 48px);
+
+  font-weight: 400;
+
+  line-height: 1;
+
+  text-shadow:
+    0 5px 24px rgba(0,0,0,.18),
+    0 0 20px rgba(229, 137, 152, .06);
+}
+
+.play-letter::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 7px 2px;
+
+  z-index: -1;
+
+  border-radius: 16px;
+
+  opacity: 0;
+
+  background:
+    rgba(255,255,255,.025);
+
+  border:
+    1px solid
+    rgba(255,255,255,.04);
+
+  transition:
+    opacity .16s ease;
+}
+
+.play-letter.is-grabbed::before {
+  opacity: 1;
+}
+
+/* =====================================================
+   КАРТОЧКИ
+===================================================== */
+
+.play-card {
+  width: 128px;
+  min-height: 72px;
+
+  padding: 12px 13px;
+
+  align-content: center;
+  justify-items: start;
+  gap: 3px;
+
+  border:
+    1px solid
+    rgba(255, 231, 224, .075);
+
+  border-radius: 18px;
+
+  color:
+    rgba(255, 238, 232, .79);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.055),
+      rgba(255,255,255,.018)
+    );
+
+  backdrop-filter:
+    blur(11px);
+
+  -webkit-backdrop-filter:
+    blur(11px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.035),
+    0 10px 24px rgba(0,0,0,.12);
+
+  text-align: left;
+}
+
+.play-card b {
+  font-size: 11px;
+  font-weight: 600;
+
+  letter-spacing: .005em;
+}
+
+.play-card small {
+  color:
+    rgba(255, 226, 218, .29);
+
+  font-size: 8px;
+
+  letter-spacing: .025em;
+}
+
+/* =====================================================
+   ЛИНИЯ
+===================================================== */
+
+.play-line {
+  width: 120px;
+  height: 28px;
+
+  color:
+    rgba(255, 222, 214, .24);
+
+  font-size: 13px;
+
+  letter-spacing: -.08em;
+}
+
+/* =====================================================
+   МАЛЕНЬКАЯ УПРЯМАЯ ТОЧКА
+===================================================== */
+
+.play-tiny {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  color:
+    rgba(255, 217, 207, .78);
+
+  font-size: 24px;
+
+  text-shadow:
+    0 0 12px
+    rgba(237, 144, 156, .34);
+}
+
+.play-tiny::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 22px;
+  height: 22px;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(233, 146, 154, .10),
+      transparent 68%
+    );
+
+  pointer-events: none;
+}
+
+.play-tiny.is-stubborn {
+  animation:
+    tinyIdle
+    3.8s ease-in-out infinite;
+}
+
+.play-tiny.is-stubborn.is-grabbed {
+  animation: none;
+}
+
+/* =====================================================
+   "НЕ НАЖИМАЙ"
+===================================================== */
+
+.wrong-button {
+  position: absolute;
+
+  z-index: 55;
+
+  transform:
+    translate(-50%, -50%);
+
+  min-width: 88px;
+
+  padding:
+    8px 11px;
+
+  border:
+    1px solid
+    rgba(255, 226, 218, .07);
+
+  border-radius:
+    999px;
+
+  color:
+    rgba(255, 231, 224, .43);
+
+  background:
+    rgba(255,255,255,.025);
+
+  backdrop-filter:
+    blur(10px);
+
+  -webkit-backdrop-filter:
+    blur(10px);
+
+  font-size:
+    8px;
+
+  letter-spacing:
+    .04em;
+
+  cursor: pointer;
+
+  transition:
+    left .32s cubic-bezier(.2,.8,.2,1),
+    top .32s cubic-bezier(.2,.8,.2,1),
+    transform .20s ease,
+    min-width .20s ease,
+    padding .20s ease,
+    opacity .20s ease;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.wrong-button:active {
+  transform:
+    translate(-50%, -50%)
+    scale(.90);
+}
+
+.wrong-1 {
+  transform:
+    translate(-50%, -50%)
+    scale(.88);
+
+  opacity: .82;
+}
+
+.wrong-2 {
+  min-width: 62px;
+
+  padding:
+    7px 8px;
+
+  transform:
+    translate(-50%, -50%)
+    scale(.72);
+
+  opacity: .68;
+}
+
+.wrong-3 {
+  min-width: 34px;
+  width: 34px;
+  height: 34px;
+
+  padding: 0;
+
+  transform:
+    translate(-50%, -50%)
+    scale(.76);
+
+  color:
+    rgba(255, 218, 208, .68);
+
+  font-size: 18px;
+}
+
+/* =====================================================
+   ПЕРЕМЕШАТЬ
+===================================================== */
+
+.scatter-button {
+  position: absolute;
+
+  left: 50%;
+  bottom: 9%;
+
+  z-index: 44;
+
+  transform:
+    translateX(-50%);
+
+  padding:
+    8px 11px;
+
+  border:
+    1px solid
+    rgba(255, 227, 218, .055);
+
+  border-radius:
+    999px;
+
+  color:
+    rgba(255, 229, 221, .25);
+
+  background:
+    rgba(255,255,255,.015);
+
+  font-size:
+    8px;
+
+  letter-spacing:
+    .04em;
+
+  cursor: pointer;
+
+  transition:
+    color .18s ease,
+    border-color .18s ease,
+    background .18s ease;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scatter-button:active {
+  color:
+    rgba(255, 236, 231, .60);
+
+  border-color:
+    rgba(255, 227, 218, .12);
+
+  background:
+    rgba(255,255,255,.035);
+}
+
+/* =====================================================
+   ВКЛЮЧИТЬ ВСТРЯСКУ
+===================================================== */
+
+.motion-play-button {
+  position: absolute;
+
+  left: 50%;
+  bottom: 15%;
+
+  z-index: 58;
+
+  transform:
+    translateX(-50%);
+
+  width: min(82%, 310px);
+
+  padding:
+    11px 13px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  border:
+    1px solid
+    rgba(255, 230, 222, .075);
+
+  border-radius:
+    17px;
+
+  color:
+    rgba(255, 238, 232, .72);
+
+  background:
+    rgba(255,255,255,.035);
+
+  backdrop-filter:
+    blur(12px);
+
+  -webkit-backdrop-filter:
+    blur(12px);
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.motion-play-button > span {
+  flex: 0 0 32px;
+
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  color:
+    rgba(255, 211, 203, .68);
+
+  background:
+    rgba(217, 127, 143, .10);
+
+  font-size: 17px;
+}
+
+.motion-play-button div {
+  display: grid;
+  gap: 2px;
+}
+
+.motion-play-button b {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.motion-play-button small {
+  color:
+    rgba(255, 225, 217, .27);
+
+  font-size: 8px;
+}
+
+/* =====================================================
+   СООБЩЕНИЯ
+===================================================== */
+
+.play-message {
+  position: absolute;
+
+  left: 50%;
+  bottom: 21%;
+
+  z-index: 70;
+
+  transform:
+    translateX(-50%);
+
+  width: max-content;
+  max-width: 76%;
+
+  padding:
+    8px 11px;
+
+  border:
+    1px solid
+    rgba(255, 230, 222, .06);
+
+  border-radius:
+    999px;
+
+  color:
+    rgba(255, 236, 230, .54);
+
+  background:
+    rgba(33, 26, 31, .50);
+
+  backdrop-filter:
+    blur(10px);
+
+  -webkit-backdrop-filter:
+    blur(10px);
+
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.12);
+
+  font-size:
+    9px;
+
+  letter-spacing:
+    .02em;
+
+  text-align: center;
+
+  pointer-events: none;
+
+  animation:
+    playMessageIn
+    1.8s ease both;
+}
+
+/* =====================================================
+   ПОДСКАЗКА
+===================================================== */
+
+.play-hint {
+  position: absolute;
+
+  left: 50%;
+  bottom: 3.3%;
+
+  z-index: 20;
+
+  transform:
+    translateX(-50%);
+
+  width: max-content;
+  max-width: 84%;
+
+  color:
+    rgba(255, 225, 217, .14);
+
+  font-size: 7px;
+
+  letter-spacing:
+    .055em;
+
+  text-align: center;
+
+  pointer-events: none;
+}
+
+/* =====================================================
+   САМОСБОРКА
+===================================================== */
+
+.pobaluysya-stage.is-repairing::before {
+  transition:
+    transform .7s cubic-bezier(.2,.9,.2,1);
+
+  transform:
+    translate(0, 0);
+}
+
+.pobaluysya-stage.is-repairing .play-top-copy span {
+  color:
+    rgba(255, 226, 219, .38);
+}
+
+/* =====================================================
+   ЭКРАН "ПОДПРЫГНУЛ"
+===================================================== */
+
+.pobaluysya-stage.screen-pop {
+  animation:
+    screenPop
+    .68s cubic-bezier(.2,.9,.2,1);
+}
+
+/* =====================================================
+   АНИМАЦИИ
+===================================================== */
+
+@keyframes tinyIdle {
+  0%,
+  100% {
+    filter:
+      drop-shadow(
+        0 0 0
+        rgba(236, 145, 157, 0)
+      );
+
+    opacity: .72;
+  }
+
+  50% {
+    filter:
+      drop-shadow(
+        0 0 10px
+        rgba(236, 145, 157, .18)
+      );
+
+    opacity: 1;
+  }
+}
+
+@keyframes playMessageIn {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(5px)
+      scale(.97);
+  }
+
+  16% {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(1);
+  }
+
+  78% {
+    opacity: .86;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(-5px)
+      scale(.985);
+  }
+}
+
+@keyframes screenPop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  28% {
+    transform:
+      scale(1.025)
+      rotate(.25deg);
+  }
+
+  52% {
+    transform:
+      scale(.992)
+      rotate(-.15deg);
+  }
+
+  74% {
+    transform:
+      scale(1.008);
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 430px) {
+  .pobaluysya-page {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .pobaluysya-stage {
+    min-height:
+      calc(100svh - 145px);
+
+    border-radius:
+      26px;
+  }
+
+  .play-top-copy {
+    left: 16px;
+    right: 16px;
+    top: 18px;
+  }
+
+  .play-card {
+    width: 116px;
+    min-height: 67px;
+
+    padding:
+      10px 11px;
+  }
+
+  .play-card b {
+    font-size: 10px;
+  }
+
+  .play-letter {
+    width: 43px;
+    height: 58px;
+
+    font-size:
+      clamp(28px, 9vw, 41px);
+  }
+
+  .motion-play-button {
+    bottom: 14%;
+  }
+
+  .play-message {
+    bottom: 20%;
+  }
+
+  .scatter-button {
+    bottom: 8.5%;
+  }
+
+  .play-hint {
+    bottom: 2.8%;
+  }
+}
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .play-tiny.is-stubborn,
+  .pobaluysya-stage.screen-pop,
+  .play-message {
+    animation: none !important;
+  }
+}
 
