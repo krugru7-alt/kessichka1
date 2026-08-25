@@ -7,772 +7,598 @@ import {
   dayNames,
 } from "../schedule";
 
-const MOODS = [
+const DAILY_THINGS = [
   {
-    id: "okay",
-    icon: "◌",
-    label: "нормально",
-    title: "Ну и хорошо.",
-    text: "Пусть сегодня всё идёт без лишней суеты.",
-    action: "оставить как есть",
+    type: "note",
+    mark: "01",
+    eyebrow: "оставлено сегодня",
+    title: "Ничего срочного.",
+    text: "Просто маленькое место в интернете, где от тебя сейчас ничего не требуется.",
+    after: "можно закрыть и вернуться потом",
   },
   {
-    id: "tired",
-    icon: "⌁",
-    label: "устала",
-    title: "Тогда сегодня помедленнее.",
-    text: "Ничего страшного, если не хочется быть продуктивной каждую секунду.",
-    action: "сделать потише",
+    type: "tiny",
+    mark: "02",
+    eyebrow: "маленькая штука",
+    title: "Тьмок без причины.",
+    text: "Причины действительно нет. Так даже лучше.",
+    after: "всё, это было всё сообщение",
   },
   {
-    id: "annoyed",
-    icon: "×",
-    label: "всё бесит",
-    title: "Понял. Убираем лишнее.",
-    text: "Здесь хотя бы можно немного повредничать без последствий.",
-    action: "убрать всё",
+    type: "pause",
+    mark: "03",
+    eyebrow: "на пару секунд",
+    title: "Не листай.",
+    text: "Побудь здесь буквально пять секунд. Сайт никуда не денется.",
+    after: "ладно, теперь можно",
   },
   {
-    id: "sad",
-    icon: "·",
-    label: "грустно",
-    title: "Я побуду здесь тихо.",
-    text: "Не обязательно сейчас что-то объяснять или исправлять.",
-    action: "оставить огонёк",
+    type: "found",
+    mark: "04",
+    eyebrow: "нашлось",
+    title: "Сегодняшняя хорошая мелочь.",
+    text: "Она может быть совсем маленькой. Это всё равно считается.",
+    after: "если найдёшь — мысленно оставь её здесь",
   },
   {
-    id: "bored",
-    icon: "↝",
-    label: "скучно",
-    title: "Так. Это уже поправимо.",
-    text: "Здесь есть несколько вещей, которые появляются не сразу.",
-    action: "пошевелить сайт",
+    type: "secret",
+    mark: "05",
+    eyebrow: "это вообще-то секрет",
+    title: "Я рад, что ты сюда зашла.",
+    text: "Даже если всего на несколько секунд.",
+    after: "никому не говори, что сайт умеет такое",
   },
   {
-    id: "sleepy",
-    icon: "☾",
-    label: "не спится",
-    title: "Ну конечно.",
-    text: "Ладно. Сделаем здесь немного тише, чем снаружи.",
-    action: "приглушить всё",
+    type: "soft",
+    mark: "06",
+    eyebrow: "без повода",
+    title: "Пусть день будет к тебе помягче.",
+    text: "Хотя бы в одном месте сегодня.",
+    after: "этого достаточно",
   },
   {
-    id: "good",
-    icon: "✦",
-    label: "хорошо",
-    title: "Вот это мне нравится.",
-    text: "Тогда ничего не исправляем. Просто сохраним этот момент.",
-    action: "зафиксировать",
+    type: "return",
+    mark: "07",
+    eyebrow: "на случай возвращения",
+    title: "О. Снова ты.",
+    text: "Хорошо. Значит, это место здесь не зря.",
+    after: "можешь ещё немного остаться",
   },
 ];
 
-const ANNOYED_BITS = [
-  { id: 1, text: "лишнее", x: 18, y: 22 },
-  { id: 2, text: "ещё одно дело", x: 68, y: 31 },
-  { id: 3, text: "ну конечно", x: 28, y: 62 },
-  { id: 4, text: "не сегодня", x: 73, y: 69 },
+const SECONDARY_NOTES = [
+  "здесь есть вещи, которые появляются не сразу",
+  "не всё на этой странице выглядит как кнопка",
+  "некоторые штуки лучше находить случайно",
+  "иногда сайт запоминает, что ты уже была здесь",
+  "кажется, где-то осталось ещё кое-что",
 ];
 
-const BORED_LINES = [
-  "сайт задумался",
-  "ничего полезного не происходит",
-  "можно ткнуть ещё раз",
-  "кажется, что-то шевельнулось",
-  "ладно, вот тебе ✦",
-];
-
-function getMinskDateKey() {
-  return new Intl.DateTimeFormat("en-CA", {
+function getMinskParts(date = new Date()) {
+  const dateKey = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Minsk",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  }).format(new Date());
+  }).format(date);
+
+  const hour = Number(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Europe/Minsk",
+      hour: "numeric",
+      hourCycle: "h23",
+    }).format(date)
+  );
+
+  return {
+    dateKey,
+    hour,
+  };
+}
+
+function stringSeed(value) {
+  return [...value].reduce(
+    (sum, char) => sum + char.charCodeAt(0),
+    0
+  );
 }
 
 export default function ForYouPage() {
-  const tiredHoldRef = useRef(null);
-  const boredTimerRef = useRef(null);
+  const idleTimerRef = useRef(null);
+  const reactionTimerRef = useRef(null);
+  const secretTimerRef = useRef(null);
+  const longHoldTimerRef = useRef(null);
+
+  const [{ dateKey, hour }] = useState(() =>
+    getMinskParts()
+  );
 
   const [ready, setReady] = useState(false);
-  const [moodId, setMoodId] = useState(null);
+  const [opened, setOpened] = useState(false);
+  const [opening, setOpening] = useState(false);
+
+  const [visits, setVisits] = useState(1);
+  const [discoveries, setDiscoveries] = useState([]);
   const [reaction, setReaction] = useState("");
 
-  const [quiet, setQuiet] = useState(false);
-
-  const [annoyedBits, setAnnoyedBits] = useState(
-    ANNOYED_BITS.map((item) => item.id)
-  );
-  const [annoyedClean, setAnnoyedClean] = useState(false);
-
-  const [sadLights, setSadLights] = useState([]);
-  const [sadSecret, setSadSecret] = useState(false);
-
-  const [boredCount, setBoredCount] = useState(0);
-  const [boredLine, setBoredLine] = useState("");
-  const [boredDot, setBoredDot] = useState(null);
-
-  const [nightMode, setNightMode] = useState(false);
-  const [nightTapCount, setNightTapCount] = useState(0);
+  const [edgeSecret, setEdgeSecret] = useState(false);
+  const [idleSecret, setIdleSecret] = useState(false);
   const [nightSecret, setNightSecret] = useState(false);
+  const [tinyVisitor, setTinyVisitor] = useState(false);
 
-  const [goodSaved, setGoodSaved] = useState(false);
-  const [goodSparks, setGoodSparks] = useState([]);
+  const [capsuleTapCount, setCapsuleTapCount] =
+    useState(0);
 
-  const dateKey = useMemo(() => getMinskDateKey(), []);
+  const dailyThing = useMemo(() => {
+    const seed = stringSeed(dateKey);
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(
-        `kessi-mood-${dateKey}`
-      );
-
-      if (
-        saved &&
-        MOODS.some((mood) => mood.id === saved)
-      ) {
-        setMoodId(saved);
-      }
-
-      setGoodSaved(
-        localStorage.getItem(
-          `kessi-good-${dateKey}`
-        ) === "1"
-      );
-    } catch {}
-
-    setReady(true);
-
-    return () => {
-      window.clearTimeout(tiredHoldRef.current);
-      window.clearTimeout(boredTimerRef.current);
-      window.clearTimeout(showReaction.timer);
-    };
+    return DAILY_THINGS[
+      seed % DAILY_THINGS.length
+    ];
   }, [dateKey]);
 
-  const mood =
-    MOODS.find((item) => item.id === moodId) || null;
-
-  function resetMoodState() {
-    setReaction("");
-    setQuiet(false);
-
-    setAnnoyedBits(
-      ANNOYED_BITS.map((item) => item.id)
+  const secondaryNote = useMemo(() => {
+    const seed = stringSeed(
+      dateKey + "secondary"
     );
-    setAnnoyedClean(false);
 
-    setSadLights([]);
-    setSadSecret(false);
+    return SECONDARY_NOTES[
+      seed % SECONDARY_NOTES.length
+    ];
+  }, [dateKey]);
 
-    setBoredCount(0);
-    setBoredLine("");
-    setBoredDot(null);
+  const isNight =
+    hour >= 23 || hour < 5;
 
-    setNightMode(false);
-    setNightTapCount(0);
-    setNightSecret(false);
-
-    setGoodSparks([]);
-  }
-
-  function chooseMood(id) {
-    resetMoodState();
-    setMoodId(id);
+  useEffect(() => {
+    let currentVisits = 1;
+    let currentDiscoveries = [];
 
     try {
+      const savedVisits =
+        Number(
+          localStorage.getItem(
+            "kessi-for-you-visits"
+          )
+        ) || 0;
+
+      currentVisits =
+        savedVisits + 1;
+
       localStorage.setItem(
-        `kessi-mood-${dateKey}`,
-        id
+        "kessi-for-you-visits",
+        String(currentVisits)
       );
+
+      const savedDiscoveries =
+        JSON.parse(
+          localStorage.getItem(
+            "kessi-for-you-discoveries"
+          ) || "[]"
+        );
+
+      if (
+        Array.isArray(savedDiscoveries)
+      ) {
+        currentDiscoveries =
+          savedDiscoveries;
+      }
+
+      const openedToday =
+        localStorage.getItem(
+          `kessi-for-you-opened-${dateKey}`
+        ) === "1";
+
+      setOpened(openedToday);
     } catch {}
-  }
 
-  function changeMood() {
-    resetMoodState();
-    setMoodId(null);
+    setVisits(currentVisits);
+    setDiscoveries(
+      currentDiscoveries
+    );
+    setReady(true);
 
-    try {
-      localStorage.removeItem(
-        `kessi-mood-${dateKey}`
+    if (
+      isNight &&
+      currentVisits >= 2 &&
+      !currentDiscoveries.includes(
+        "night"
+      )
+    ) {
+      secretTimerRef.current =
+        window.setTimeout(() => {
+          setNightSecret(true);
+        }, 6000);
+    }
+
+    idleTimerRef.current =
+      window.setTimeout(() => {
+        if (currentVisits >= 2) {
+          setIdleSecret(true);
+        }
+      }, 11000);
+
+    return () => {
+      window.clearTimeout(
+        idleTimerRef.current
       );
-    } catch {}
-  }
 
-  function showReaction(text, ms = 2300) {
+      window.clearTimeout(
+        reactionTimerRef.current
+      );
+
+      window.clearTimeout(
+        secretTimerRef.current
+      );
+
+      window.clearTimeout(
+        longHoldTimerRef.current
+      );
+    };
+  }, [dateKey, isNight]);
+
+  function showReaction(
+    text,
+    ms = 2500
+  ) {
     setReaction(text);
 
-    window.clearTimeout(showReaction.timer);
+    window.clearTimeout(
+      reactionTimerRef.current
+    );
 
-    showReaction.timer =
+    reactionTimerRef.current =
       window.setTimeout(() => {
         setReaction("");
       }, ms);
   }
 
-  function mainAction() {
-    if (!mood) return;
-
-    if (mood.id === "okay") {
-      showReaction(
-        "тогда просто оставим всё спокойно."
-      );
-    }
-
-    if (mood.id === "tired") {
-      setQuiet(true);
-      showReaction("готово. потише.");
-    }
-
-    if (mood.id === "annoyed") {
-      setAnnoyedClean(true);
-      setAnnoyedBits([]);
-      showReaction("всё убрал.");
-    }
-
-    if (mood.id === "sad") {
-      if (sadLights.length === 0) {
-        setSadLights([
-          { id: Date.now(), x: 50, y: 50 },
-        ]);
+  function unlockDiscovery(id) {
+    setDiscoveries((current) => {
+      if (current.includes(id)) {
+        return current;
       }
 
-      showReaction("пусть пока просто горит.");
-    }
+      const next = [
+        ...current,
+        id,
+      ];
 
-    if (mood.id === "bored") {
-      boredInteract();
-    }
+      try {
+        localStorage.setItem(
+          "kessi-for-you-discoveries",
+          JSON.stringify(next)
+        );
+      } catch {}
 
-    if (mood.id === "sleepy") {
-      setNightMode(true);
-      showReaction("теперь совсем тихо.");
-    }
-
-    if (mood.id === "good") {
-      saveGoodMoment();
-    }
+      return next;
+    });
   }
 
-  /* ===================================================
-     УСТАЛА
-  =================================================== */
+  function openCapsule() {
+    if (opening) return;
 
-  function startTiredHold() {
-    window.clearTimeout(tiredHoldRef.current);
+    if (opened) {
+      const nextCount =
+        capsuleTapCount + 1;
 
-    tiredHoldRef.current =
-      window.setTimeout(() => {
-        setQuiet(true);
+      setCapsuleTapCount(
+        nextCount
+      );
+
+      if (nextCount === 3) {
+        showReaction(
+          "она уже открыта :)"
+        );
+      }
+
+      if (nextCount === 6) {
+        unlockDiscovery(
+          "persistent"
+        );
 
         showReaction(
-          "вот так. можно ничего не делать.",
+          "ладно. за настойчивость — ✦",
           3000
         );
-      }, 1800);
-  }
+      }
 
-  function stopTiredHold() {
-    window.clearTimeout(tiredHoldRef.current);
-  }
-
-  /* ===================================================
-     ВСЁ БЕСИТ
-  =================================================== */
-
-  function removeAnnoyedBit(id) {
-    setAnnoyedBits((current) =>
-      current.filter((item) => item !== id)
-    );
-
-    const left =
-      annoyedBits.filter((item) => item !== id)
-        .length;
-
-    if (left === 0) {
-      showReaction("вот. уже меньше.");
+      return;
     }
-  }
 
-  /* ===================================================
-     ГРУСТНО
-  =================================================== */
+    setOpening(true);
 
-  function addSadLight(event) {
-    const rect =
-      event.currentTarget.getBoundingClientRect();
+    window.setTimeout(() => {
+      setOpened(true);
+      setOpening(false);
 
-    const x =
-      ((event.clientX - rect.left) /
-        rect.width) *
-      100;
+      try {
+        localStorage.setItem(
+          `kessi-for-you-opened-${dateKey}`,
+          "1"
+        );
+      } catch {}
 
-    const y =
-      ((event.clientY - rect.top) /
-        rect.height) *
-      100;
+      unlockDiscovery(
+        "daily"
+      );
 
-    setSadLights((current) => [
-      ...current.slice(-7),
-      {
-        id: Date.now() + Math.random(),
-        x,
-        y,
-      },
-    ]);
-
-    if (sadLights.length >= 4 && !sadSecret) {
-      setSadSecret(true);
+      showReaction(
+        "нашлось кое-что на сегодня.",
+        2300
+      );
 
       window.setTimeout(() => {
+        setEdgeSecret(true);
+      }, 3200);
+    }, 780);
+  }
+
+  function startCapsuleHold() {
+    window.clearTimeout(
+      longHoldTimerRef.current
+    );
+
+    longHoldTimerRef.current =
+      window.setTimeout(() => {
+        if (!opened) {
+          showReaction(
+            "не обязательно так серьёзно. просто нажми :)"
+          );
+
+          return;
+        }
+
+        unlockDiscovery("hold");
+
+        setTinyVisitor(true);
+
         showReaction(
-          "смотри, уже не так пусто.",
+          "о. это место реагирует и на такое.",
           2800
         );
-      }, 400);
-    }
+
+        window.setTimeout(() => {
+          setTinyVisitor(false);
+        }, 4200);
+      }, 1700);
   }
 
-  /* ===================================================
-     СКУЧНО
-  =================================================== */
-
-  function boredInteract() {
-    const next = boredCount + 1;
-    setBoredCount(next);
-
-    setBoredLine(
-      BORED_LINES[
-        Math.min(
-          BORED_LINES.length - 1,
-          next - 1
-        )
-      ]
+  function stopCapsuleHold() {
+    window.clearTimeout(
+      longHoldTimerRef.current
     );
-
-    if (next === 3) {
-      setBoredDot({
-        x: 20 + Math.random() * 60,
-        y: 28 + Math.random() * 38,
-      });
-
-      showReaction(
-        "кажется, что-то появилось."
-      );
-    }
-
-    if (next >= 5) {
-      setBoredCount(0);
-      showReaction(
-        "ладно. ты победила скуку на секунд десять."
-      );
-    }
-
-    window.clearTimeout(boredTimerRef.current);
-
-    boredTimerRef.current =
-      window.setTimeout(() => {
-        if (next < 3) {
-          setBoredLine("");
-        }
-      }, 3500);
   }
 
-  function catchBoredDot() {
-    setBoredDot({
-      x: 16 + Math.random() * 68,
-      y: 24 + Math.random() * 46,
-    });
+  function openEdgeSecret() {
+    setEdgeSecret(false);
 
-    showReaction("неа.");
+    unlockDiscovery("edge");
 
-    if (boredCount >= 4) {
-      setBoredDot(null);
-      showReaction("ладно, поймала.");
-    }
+    showReaction(
+      secondaryNote,
+      3400
+    );
   }
 
-  /* ===================================================
-     НЕ СПИТСЯ
-  =================================================== */
+  function openIdleSecret() {
+    setIdleSecret(false);
 
-  function tapNight() {
-    const next = nightTapCount + 1;
-    setNightTapCount(next);
+    unlockDiscovery("idle");
 
-    if (next === 3) {
-      showReaction("тише.");
-    }
-
-    if (next >= 7 && !nightSecret) {
-      setNightSecret(true);
-      showReaction(
-        "семь раз. серьёзно?",
-        2600
-      );
-    }
+    showReaction(
+      visits >= 4
+        ? "ты уже знаешь, что здесь лучше не спешить."
+        : "о. ты всё-таки заметила.",
+      3300
+    );
   }
 
-  /* ===================================================
-     ХОРОШО
-  =================================================== */
+  function openNightSecret() {
+    setNightSecret(false);
 
-  function saveGoodMoment() {
-    setGoodSaved(true);
+    unlockDiscovery("night");
 
-    try {
-      localStorage.setItem(
-        `kessi-good-${dateKey}`,
-        "1"
-      );
-    } catch {}
-
-    setGoodSparks([
-      { id: 1, x: 27, y: 43 },
-      { id: 2, x: 72, y: 36 },
-      { id: 3, x: 56, y: 66 },
-      { id: 4, x: 38, y: 73 },
-    ]);
-
-    showReaction("сохранил.");
+    showReaction(
+      "ночью здесь кое-что появляется само.",
+      3600
+    );
   }
 
   let schedule = null;
   let day = null;
 
   try {
-    schedule = getCurrentScheduleItem();
-    day = getCurrentDay();
+    schedule =
+      getCurrentScheduleItem();
+
+    day =
+      getCurrentDay();
   } catch {}
 
   if (!ready) {
     return (
-      <main className="mood-page mood-loading">
-        <div className="mood-loading-dot" />
-      </main>
-    );
-  }
-
-  if (!mood) {
-    return (
-      <main className="mood-page mood-picker-page">
-        <section className="mood-picker">
-          <div className="mood-picker-copy">
-            <small>ДЛЯ ТЕБЯ</small>
-
-            <h1>Как ты сегодня?</h1>
-
-            <p>
-              Выбери первое, что подходит.
-              Дальше сайт сам подстроится.
-            </p>
-          </div>
-
-          <div className="mood-grid">
-            {MOODS.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`mood-choice mood-choice-${item.id}`}
-                onClick={() =>
-                  chooseMood(item.id)
-                }
-              >
-                <span>{item.icon}</span>
-                <b>{item.label}</b>
-              </button>
-            ))}
-          </div>
-
-          <div className="mood-picker-note">
-            выбор сохранится только на сегодня
-          </div>
-        </section>
+      <main className="gift-page gift-loading">
+        <span />
       </main>
     );
   }
 
   return (
     <main
-      className={`mood-page mood-${mood.id} ${
-        quiet ? "is-quiet" : ""
+      className={`gift-page ${
+        opened
+          ? "is-opened"
+          : ""
       } ${
-        annoyedClean ? "is-clean" : ""
-      } ${
-        nightMode ? "is-night-deep" : ""
-      } ${
-        sadSecret ? "has-sad-secret" : ""
+        isNight
+          ? "is-night"
+          : ""
       }`}
     >
-      <section className="mood-world">
+      <section className="gift-world">
+
         <div
-          className="mood-background"
+          className="gift-ambient"
           aria-hidden="true"
         >
-          <span className="mood-orb orb-a" />
-          <span className="mood-orb orb-b" />
-          <span className="mood-orb orb-c" />
+          <span className="gift-glow glow-a" />
+
+          <span className="gift-glow glow-b" />
+
+          <span className="gift-grain" />
         </div>
 
-        <header className="mood-header">
+        <header className="gift-header">
+
           <div>
-            <small>ДЛЯ ТЕБЯ</small>
-            <h1>{mood.label}</h1>
+            <small>
+              ДЛЯ ТЕБЯ
+            </small>
+
+            <h1>
+              {visits >= 4
+                ? "О. Ты опять здесь."
+                : "Я кое-что оставил."}
+            </h1>
           </div>
+
+          <span className="gift-counter">
+            {String(
+              discoveries.length
+            ).padStart(
+              2,
+              "0"
+            )}
+
+            <i>/ ?</i>
+          </span>
+
+        </header>
+
+        <p className="gift-intro">
+          {opened
+            ? "Сегодняшняя штука уже открыта. Но это не значит, что здесь больше ничего нет."
+            : "Она меняется. Иногда совсем чуть-чуть."}
+        </p>
+
+        <section className="gift-stage">
 
           <button
             type="button"
-            className="change-mood"
-            onClick={changeMood}
+            className={`gift-capsule ${
+              opening
+                ? "is-opening"
+                : ""
+            } ${
+              opened
+                ? "is-open"
+                : ""
+            }`}
+            onClick={
+              openCapsule
+            }
+            onPointerDown={
+              startCapsuleHold
+            }
+            onPointerUp={
+              stopCapsuleHold
+            }
+            onPointerCancel={
+              stopCapsuleHold
+            }
+            onPointerLeave={
+              stopCapsuleHold
+            }
+            aria-label={
+              opened
+                ? "Открытая капсула"
+                : "Открыть"
+            }
           >
-            настроение изменилось?
+
+            <span className="capsule-ring ring-one" />
+
+            <span className="capsule-ring ring-two" />
+
+            <span className="capsule-shell">
+
+              <i className="capsule-shine" />
+
+              <b>
+                {opened
+                  ? dailyThing.mark
+                  : "?"}
+              </b>
+
+            </span>
+
+            <span className="capsule-shadow" />
+
           </button>
-        </header>
 
-        <section className="mood-main-card">
-          <span className="mood-main-icon">
-            {mood.icon}
-          </span>
-
-          <div>
-            <h2>{mood.title}</h2>
-            <p>{mood.text}</p>
-          </div>
-        </section>
-
-        {/* НОРМАЛЬНО */}
-        {mood.id === "okay" && (
-          <section className="mood-special mood-special-okay">
-            <button
-              type="button"
-              className="mood-main-action"
-              onClick={mainAction}
-            >
-              {mood.action}
-            </button>
-
-            <span className="okay-line">
-              сегодня без спецэффектов
+          {!opened && (
+            <span className="gift-hint">
+              нажми
             </span>
-          </section>
-        )}
+          )}
 
-        {/* УСТАЛА */}
-        {mood.id === "tired" && (
-          <section className="mood-special mood-special-tired">
-            <button
-              type="button"
-              className="tired-hold"
-              onPointerDown={startTiredHold}
-              onPointerUp={stopTiredHold}
-              onPointerCancel={stopTiredHold}
-              onPointerLeave={stopTiredHold}
-            >
-              <span />
-              <b>подержи немного</b>
+          {opened && (
+            <article className="daily-reveal">
+
               <small>
-                ничего делать не надо
+                {dailyThing.eyebrow}
               </small>
-            </button>
-          </section>
-        )}
 
-        {/* ВСЁ БЕСИТ */}
-        {mood.id === "annoyed" && (
-          <section className="mood-special mood-special-annoyed">
-            {!annoyedClean &&
-              ANNOYED_BITS.map((bit) =>
-                annoyedBits.includes(bit.id) ? (
-                  <button
-                    key={bit.id}
-                    type="button"
-                    className="annoyed-bit"
-                    style={{
-                      left: `${bit.x}%`,
-                      top: `${bit.y}%`,
-                    }}
-                    onClick={() =>
-                      removeAnnoyedBit(bit.id)
-                    }
-                  >
-                    {bit.text}
-                  </button>
-                ) : null
-              )}
+              <h2>
+                {dailyThing.title}
+              </h2>
 
-            {!annoyedClean && (
-              <button
-                type="button"
-                className="mood-main-action annoyed-clear-all"
-                onClick={mainAction}
-              >
-                убрать вообще всё
-              </button>
-            )}
+              <p>
+                {dailyThing.text}
+              </p>
 
-            {annoyedClean && (
-              <div className="annoyed-empty">
-                <p>всё. чисто.</p>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAnnoyedClean(false);
-                    setAnnoyedBits(
-                      ANNOYED_BITS.map(
-                        (item) => item.id
-                      )
-                    );
-                  }}
-                >
-                  ладно, верни
-                </button>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ГРУСТНО */}
-        {mood.id === "sad" && (
-          <section
-            className="mood-special mood-special-sad"
-            onPointerDown={addSadLight}
-          >
-            <span className="sad-hint">
-              можно просто потыкать сюда
-            </span>
-
-            {sadLights.map((light) => (
-              <span
-                key={light.id}
-                className="sad-created-light"
-                style={{
-                  left: `${light.x}%`,
-                  top: `${light.y}%`,
-                }}
-              />
-            ))}
-
-            {sadSecret && (
-              <span className="sad-secret-copy">
-                уже не так пусто
+              <span>
+                {dailyThing.after}
               </span>
-            )}
-          </section>
-        )}
 
-        {/* СКУЧНО */}
-        {mood.id === "bored" && (
-          <section className="mood-special mood-special-bored">
-            <button
-              type="button"
-              className="mood-main-action"
-              onClick={boredInteract}
+            </article>
+          )}
+
+          {tinyVisitor && (
+            <div
+              className="gift-tiny-visitor"
+              aria-hidden="true"
             >
-              что-нибудь
-            </button>
-
-            {boredLine && (
-              <div className="bored-result">
-                {boredLine}
-              </div>
-            )}
-
-            {boredDot && (
-              <button
-                type="button"
-                className="bored-runaway-dot"
-                style={{
-                  left: `${boredDot.x}%`,
-                  top: `${boredDot.y}%`,
-                }}
-                onClick={catchBoredDot}
-                aria-label="Поймать"
-              >
-                ·
-              </button>
-            )}
-          </section>
-        )}
-
-        {/* НЕ СПИТСЯ */}
-        {mood.id === "sleepy" && (
-          <section
-            className="mood-special mood-special-sleepy"
-            onPointerDown={tapNight}
-          >
-            <button
-              type="button"
-              className="mood-main-action sleepy-button"
-              onClick={(event) => {
-                event.stopPropagation();
-                mainAction();
-              }}
-            >
-              {mood.action}
-            </button>
-
-            <div className="night-particles">
-              <span />
-              <span />
-              <span />
-              <span />
-              <span />
-            </div>
-
-            {nightSecret && (
-              <div className="night-secret">
-                <span>☾</span>
-                <small>
-                  ладно. ещё немного не спим.
-                </small>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ХОРОШО */}
-        {mood.id === "good" && (
-          <section className="mood-special mood-special-good">
-            <button
-              type="button"
-              className="mood-main-action"
-              onClick={saveGoodMoment}
-            >
-              {goodSaved
-                ? "уже сохранено"
-                : mood.action}
-            </button>
-
-            {goodSparks.map((spark) => (
-              <span
-                key={spark.id}
-                className="good-spark"
-                style={{
-                  left: `${spark.x}%`,
-                  top: `${spark.y}%`,
-                }}
-              >
+              <span>
                 ✦
               </span>
-            ))}
 
-            {goodSaved && (
-              <div className="good-saved-mark">
-                <span>✦</span>
+              <i />
+            </div>
+          )}
 
-                <small>
-                  этот момент остался здесь
-                </small>
-              </div>
-            )}
+        </section>
+
+        {opened && (
+          <section className="gift-after">
+
+            <div className="gift-after-line" />
+
+            <small>
+              возвращаться сюда можно
+            </small>
+
           </section>
         )}
 
-        {schedule && !annoyedClean && (
-          <section className="mood-next-hello">
+        {schedule && (
+          <section className="gift-next">
+
             <div>
-              <small>следующий привет</small>
+              <small>
+                следующий привет
+              </small>
 
               <b>
                 {dayNames?.[day] || ""} ·{" "}
@@ -780,15 +606,80 @@ export default function ForYouPage() {
               </b>
             </div>
 
-            <span>{schedule.title}</span>
+            <span>
+              {schedule.title}
+            </span>
+
           </section>
         )}
 
+        {edgeSecret && (
+          <button
+            type="button"
+            className="gift-edge-secret"
+            onClick={
+              openEdgeSecret
+            }
+            aria-label="Скрытая записка"
+          >
+            <span />
+          </button>
+        )}
+
+        {idleSecret && (
+          <button
+            type="button"
+            className="gift-idle-secret"
+            onClick={
+              openIdleSecret
+            }
+            aria-label="Что-то появилось"
+          >
+            ·
+          </button>
+        )}
+
+        {nightSecret && (
+          <button
+            type="button"
+            className="gift-night-secret"
+            onClick={
+              openNightSecret
+            }
+            aria-label="Ночная штука"
+          >
+            <span>
+              ☾
+            </span>
+          </button>
+        )}
+
         {reaction && (
-          <div className="mood-reaction">
+          <div className="gift-reaction">
             {reaction}
           </div>
         )}
+
+        <footer className="gift-footer">
+
+          <span>
+            {opened
+              ? "сегодня найдено"
+              : "сегодня ещё закрыто"}
+          </span>
+
+          <b>
+            {discoveries.length > 0
+              ? `${discoveries.length} ${
+                  discoveries.length === 1
+                    ? "штука"
+                    : "штук"
+                }`
+              : "ничего"}
+          </b>
+
+        </footer>
+
       </section>
     </main>
   );
