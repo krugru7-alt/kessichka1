@@ -1,12 +1,17 @@
+import "./globals.css";
+import SiteShell from "./components/SiteShell";
+
 export const metadata = {
   title: "Для Кэссички ❤️",
-  description: "for you",
+  description: "Маленький личный уголок в интернете",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body>
+        <SiteShell>{children}</SiteShell>
+      </body>
     </html>
   );
 }
