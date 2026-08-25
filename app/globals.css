@@ -9265,3 +9265,1552 @@ body:has(.traces-page) .topbar {
     animation: none !important;
   }
 }
+/* =====================================================
+   ДЛЯ ТЕБЯ — ЖИВОЙ РАЗДЕЛ / КАПСУЛА
+===================================================== */
+
+.gift-page {
+  width: min(100% - 16px, 760px);
+  min-height: calc(100svh - 120px);
+
+  margin: 0 auto;
+  padding: 10px 0 115px;
+}
+
+
+/* =====================================================
+   ЗАГРУЗКА
+===================================================== */
+
+.gift-loading {
+  display: grid;
+  place-items: center;
+}
+
+.gift-loading > span {
+  width: 9px;
+  height: 9px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 222, 214, 0.72);
+
+  box-shadow:
+    0 0 18px
+    rgba(229, 142, 157, 0.28);
+
+  animation:
+    giftLoading
+    1.5s ease-in-out infinite;
+}
+
+
+/* =====================================================
+   ОСНОВНОЙ МИР
+===================================================== */
+
+.gift-world {
+  position: relative;
+
+  min-height: calc(100svh - 145px);
+
+  padding:
+    27px 19px 23px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(255, 232, 226, 0.07);
+
+  border-radius: 30px;
+
+  background:
+    radial-gradient(
+      circle at 18% 10%,
+      rgba(172, 73, 100, 0.16),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 88% 73%,
+      rgba(116, 82, 133, 0.12),
+      transparent 30%
+    ),
+    linear-gradient(
+      155deg,
+      #2b2025 0%,
+      #211b20 48%,
+      #19171b 100%
+    );
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.035),
+    0 28px 70px
+      rgba(0, 0, 0, 0.22);
+
+  isolation: isolate;
+}
+
+
+/* =====================================================
+   ФОН
+===================================================== */
+
+.gift-ambient {
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+}
+
+.gift-grain {
+  position: absolute;
+  inset: 0;
+
+  opacity: 0.15;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(255, 244, 239, 0.18) 0 0.6px,
+      transparent 0.9px
+    );
+
+  background-size:
+    27px 27px;
+}
+
+.gift-glow {
+  position: absolute;
+
+  border-radius: 50%;
+
+  filter:
+    blur(48px);
+
+  opacity: 0.2;
+
+  animation:
+    giftGlowFloat
+    9s ease-in-out infinite;
+}
+
+.glow-a {
+  width: 250px;
+  height: 250px;
+
+  left: -110px;
+  top: 5%;
+
+  background:
+    rgba(210, 111, 133, 0.34);
+}
+
+.glow-b {
+  width: 230px;
+  height: 230px;
+
+  right: -100px;
+  bottom: 10%;
+
+  background:
+    rgba(139, 102, 150, 0.27);
+
+  animation-delay: 2s;
+}
+
+
+/* =====================================================
+   НОЧНАЯ ВЕРСИЯ
+===================================================== */
+
+.gift-page.is-night .gift-world {
+  background:
+    radial-gradient(
+      circle at 80% 12%,
+      rgba(95, 91, 139, 0.16),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 10% 76%,
+      rgba(143, 74, 104, 0.09),
+      transparent 30%
+    ),
+    linear-gradient(
+      155deg,
+      #22212b,
+      #1c1b23 50%,
+      #15151a
+    );
+}
+
+.gift-page.is-night .glow-a {
+  background:
+    rgba(108, 105, 161, 0.28);
+}
+
+.gift-page.is-night .glow-b {
+  background:
+    rgba(157, 95, 128, 0.18);
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.gift-header {
+  position: relative;
+  z-index: 10;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.gift-header > div {
+  min-width: 0;
+}
+
+.gift-header small {
+  color:
+    rgba(255, 218, 209, 0.31);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.22em;
+}
+
+.gift-header h1 {
+  max-width: 470px;
+
+  margin:
+    7px 0 0;
+
+  color:
+    rgba(255, 243, 238, 0.94);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(29px, 8vw, 48px);
+
+  font-weight: 400;
+
+  line-height: 1.04;
+
+  letter-spacing:
+    -0.04em;
+}
+
+.gift-counter {
+  flex: 0 0 auto;
+
+  margin-top: 3px;
+
+  color:
+    rgba(255, 231, 223, 0.42);
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+
+  font-size: 12px;
+
+  letter-spacing:
+    0.04em;
+}
+
+.gift-counter i {
+  margin-left: 2px;
+
+  color:
+    rgba(255, 228, 220, 0.15);
+
+  font-size: 9px;
+
+  font-style: normal;
+}
+
+.gift-intro {
+  position: relative;
+  z-index: 10;
+
+  max-width: 440px;
+
+  margin:
+    12px 0 0;
+
+  color:
+    rgba(255, 230, 222, 0.35);
+
+  font-size: 9px;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   СЦЕНА
+===================================================== */
+
+.gift-stage {
+  position: relative;
+  z-index: 10;
+
+  min-height: 410px;
+
+  margin-top: 19px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(255, 232, 225, 0.055);
+
+  border-radius: 25px;
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(214, 126, 144, 0.055),
+      transparent 28%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.024),
+      rgba(255, 255, 255, 0.006)
+    );
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.018);
+}
+
+
+/* =====================================================
+   КАПСУЛА
+===================================================== */
+
+.gift-capsule {
+  position: relative;
+
+  width: 205px;
+  height: 205px;
+
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+
+  background:
+    transparent;
+
+  cursor: pointer;
+
+  touch-action:
+    manipulation;
+
+  -webkit-tap-highlight-color:
+    transparent;
+
+  transition:
+    transform 0.35s ease,
+    opacity 0.35s ease;
+}
+
+.gift-capsule:active {
+  transform:
+    scale(0.96);
+}
+
+
+/* кольца */
+
+.capsule-ring {
+  position: absolute;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.ring-one {
+  inset: 13px;
+
+  border:
+    1px solid
+    rgba(236, 172, 178, 0.12);
+
+  animation:
+    capsuleRingOne
+    10s linear infinite;
+}
+
+.ring-two {
+  inset: 31px;
+
+  border:
+    1px dashed
+    rgba(190, 153, 184, 0.12);
+
+  animation:
+    capsuleRingTwo
+    14s linear infinite reverse;
+}
+
+
+/* сама капсула */
+
+.capsule-shell {
+  position: relative;
+  z-index: 4;
+
+  width: 92px;
+  height: 112px;
+
+  display: grid;
+  place-items: center;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(255, 222, 216, 0.14);
+
+  border-radius:
+    46px 46px 42px 42px;
+
+  color:
+    rgba(255, 238, 232, 0.8);
+
+  background:
+    radial-gradient(
+      circle at 36% 26%,
+      rgba(255, 255, 255, 0.13),
+      transparent 20%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(176, 87, 108, 0.42),
+      rgba(96, 60, 78, 0.37)
+    );
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.11),
+    inset 0 -20px 28px
+      rgba(23, 16, 23, 0.16),
+    0 18px 44px
+      rgba(0, 0, 0, 0.27),
+    0 0 60px
+      rgba(190, 99, 119, 0.09);
+
+  animation:
+    capsuleFloat
+    4.4s ease-in-out infinite;
+
+  transition:
+    border-radius 0.7s ease,
+    transform 0.7s ease,
+    background 0.7s ease,
+    box-shadow 0.7s ease;
+}
+
+.capsule-shell b {
+  position: relative;
+  z-index: 4;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 28px;
+  font-weight: 400;
+
+  text-shadow:
+    0 0 18px
+    rgba(255, 219, 213, 0.16);
+}
+
+.capsule-shine {
+  position: absolute;
+
+  width: 22px;
+  height: 70px;
+
+  left: 14px;
+  top: 9px;
+
+  transform:
+    rotate(17deg);
+
+  border-radius: 50%;
+
+  opacity: 0.35;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.11),
+      transparent
+    );
+}
+
+.capsule-shadow {
+  position: absolute;
+
+  left: 50%;
+  bottom: 29px;
+
+  width: 82px;
+  height: 17px;
+
+  transform:
+    translateX(-50%);
+
+  border-radius: 50%;
+
+  opacity: 0.3;
+
+  background:
+    rgba(0, 0, 0, 0.58);
+
+  filter:
+    blur(8px);
+
+  animation:
+    capsuleShadow
+    4.4s ease-in-out infinite;
+}
+
+
+/* =====================================================
+   ОТКРЫТИЕ
+===================================================== */
+
+.gift-capsule.is-opening .capsule-shell {
+  animation:
+    capsuleOpening
+    0.78s cubic-bezier(
+      0.2,
+      0.8,
+      0.2,
+      1
+    ) both;
+}
+
+.gift-capsule.is-opening .ring-one {
+  animation:
+    capsuleRingBurst
+    0.78s ease both;
+}
+
+.gift-capsule.is-opening .ring-two {
+  animation:
+    capsuleRingBurstTwo
+    0.78s ease both;
+}
+
+.gift-capsule.is-open {
+  width: 150px;
+  height: 150px;
+
+  margin-bottom: 3px;
+}
+
+.gift-capsule.is-open .capsule-shell {
+  width: 65px;
+  height: 65px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      rgba(255, 255, 255, 0.14),
+      transparent 20%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(188, 104, 124, 0.35),
+      rgba(92, 62, 81, 0.32)
+    );
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.08),
+    0 10px 32px
+      rgba(0, 0, 0, 0.22),
+    0 0 45px
+      rgba(201, 111, 129, 0.1);
+}
+
+.gift-capsule.is-open .capsule-shell b {
+  font-size: 18px;
+}
+
+.gift-capsule.is-open .capsule-shadow {
+  width: 54px;
+
+  bottom: 24px;
+}
+
+
+/* =====================================================
+   ПОДСКАЗКА
+===================================================== */
+
+.gift-hint {
+  margin-top: -13px;
+
+  color:
+    rgba(255, 225, 218, 0.2);
+
+  font-size: 8px;
+
+  letter-spacing:
+    0.06em;
+
+  animation:
+    giftHint
+    2.8s ease-in-out infinite;
+}
+
+
+/* =====================================================
+   СОДЕРЖИМОЕ НА СЕГОДНЯ
+===================================================== */
+
+.daily-reveal {
+  width:
+    min(calc(100% - 28px), 410px);
+
+  margin-top: 0;
+
+  padding:
+    19px 18px;
+
+  border:
+    1px solid
+    rgba(255, 232, 226, 0.065);
+
+  border-radius: 19px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.041),
+      rgba(255, 255, 255, 0.012)
+    );
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255, 255, 255, 0.025);
+
+  text-align: center;
+
+  animation:
+    dailyReveal
+    0.8s
+    cubic-bezier(0.2, 0.8, 0.2, 1)
+    both;
+}
+
+.daily-reveal small {
+  color:
+    rgba(255, 218, 209, 0.28);
+
+  font-size: 7px;
+
+  letter-spacing:
+    0.17em;
+
+  text-transform:
+    uppercase;
+}
+
+.daily-reveal h2 {
+  margin:
+    7px 0 8px;
+
+  color:
+    rgba(255, 242, 237, 0.91);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(19px, 5vw, 26px);
+
+  font-weight: 400;
+
+  letter-spacing:
+    -0.025em;
+}
+
+.daily-reveal p {
+  max-width: 330px;
+
+  margin:
+    0 auto;
+
+  color:
+    rgba(255, 231, 223, 0.42);
+
+  font-size: 9px;
+
+  line-height: 1.65;
+}
+
+.daily-reveal > span {
+  display: block;
+
+  margin-top: 12px;
+
+  color:
+    rgba(255, 224, 215, 0.18);
+
+  font-size: 7px;
+}
+
+
+/* =====================================================
+   ПОСЛЕ ОТКРЫТИЯ
+===================================================== */
+
+.gift-after {
+  position: relative;
+  z-index: 10;
+
+  margin:
+    20px 0 4px;
+
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.gift-after-line {
+  width: 1px;
+  height: 28px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255, 222, 215, 0.2),
+      transparent
+    );
+}
+
+.gift-after small {
+  color:
+    rgba(255, 226, 218, 0.16);
+
+  font-size: 7px;
+
+  letter-spacing:
+    0.05em;
+}
+
+
+/* =====================================================
+   СЛЕДУЮЩИЙ ПРИВЕТ
+===================================================== */
+
+.gift-next {
+  position: relative;
+  z-index: 10;
+
+  margin-top: 17px;
+
+  padding:
+    12px 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  border:
+    1px solid
+    rgba(255, 230, 223, 0.05);
+
+  border-radius: 16px;
+
+  background:
+    rgba(255, 255, 255, 0.012);
+}
+
+.gift-next > div {
+  display: grid;
+  gap: 2px;
+}
+
+.gift-next small {
+  color:
+    rgba(255, 224, 216, 0.18);
+
+  font-size: 7px;
+}
+
+.gift-next b {
+  color:
+    rgba(255, 236, 230, 0.48);
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.gift-next > span {
+  max-width: 46%;
+
+  color:
+    rgba(255, 230, 222, 0.25);
+
+  font-size: 8px;
+
+  text-align: right;
+}
+
+
+/* =====================================================
+   СКРЫТАЯ ШТУКА С КРАЯ
+===================================================== */
+
+.gift-edge-secret {
+  position: absolute;
+
+  right: -7px;
+  top: 56%;
+
+  z-index: 25;
+
+  width: 30px;
+  height: 84px;
+
+  padding: 0;
+
+  border: 0;
+
+  background:
+    transparent;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color:
+    transparent;
+
+  animation:
+    giftEdgeIn
+    0.8s ease both;
+}
+
+.gift-edge-secret span {
+  position: absolute;
+
+  right: 0;
+  top: 50%;
+
+  width: 11px;
+  height: 52px;
+
+  transform:
+    translateY(-50%);
+
+  border-radius:
+    10px 0 0 10px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(216, 156, 164, 0.11),
+      rgba(255, 232, 226, 0.21),
+      rgba(151, 106, 139, 0.1)
+    );
+
+  box-shadow:
+    -4px 0 22px
+    rgba(218, 142, 155, 0.07);
+}
+
+
+/* =====================================================
+   СЕКРЕТ ПОСЛЕ БЕЗДЕЙСТВИЯ
+===================================================== */
+
+.gift-idle-secret {
+  position: absolute;
+
+  right: 11%;
+  bottom: 20%;
+
+  z-index: 26;
+
+  width: 45px;
+  height: 45px;
+
+  border: 0;
+  border-radius: 50%;
+
+  color:
+    rgba(255, 223, 214, 0.7);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(223, 143, 157, 0.09),
+      transparent 68%
+    );
+
+  font-size: 24px;
+
+  cursor: pointer;
+
+  text-shadow:
+    0 0 12px
+    rgba(232, 154, 160, 0.26);
+
+  animation:
+    giftIdleSecret
+    3s ease-in-out infinite;
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+
+/* =====================================================
+   НОЧНОЙ СЕКРЕТ
+===================================================== */
+
+.gift-night-secret {
+  position: absolute;
+
+  left: 8%;
+  top: 31%;
+
+  z-index: 28;
+
+  width: 54px;
+  height: 54px;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid
+    rgba(182, 173, 218, 0.055);
+
+  border-radius: 50%;
+
+  color:
+    rgba(222, 214, 234, 0.4);
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(124, 119, 172, 0.08),
+      transparent 68%
+    );
+
+  cursor: pointer;
+
+  animation:
+    nightGiftAppear
+    1.4s ease both;
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+.gift-night-secret span {
+  font-size: 17px;
+
+  text-shadow:
+    0 0 17px
+    rgba(165, 157, 205, 0.25);
+}
+
+
+/* =====================================================
+   МАЛЕНЬКИЙ ПОСЕТИТЕЛЬ
+===================================================== */
+
+.gift-tiny-visitor {
+  position: absolute;
+
+  left: -30px;
+  top: 29%;
+
+  z-index: 32;
+
+  width: 28px;
+  height: 28px;
+
+  pointer-events: none;
+
+  animation:
+    tinyVisitorTravel
+    4.2s ease-in-out both;
+}
+
+.gift-tiny-visitor > i {
+  position: absolute;
+
+  left: 8px;
+  top: 10px;
+
+  width: 12px;
+  height: 12px;
+
+  border-radius:
+    48% 52% 46% 54%;
+
+  background:
+    rgba(246, 210, 198, 0.8);
+
+  box-shadow:
+    0 0 18px
+    rgba(232, 159, 157, 0.18);
+}
+
+.gift-tiny-visitor > span {
+  position: absolute;
+
+  left: -3px;
+  top: -3px;
+
+  color:
+    rgba(255, 219, 203, 0.54);
+
+  font-size: 10px;
+
+  animation:
+    tinyVisitorSpark
+    0.8s ease-in-out infinite;
+}
+
+
+/* =====================================================
+   ВСПЛЫВАЮЩАЯ РЕАКЦИЯ
+===================================================== */
+
+.gift-reaction {
+  position: fixed;
+
+  left: 50%;
+  bottom:
+    max(96px, calc(env(safe-area-inset-bottom) + 86px));
+
+  z-index: 999;
+
+  transform:
+    translateX(-50%);
+
+  width: max-content;
+  max-width: min(82vw, 360px);
+
+  padding:
+    9px 12px;
+
+  border:
+    1px solid
+    rgba(255, 230, 223, 0.07);
+
+  border-radius: 999px;
+
+  color:
+    rgba(255, 237, 231, 0.62);
+
+  background:
+    rgba(31, 24, 30, 0.74);
+
+  backdrop-filter:
+    blur(13px);
+
+  -webkit-backdrop-filter:
+    blur(13px);
+
+  box-shadow:
+    0 15px 40px
+    rgba(0, 0, 0, 0.22);
+
+  font-size: 9px;
+
+  line-height: 1.4;
+
+  text-align: center;
+
+  pointer-events: none;
+
+  animation:
+    giftReaction
+    2.7s ease both;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.gift-footer {
+  position: relative;
+  z-index: 10;
+
+  margin-top: 18px;
+
+  padding:
+    4px 3px;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  color:
+    rgba(255, 225, 217, 0.12);
+
+  font-size: 7px;
+}
+
+.gift-footer b {
+  color:
+    rgba(255, 229, 221, 0.2);
+
+  font-weight: 500;
+}
+
+
+/* =====================================================
+   СОСТОЯНИЕ ПОСЛЕ ОТКРЫТИЯ
+===================================================== */
+
+.gift-page.is-opened .gift-stage {
+  background:
+    radial-gradient(
+      circle at 50% 33%,
+      rgba(205, 126, 143, 0.06),
+      transparent 28%
+    ),
+    rgba(255, 255, 255, 0.006);
+}
+
+
+/* =====================================================
+   АНИМАЦИИ
+===================================================== */
+
+@keyframes giftLoading {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes giftGlowFloat {
+  0%,
+  100% {
+    transform:
+      translate3d(0, 0, 0)
+      scale(0.95);
+  }
+
+  50% {
+    transform:
+      translate3d(14px, -11px, 0)
+      scale(1.06);
+  }
+}
+
+@keyframes capsuleFloat {
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      rotate(-1deg);
+  }
+
+  50% {
+    transform:
+      translateY(-7px)
+      rotate(1deg);
+  }
+}
+
+@keyframes capsuleShadow {
+  0%,
+  100% {
+    transform:
+      translateX(-50%)
+      scaleX(0.88);
+
+    opacity: 0.23;
+  }
+
+  50% {
+    transform:
+      translateX(-50%)
+      scaleX(1);
+
+    opacity: 0.34;
+  }
+}
+
+@keyframes capsuleRingOne {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes capsuleRingTwo {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes capsuleOpening {
+  0% {
+    transform:
+      scale(1)
+      rotate(0);
+  }
+
+  35% {
+    transform:
+      scale(0.86)
+      rotate(-7deg);
+  }
+
+  68% {
+    transform:
+      scale(1.14)
+      rotate(5deg);
+
+    box-shadow:
+      0 0 85px
+      rgba(230, 151, 160, 0.25);
+  }
+
+  100% {
+    transform:
+      scale(0.75)
+      rotate(0);
+
+    opacity: 0.86;
+  }
+}
+
+@keyframes capsuleRingBurst {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      scale(1.45)
+      rotate(60deg);
+  }
+}
+
+@keyframes capsuleRingBurstTwo {
+  0% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      scale(1.7)
+      rotate(-65deg);
+  }
+}
+
+@keyframes giftHint {
+  0%,
+  100% {
+    opacity: 0.16;
+  }
+
+  50% {
+    opacity: 0.38;
+  }
+}
+
+@keyframes dailyReveal {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(13px)
+      scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes giftEdgeIn {
+  from {
+    opacity: 0;
+    transform:
+      translateX(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateX(0);
+  }
+}
+
+@keyframes giftIdleSecret {
+  0%,
+  100% {
+    opacity: 0.18;
+
+    transform:
+      scale(0.82);
+  }
+
+  50% {
+    opacity: 0.62;
+
+    transform:
+      scale(1.06);
+  }
+}
+
+@keyframes nightGiftAppear {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-8px)
+      scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes tinyVisitorTravel {
+  0% {
+    left: -35px;
+
+    transform:
+      translateY(8px)
+      rotate(-8deg);
+
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  48% {
+    left: 48%;
+
+    transform:
+      translateY(-12px)
+      rotate(4deg);
+  }
+
+  62% {
+    left: 52%;
+
+    transform:
+      translateY(-7px)
+      rotate(-2deg);
+  }
+
+  100% {
+    left: calc(100% + 35px);
+
+    transform:
+      translateY(4px)
+      rotate(10deg);
+
+    opacity: 0;
+  }
+}
+
+@keyframes tinyVisitorSpark {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes giftReaction {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(8px);
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  78% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(-7px);
+  }
+}
+
+
+/* =====================================================
+   МОБИЛЬНЫЙ
+===================================================== */
+
+@media (max-width: 430px) {
+
+  .gift-page {
+    width:
+      min(100% - 12px, 760px);
+
+    padding-bottom:
+      110px;
+  }
+
+  .gift-world {
+    min-height:
+      calc(100svh - 137px);
+
+    padding:
+      23px 15px 22px;
+
+    border-radius:
+      26px;
+  }
+
+  .gift-header {
+    gap: 10px;
+  }
+
+  .gift-header h1 {
+    font-size:
+      clamp(28px, 8vw, 39px);
+  }
+
+  .gift-counter {
+    font-size: 10px;
+  }
+
+  .gift-stage {
+    min-height:
+      390px;
+
+    border-radius:
+      21px;
+  }
+
+  .gift-capsule {
+    width: 190px;
+    height: 190px;
+  }
+
+  .capsule-shell {
+    width: 86px;
+    height: 105px;
+  }
+
+  .daily-reveal {
+    width:
+      calc(100% - 20px);
+
+    padding:
+      17px 15px;
+  }
+
+  .gift-next {
+    padding:
+      11px 12px;
+  }
+
+}
+
+
+/* =====================================================
+   БЕЗ АНИМАЦИИ
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .gift-loading > span,
+  .gift-glow,
+  .capsule-ring,
+  .capsule-shell,
+  .capsule-shadow,
+  .gift-hint,
+  .daily-reveal,
+  .gift-edge-secret,
+  .gift-idle-secret,
+  .gift-night-secret,
+  .gift-tiny-visitor,
+  .gift-tiny-visitor > span,
+  .gift-reaction {
+    animation:
+      none !important;
+  }
+
+}
