@@ -1,48 +1,10 @@
 import webpush from "web-push";
 import { neon } from "@neondatabase/serverless";
 
-function getMessage() {
-  const hour = Number(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "Europe/Minsk",
-      hour: "numeric",
-      hourCycle: "h23",
-    }).format(new Date())
-  );
-
-  if (hour >= 6 && hour < 12) {
-    return {
-      title: "Доброе утро, Кэссичка ❤️",
-      body: "Просыпайся потиху солнышко 🌷",
-    };
-  }
-
-  if (hour >= 12 && hour < 18) {
-    return {
-      title: "Привет от Обсидика ❤️",
-      body: "Просто напоминаю: ты мой важный человечек. 😌",
-    };
-  }
-
-  if (hour >= 18 && hour < 22) {
-    return {
-      title: "Вечерний привет 🌆",
-      body: "День почти закончился. Отдыхай, ты сегодня молодец ❤️",
-    };
-  }
-
-  return {
-    title: "Спокойной ночи, Кэссичка 🌙",
-    body: "Пора отдыхать. Пусть тебе приснятся хорошие вещи ❤️",
-  };
-}
-
 export async function POST(request) {
   try {
-    const authHeader = request.headers.get("authorization");
-    const cronHeader = request.headers.get("x-vercel-cron");
-
     const secret = process.env.PUSH_SECRET;
+    const authHeader = request.headers.get("authorization");
 
     if (!secret) {
       return Response.json(
@@ -51,16 +13,20 @@ export async function POST(request) {
       );
     }
 
-    const isAuthorized =
-      authHeader === `Bearer ${secret}` ||
-      cronHeader !== null;
-
-    if (!isAuthorized) {
+    if (authHeader !== `Bearer ${secret}`) {
       return Response.json(
-        { error: "Неверный секретный ключ" },
+        { error: "Неверный PUSH_SECRET" },
         { status: 401 }
       );
     }
+
+    const data = await request.json();
+
+    const title =
+      data?.title?.trim() || "Внеплановый привет ❤️";
+
+    const body =
+      data?.body?.trim() || "бусссс ты те надулась";
 
     if (!process.env.DATABASE_URL) {
       return Response.json(
@@ -74,21 +40,18 @@ export async function POST(request) {
       !process.env.VAPID_PRIVATE_KEY
     ) {
       return Response.json(
-        {
-          error:
-            "VAPID_PUBLIC_KEY или VAPID_PRIVATE_KEY не настроены",
-        },
+        { error: "VAPID ключи не настроены" },
         { status: 500 }
       );
     }
-
-    const sql = neon(process.env.DATABASE_URL);
 
     webpush.setVapidDetails(
       "mailto:admin@example.com",
       process.env.VAPID_PUBLIC_KEY,
       process.env.VAPID_PRIVATE_KEY
     );
+
+    const sql = neon(process.env.DATABASE_URL);
 
     const subscriptions = await sql`
       SELECT id, subscription
@@ -97,56 +60,60 @@ export async function POST(request) {
 
     if (subscriptions.length === 0) {
       return Response.json(
-        { error: "В Neon нет Push-подписок" },
+        { error: "Нет Push-подписок" },
         { status: 404 }
       );
     }
 
-    const message = getMessage();
-    const results = [];
+    let sent = 0;
+
+    const errors = [];
 
     for (const row of subscriptions) {
       try {
         await webpush.sendNotification(
           row.subscription,
           JSON.stringify({
-            title: message.title,
-            body: message.body,
+            title,
+            body,
+
             icon: "/icon-192.png",
             badge: "/icon-192.png",
+
+            url: "/for-you",
           })
         );
 
-        results.push({
-          id: row.id,
-          success: true,
-        });
+        sent++;
       } catch (error) {
         console.error(
-          `Ошибка отправки подписке ${row.id}:`,
+          "Push error:",
+          row.id,
           error
         );
 
-        results.push({
+        errors.push({
           id: row.id,
-          success: false,
-          error: error?.message || "Ошибка отправки",
+          statusCode: error?.statusCode,
+          message: error?.message,
         });
       }
     }
 
     return Response.json({
-      success: true,
-      message: "Push отправлен ❤️",
-      results,
+      success: sent > 0,
+      sent,
+      total: subscriptions.length,
+      errors,
     });
   } catch (error) {
-    console.error("Send push error:", error);
+    console.error("SEND NOW ERROR:", error);
 
     return Response.json(
       {
         error:
-          error?.message || "Ошибка отправки Push",
+          error?.message ||
+          "Ошибка отправки",
       },
       { status: 500 }
     );
