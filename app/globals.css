@@ -3504,3 +3504,1299 @@ body:has(.traces-page) .topbar {
     animation: none !important;
   }
 }
+/* =====================================================
+   ТАМ
+   app/room/page.js
+===================================================== */
+
+body:has(.there-page) .weather-effects,
+body:has(.there-page) .buddy,
+body:has(.there-page) .global-light {
+  display: none !important;
+}
+
+body:has(.there-page) .site-shell {
+  background:
+    radial-gradient(
+      circle at 18% 12%,
+      rgba(142, 78, 91, .16),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 82% 78%,
+      rgba(103, 72, 91, .14),
+      transparent 32%
+    ),
+    linear-gradient(
+      155deg,
+      #211a1e 0%,
+      #2a2025 48%,
+      #201a20 100%
+    ) !important;
+}
+
+body:has(.there-page) .site-ambient {
+  opacity: .24;
+}
+
+.there-page {
+  width: min(100%, 900px);
+  min-height: calc(100svh - 90px);
+
+  margin: 0 auto;
+  padding: 0 9px 94px;
+}
+
+.there-surface {
+  --touch-x: 50%;
+  --touch-y: 48%;
+
+  position: relative;
+
+  min-height: calc(100svh - 150px);
+
+  overflow: hidden;
+
+  border:
+    1px solid rgba(255, 234, 227, .08);
+
+  border-radius: 30px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.025),
+      rgba(255,255,255,.008)
+    );
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 28px 70px rgba(0,0,0,.22);
+
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  isolation: isolate;
+}
+
+/* =====================================================
+   ТО, ЧТО НАХОДИТСЯ "ПОД" СЛОЕМ
+===================================================== */
+
+.there-underlayer {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 23% 24%,
+      rgba(223, 145, 151, .15),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 76% 34%,
+      rgba(218, 178, 157, .12),
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 43% 72%,
+      rgba(174, 126, 153, .13),
+      transparent 24%
+    ),
+    linear-gradient(
+      150deg,
+      #34252b,
+      #2a2329 48%,
+      #32262c
+    );
+}
+
+.there-underlayer::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  opacity: .22;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(255, 230, 222, .35) 0 1px,
+      transparent 1.4px
+    );
+
+  background-size:
+    78px 78px;
+
+  background-position:
+    18px 28px;
+}
+
+.under-glow {
+  position: absolute;
+
+  width: 260px;
+  height: 260px;
+
+  border-radius: 50%;
+
+  filter: blur(45px);
+
+  opacity: .18;
+
+  pointer-events: none;
+}
+
+.under-glow-one {
+  left: -80px;
+  top: 32%;
+
+  background:
+    rgba(222, 126, 140, .48);
+}
+
+.under-glow-two {
+  right: -90px;
+  bottom: 6%;
+
+  background:
+    rgba(224, 181, 157, .36);
+}
+
+/* =====================================================
+   СКРЫТЫЕ НАХОДКИ
+===================================================== */
+
+.hidden-thing {
+  position: absolute;
+
+  z-index: 3;
+
+  transform:
+    translate(-50%, -50%);
+
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+
+  width: max-content;
+  max-width: 150px;
+
+  color:
+    rgba(255, 237, 231, .74);
+
+  text-align: center;
+
+  opacity: .82;
+
+  transition:
+    transform .25s ease,
+    opacity .25s ease,
+    filter .25s ease;
+}
+
+.hidden-thing.is-near {
+  transform:
+    translate(-50%, -50%)
+    scale(1.05);
+
+  opacity: 1;
+
+  filter:
+    drop-shadow(
+      0 0 18px
+      rgba(240, 161, 166, .22)
+    );
+}
+
+.hidden-thing strong {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(16px, 4.8vw, 28px);
+
+  font-weight: 400;
+
+  letter-spacing:
+    -.02em;
+}
+
+.hidden-thing small {
+  color:
+    rgba(255, 231, 224, .50);
+
+  font-size:
+    8px;
+
+  line-height:
+    1.3;
+
+  letter-spacing:
+    .035em;
+}
+
+/* маленький спящий персонаж */
+
+.tiny-sleeper {
+  position: relative;
+
+  width: 44px;
+  height: 29px;
+
+  border-radius:
+    50% 50% 46% 46%;
+
+  background:
+    linear-gradient(
+      160deg,
+      rgba(236, 191, 180, .88),
+      rgba(178, 124, 137, .88)
+    );
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.20),
+    0 8px 20px
+    rgba(0,0,0,.16);
+}
+
+.tiny-ear {
+  position: absolute;
+
+  top: -5px;
+
+  width: 13px;
+  height: 13px;
+
+  border-radius:
+    50% 50% 42% 42%;
+
+  background:
+    #c88b91;
+}
+
+.ear-left {
+  left: 6px;
+
+  transform:
+    rotate(-20deg);
+}
+
+.ear-right {
+  right: 6px;
+
+  transform:
+    rotate(20deg);
+}
+
+.tiny-face {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.tiny-face i {
+  display: block;
+
+  width: 7px;
+  height: 1.5px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(68, 45, 51, .80);
+}
+
+/* скрытая дверка */
+
+.tiny-door {
+  position: relative;
+
+  width: 28px;
+  height: 42px;
+
+  border:
+    1px solid
+    rgba(255, 225, 217, .55);
+
+  border-radius:
+    12px 12px 4px 4px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.05),
+      rgba(255,255,255,.012)
+    );
+
+  box-shadow:
+    inset 0 0 18px
+    rgba(255, 214, 201, .04);
+}
+
+.tiny-door-knob {
+  position: absolute;
+
+  right: 5px;
+  top: 22px;
+
+  width: 3px;
+  height: 3px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 223, 210, .72);
+
+  box-shadow:
+    0 0 8px
+    rgba(247, 174, 165, .40);
+}
+
+/* =====================================================
+   МАТОВЫЙ ВЕРХНИЙ СЛОЙ
+===================================================== */
+
+.there-veil {
+  position: absolute;
+  inset: 0;
+
+  z-index: 5;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 20% 18%,
+      rgba(255, 219, 211, .055),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 78% 75%,
+      rgba(207, 169, 191, .045),
+      transparent 30%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(47, 37, 42, .98),
+      rgba(37, 31, 36, .985)
+    );
+
+  backdrop-filter:
+    blur(11px);
+
+  -webkit-backdrop-filter:
+    blur(11px);
+
+  transition:
+    opacity .32s ease;
+
+  pointer-events: none;
+}
+
+/*
+   Когда палец активен, круг вокруг него
+   буквально делает верхний слой прозрачнее.
+*/
+
+.there-surface.is-searching .there-veil {
+  -webkit-mask-image:
+    radial-gradient(
+      circle 118px
+      at var(--touch-x) var(--touch-y),
+      transparent 0,
+      transparent 34%,
+      rgba(0,0,0,.18) 54%,
+      rgba(0,0,0,.72) 76%,
+      #000 100%
+    );
+
+  mask-image:
+    radial-gradient(
+      circle 118px
+      at var(--touch-x) var(--touch-y),
+      transparent 0,
+      transparent 34%,
+      rgba(0,0,0,.18) 54%,
+      rgba(0,0,0,.72) 76%,
+      #000 100%
+    );
+}
+
+.there-surface.is-near .there-veil {
+  -webkit-mask-image:
+    radial-gradient(
+      circle 142px
+      at var(--touch-x) var(--touch-y),
+      transparent 0,
+      transparent 42%,
+      rgba(0,0,0,.12) 58%,
+      rgba(0,0,0,.68) 80%,
+      #000 100%
+    );
+
+  mask-image:
+    radial-gradient(
+      circle 142px
+      at var(--touch-x) var(--touch-y),
+      transparent 0,
+      transparent 42%,
+      rgba(0,0,0,.12) 58%,
+      rgba(0,0,0,.68) 80%,
+      #000 100%
+    );
+}
+
+.veil-grain {
+  position: absolute;
+  inset: 0;
+
+  opacity: .22;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,.13) 0 .7px,
+      transparent .9px
+    );
+
+  background-size:
+    13px 13px;
+}
+
+.veil-line {
+  position: absolute;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 230, 222, .055),
+      transparent
+    );
+
+  transform-origin:
+    center;
+
+  opacity: .75;
+}
+
+.veil-line-a {
+  width: 72%;
+
+  left: -9%;
+  top: 39%;
+
+  transform:
+    rotate(-12deg);
+}
+
+.veil-line-b {
+  width: 62%;
+
+  right: -13%;
+  top: 57%;
+
+  transform:
+    rotate(9deg);
+}
+
+.veil-line-c {
+  width: 46%;
+
+  left: 25%;
+  bottom: 17%;
+
+  transform:
+    rotate(-3deg);
+}
+
+/* =====================================================
+   СВЕТ ПОД ПАЛЬЦЕМ
+===================================================== */
+
+.there-touch-light {
+  position: absolute;
+
+  left: var(--touch-x);
+  top: var(--touch-y);
+
+  z-index: 7;
+
+  width: 190px;
+  height: 190px;
+
+  transform:
+    translate(-50%, -50%)
+    scale(.82);
+
+  border-radius: 50%;
+
+  opacity: 0;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 238, 229, .30) 0,
+      rgba(245, 181, 174, .17) 23%,
+      rgba(203, 112, 137, .08) 45%,
+      transparent 72%
+    );
+
+  box-shadow:
+    inset 0 0 22px
+    rgba(255,255,255,.04);
+
+  filter:
+    blur(.3px);
+
+  pointer-events: none;
+
+  transition:
+    opacity .20s ease,
+    transform .20s ease;
+}
+
+.there-surface.is-searching .there-touch-light {
+  opacity: .72;
+
+  transform:
+    translate(-50%, -50%)
+    scale(1);
+}
+
+.there-surface.is-near .there-touch-light {
+  opacity: 1;
+
+  transform:
+    translate(-50%, -50%)
+    scale(1.10);
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.there-header {
+  position: relative;
+
+  z-index: 14;
+
+  padding:
+    24px 21px 0;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+
+  pointer-events: none;
+}
+
+.there-header > div {
+  display: grid;
+  gap: 3px;
+}
+
+.there-header small {
+  color:
+    rgba(255, 220, 211, .34);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing:
+    .21em;
+}
+
+.there-header h1 {
+  margin: 0;
+
+  color:
+    rgba(255, 242, 237, .92);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(31px, 7vw, 46px);
+
+  font-weight: 400;
+
+  letter-spacing:
+    -.035em;
+}
+
+.there-found-counter {
+  margin-top: 7px;
+
+  color:
+    rgba(255, 226, 219, .25);
+
+  font-size:
+    8px;
+
+  letter-spacing:
+    .07em;
+}
+
+/* =====================================================
+   ПЕРВЫЙ НАМЁК
+===================================================== */
+
+.there-first-hint {
+  position: absolute;
+
+  left: 50%;
+  bottom: 14%;
+
+  z-index: 14;
+
+  transform:
+    translateX(-50%);
+
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+
+  color:
+    rgba(255, 229, 221, .30);
+
+  pointer-events: none;
+
+  animation:
+    thereHint 3.4s ease-in-out infinite;
+}
+
+.there-first-hint span {
+  width: 27px;
+  height: 27px;
+
+  border:
+    1px solid
+    rgba(255, 217, 207, .14);
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 0 8px
+    rgba(255, 181, 177, .018),
+    0 0 26px
+    rgba(238, 145, 153, .05);
+}
+
+.there-first-hint p {
+  margin: 0;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 10px;
+
+  letter-spacing:
+    .015em;
+}
+
+/* =====================================================
+   НАЙДЕННЫЕ ВЕЩИ
+===================================================== */
+
+.there-found-layer {
+  position: absolute;
+  inset: 0;
+
+  z-index: 12;
+
+  pointer-events: none;
+}
+
+.found-thing {
+  position: absolute;
+
+  transform:
+    translate(-50%, -50%);
+
+  width: 54px;
+  min-height: 46px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 5px;
+
+  border: 0;
+
+  color:
+    rgba(255, 233, 227, .78);
+
+  background:
+    transparent;
+
+  cursor: pointer;
+
+  pointer-events: auto;
+
+  -webkit-tap-highlight-color: transparent;
+
+  animation:
+    foundAppear .75s ease both;
+}
+
+.found-thing strong {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    21px;
+
+  font-weight: 400;
+}
+
+.found-thing::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 64px;
+  height: 64px;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(238, 160, 160, .055),
+      transparent 68%
+    );
+
+  opacity: .75;
+
+  pointer-events: none;
+}
+
+.found-sleeper {
+  transform: scale(.84);
+
+  opacity: .82;
+}
+
+.found-door {
+  transform: scale(.9);
+
+  opacity: .84;
+}
+
+/* =====================================================
+   МАЛЕНЬКИЕ ОТВЕТЫ
+===================================================== */
+
+.there-reaction {
+  position: absolute;
+
+  left: 50%;
+  bottom: 21%;
+
+  z-index: 18;
+
+  transform:
+    translateX(-50%);
+
+  width: max-content;
+  max-width: 76%;
+
+  padding:
+    7px 10px;
+
+  border:
+    1px solid
+    rgba(255, 226, 217, .055);
+
+  border-radius:
+    999px;
+
+  color:
+    rgba(255, 232, 225, .48);
+
+  background:
+    rgba(44, 34, 39, .36);
+
+  backdrop-filter:
+    blur(8px);
+
+  font-size:
+    9px;
+
+  letter-spacing:
+    .025em;
+
+  pointer-events: none;
+
+  animation:
+    thereReaction
+    2.2s ease both;
+}
+
+/* =====================================================
+   СЕКРЕТНАЯ ДВЕРЬ
+===================================================== */
+
+.there-door-scene {
+  position: absolute;
+  inset: 0;
+
+  z-index: 60;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  background:
+    radial-gradient(
+      circle at 50% 44%,
+      rgba(229, 157, 153, .16),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 76% 22%,
+      rgba(192, 138, 161, .10),
+      transparent 25%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(38, 30, 35, .98),
+      rgba(27, 24, 29, .99)
+    );
+
+  backdrop-filter:
+    blur(13px);
+
+  animation:
+    doorSceneIn .7s ease both;
+}
+
+.door-scene-light {
+  position: absolute;
+
+  left: 50%;
+  top: 46%;
+
+  width: 300px;
+  height: 300px;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 212, 199, .16),
+      rgba(209, 125, 145, .055) 36%,
+      transparent 68%
+    );
+
+  filter:
+    blur(5px);
+
+  pointer-events: none;
+
+  animation:
+    doorLightBreath
+    4.4s ease-in-out infinite;
+}
+
+.there-door-close {
+  position: absolute;
+
+  right: 18px;
+  top: 18px;
+
+  z-index: 4;
+
+  width: 38px;
+  height: 38px;
+
+  border:
+    1px solid
+    rgba(255, 231, 224, .08);
+
+  border-radius: 50%;
+
+  color:
+    rgba(255, 234, 228, .50);
+
+  background:
+    rgba(255,255,255,.025);
+
+  font-size: 19px;
+
+  cursor: pointer;
+}
+
+.door-scene-copy {
+  position: relative;
+
+  z-index: 3;
+
+  max-width: 430px;
+
+  text-align: center;
+}
+
+.door-scene-copy small {
+  color:
+    rgba(255, 216, 207, .27);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing:
+    .20em;
+}
+
+.door-scene-copy p {
+  margin:
+    18px 0 17px;
+
+  color:
+    rgba(255, 239, 234, .83);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(20px, 5.5vw, 31px);
+
+  line-height:
+    1.48;
+
+  letter-spacing:
+    -.02em;
+}
+
+.door-scene-copy span {
+  color:
+    rgba(255, 228, 220, .32);
+
+  font-size:
+    9px;
+
+  line-height:
+    1.45;
+
+  letter-spacing:
+    .025em;
+}
+
+/* =====================================================
+   ПАСХАЛКА ПОСЛЕ ВСЕХ НАХОДОК
+===================================================== */
+
+.there-all-found {
+  position: absolute;
+
+  right: 10%;
+  top: 18%;
+
+  z-index: 20;
+
+  width: 46px;
+  height: 46px;
+
+  border: 0;
+
+  background:
+    transparent;
+
+  cursor: pointer;
+}
+
+.there-all-found span {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform:
+    translate(-50%, -50%);
+
+  color:
+    rgba(255, 213, 206, .55);
+
+  font-size: 21px;
+
+  text-shadow:
+    0 0 14px
+    rgba(241, 148, 155, .40);
+
+  animation:
+    finalDot
+    2.8s ease-in-out infinite;
+}
+
+.there-reset {
+  display: block;
+
+  margin:
+    14px auto 0;
+
+  padding:
+    8px 12px;
+
+  border:
+    1px solid
+    rgba(255, 226, 218, .055);
+
+  border-radius:
+    999px;
+
+  color:
+    rgba(255, 229, 222, .22);
+
+  background:
+    rgba(255,255,255,.014);
+
+  font-size:
+    8px;
+
+  letter-spacing:
+    .04em;
+
+  cursor: pointer;
+}
+
+/* =====================================================
+   АНИМАЦИИ
+===================================================== */
+
+@keyframes thereHint {
+  0%,
+  100% {
+    opacity: .42;
+
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+
+  50% {
+    opacity: .78;
+
+    transform:
+      translateX(-50%)
+      translateY(-5px);
+  }
+}
+
+@keyframes foundAppear {
+  from {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.82);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+}
+
+@keyframes thereReaction {
+  0% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(5px);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  72% {
+    opacity: .85;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(-5px);
+  }
+}
+
+@keyframes doorSceneIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes doorLightBreath {
+  0%,
+  100% {
+    opacity: .50;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.92);
+  }
+
+  50% {
+    opacity: .92;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1.08);
+  }
+}
+
+@keyframes finalDot {
+  0%,
+  100% {
+    opacity: .24;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.8);
+  }
+
+  50% {
+    opacity: .78;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1.14);
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 430px) {
+  .there-page {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .there-surface {
+    min-height:
+      calc(100svh - 145px);
+
+    border-radius:
+      26px;
+  }
+
+  .there-header {
+    padding:
+      21px 18px 0;
+  }
+
+  .there-surface.is-searching .there-veil {
+    -webkit-mask-image:
+      radial-gradient(
+        circle 106px
+        at var(--touch-x) var(--touch-y),
+        transparent 0,
+        transparent 35%,
+        rgba(0,0,0,.18) 56%,
+        rgba(0,0,0,.74) 78%,
+        #000 100%
+      );
+
+    mask-image:
+      radial-gradient(
+        circle 106px
+        at var(--touch-x) var(--touch-y),
+        transparent 0,
+        transparent 35%,
+        rgba(0,0,0,.18) 56%,
+        rgba(0,0,0,.74) 78%,
+        #000 100%
+      );
+  }
+
+  .there-surface.is-near .there-veil {
+    -webkit-mask-image:
+      radial-gradient(
+        circle 128px
+        at var(--touch-x) var(--touch-y),
+        transparent 0,
+        transparent 42%,
+        rgba(0,0,0,.14) 60%,
+        rgba(0,0,0,.70) 80%,
+        #000 100%
+      );
+
+    mask-image:
+      radial-gradient(
+        circle 128px
+        at var(--touch-x) var(--touch-y),
+        transparent 0,
+        transparent 42%,
+        rgba(0,0,0,.14) 60%,
+        rgba(0,0,0,.70) 80%,
+        #000 100%
+      );
+  }
+
+  .there-touch-light {
+    width: 168px;
+    height: 168px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .there-first-hint,
+  .door-scene-light,
+  .there-all-found span {
+    animation: none !important;
+  }
+}
+
