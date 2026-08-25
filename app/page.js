@@ -1,480 +1,160 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import WeatherMini from "./components/WeatherMini";
+import {
+  getCurrentScheduleItem,
+  getCurrentDay,
+  dayNames,
+} from "./schedule";
 
-const HIDDEN_THINGS = [
-  {
-    id: "hello",
-    x: 21,
-    y: 28,
-    type: "note",
-    title: "ну привет",
-    text: "раз уж нашла",
-  },
-  {
-    id: "sleepy",
-    x: 73,
-    y: 35,
-    type: "sleepy",
-    title: "ᶻ 𝗓 𐰁",
-    text: "он вообще-то спал",
-  },
-  {
-    id: "star",
-    x: 35,
-    y: 61,
-    type: "star",
-    title: "✦",
-    text: "маленькая штука. просто твоя.",
-  },
-  {
-    id: "smile",
-    x: 78,
-    y: 70,
-    type: "smile",
-    title: ":)",
-    text: "ага. тут тоже что-то есть.",
-  },
-  {
-    id: "door",
-    x: 52,
-    y: 82,
-    type: "door",
-    title: "",
-    text: "дверь",
-  },
+const messages = [
+  "Просто напоминаю: ты очень важная буська. ❤️",
+  "Сегодня не обязательно успеть всё. Правда.",
+  "Если день вредничает — вредничай в ответ совсем чуть-чуть.",
+  "Пусть сегодня найдётся хотя бы один момент, который тебя порадует.",
+  "Где-то далеко один Обсидик очень хочет, чтобы у тебя всё было хорошо.",
+  "Поесть, попить воды и иногда отдыхать — официальный план.",
+  "Тьмок без причины 💋",
 ];
 
-function distance(aX, aY, bX, bY) {
-  return Math.hypot(aX - bX, aY - bY);
+function getMinskHour(date = new Date()) {
+  return Number(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Europe/Minsk",
+      hour: "numeric",
+      hourCycle: "h23",
+    }).format(date)
+  );
 }
 
-export default function TherePage() {
-  const surfaceRef = useRef(null);
-  const holdTimerRef = useRef(null);
-  const fadeTimerRef = useRef(null);
+function getGreeting(hour) {
+  if (hour >= 6 && hour < 12) return ["Доброе утро, бус ❤️", "🌅"];
+  if (hour >= 12 && hour < 18) return ["Хорошего дня, бус ❤️", "☀️"];
+  if (hour >= 18 && hour < 22) return ["Добрый вечер, бус ❤️", "🌆"];
+  return ["Спокойной ночи, бус ❤️", "🌙"];
+}
 
-  const [pointer, setPointer] = useState({
-    x: 50,
-    y: 48,
-    active: false,
-  });
-
-  const [found, setFound] = useState([]);
-  const [nearId, setNearId] = useState(null);
-  const [reaction, setReaction] = useState("");
-  const [doorOpen, setDoorOpen] = useState(false);
-  const [firstHint, setFirstHint] = useState(true);
+export default function HomePage() {
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-    try {
-      // Удаляем остатки старого раздела "Следы".
-      localStorage.removeItem("kessi-traces-discoveries");
-      localStorage.removeItem("kessi-traces-lights");
-
-      // Загружаем только находки нового раздела "Там".
-      const saved = JSON.parse(
-        localStorage.getItem("kessi-there-found") || "[]"
-      );
-
-      if (Array.isArray(saved)) {
-        setFound(saved);
-      }
-    } catch {}
+    const timer = setInterval(() => setNow(new Date()), 30000);
+    return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(
-        "kessi-there-found",
-        JSON.stringify(found)
-      );
-    } catch {}
-  }, [found]);
+  const hour = getMinskHour(now);
+  const [greeting, icon] = getGreeting(hour);
 
-  useEffect(() => {
-    return () => {
-      window.clearTimeout(holdTimerRef.current);
-      window.clearTimeout(fadeTimerRef.current);
-    };
-  }, []);
+  const minskTime = new Intl.DateTimeFormat("ru-RU", {
+    timeZone: "Europe/Minsk",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(now);
 
-  const foundCount = found.length;
+  const dateKey = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Minsk",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
 
-  const hiddenById = useMemo(
-    () =>
-      Object.fromEntries(
-        HIDDEN_THINGS.map((thing) => [thing.id, thing])
-      ),
-    []
-  );
+  const message = useMemo(() => {
+    const seed = Number(dateKey.replace(/\D/g, "")) || 1;
+    return messages[seed % messages.length];
+  }, [dateKey]);
 
-  function getPoint(event) {
-    const rect = surfaceRef.current.getBoundingClientRect();
+  let schedule = null;
+  let day = null;
 
-    return {
-      x:
-        ((event.clientX - rect.left) / rect.width) *
-        100,
-      y:
-        ((event.clientY - rect.top) / rect.height) *
-        100,
-    };
-  }
-
-  function showReaction(text) {
-    setReaction(text);
-
-    window.clearTimeout(fadeTimerRef.current);
-
-    fadeTimerRef.current = window.setTimeout(() => {
-      setReaction("");
-    }, 2200);
-  }
-
-  function unlock(id) {
-    setFound((current) => {
-      if (current.includes(id)) return current;
-      return [...current, id];
-    });
-
-    const thing = hiddenById[id];
-
-    if (!thing) return;
-
-    if (id === "hello") {
-      showReaction("нашлось");
-    } else if (id === "sleepy") {
-      showReaction("разбудила");
-    } else if (id === "star") {
-      showReaction("оставим здесь");
-    } else if (id === "smile") {
-      showReaction("да, это считается");
-    } else if (id === "door") {
-      showReaction("это уже интереснее");
-    }
-  }
-
-  function findNearest(x, y) {
-    let nearest = null;
-    let nearestDistance = Infinity;
-
-    for (const thing of HIDDEN_THINGS) {
-      if (found.includes(thing.id)) continue;
-
-      const d = distance(x, y, thing.x, thing.y);
-
-      if (d < nearestDistance) {
-        nearest = thing;
-        nearestDistance = d;
-      }
-    }
-
-    return nearestDistance < 10 ? nearest : null;
-  }
-
-  function startHoldCheck(x, y) {
-    window.clearTimeout(holdTimerRef.current);
-
-    const nearest = findNearest(x, y);
-
-    setNearId(nearest?.id || null);
-
-    if (!nearest) return;
-
-    holdTimerRef.current = window.setTimeout(() => {
-      unlock(nearest.id);
-    }, 850);
-  }
-
-  function movePointer(event) {
-    const point = getPoint(event);
-
-    setPointer({
-      x: Math.max(0, Math.min(100, point.x)),
-      y: Math.max(0, Math.min(100, point.y)),
-      active: true,
-    });
-
-    setFirstHint(false);
-
-    startHoldCheck(point.x, point.y);
-  }
-
-  function onPointerDown(event) {
-    try {
-      event.currentTarget.setPointerCapture(
-        event.pointerId
-      );
-    } catch {}
-
-    movePointer(event);
-  }
-
-  function onPointerMove(event) {
-    if (event.pointerType !== "mouse") {
-      if (event.buttons === 0) return;
-    }
-
-    movePointer(event);
-  }
-
-  function onPointerUp(event) {
-    window.clearTimeout(holdTimerRef.current);
-    setNearId(null);
-
-    if (event.pointerType !== "mouse") {
-      setPointer((current) => ({
-        ...current,
-        active: false,
-      }));
-    }
-  }
-
-  function onMouseLeave() {
-    window.clearTimeout(holdTimerRef.current);
-    setNearId(null);
-
-    setPointer((current) => ({
-      ...current,
-      active: false,
-    }));
-  }
-
-  function resetThere() {
-    setDoorOpen(false);
-    setFound([]);
-    showReaction("как будто ничего и не было");
-  }
+  try {
+    schedule = getCurrentScheduleItem();
+    day = getCurrentDay();
+  } catch {}
 
   return (
-    <main className="there-page">
-      <section
-        ref={surfaceRef}
-        className={`there-surface ${
-          pointer.active ? "is-searching" : ""
-        } ${nearId ? "is-near" : ""}`}
-        style={{
-          "--touch-x": `${pointer.x}%`,
-          "--touch-y": `${pointer.y}%`,
-        }}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        onMouseLeave={onMouseLeave}
-      >
-        {/* СЛОЙ ПОД ПОВЕРХНОСТЬЮ */}
-        <div
-          className="there-underlayer"
-          aria-hidden="true"
-        >
-          <div className="under-glow under-glow-one" />
-          <div className="under-glow under-glow-two" />
-
-          {HIDDEN_THINGS.map((thing) => (
-            <div
-              key={thing.id}
-              className={`hidden-thing hidden-${thing.type} ${
-                nearId === thing.id ? "is-near" : ""
-              }`}
-              style={{
-                left: `${thing.x}%`,
-                top: `${thing.y}%`,
-              }}
-            >
-              {thing.type === "sleepy" && (
-                <div className="tiny-sleeper">
-                  <span className="tiny-ear ear-left" />
-                  <span className="tiny-ear ear-right" />
-                  <span className="tiny-face">
-                    <i />
-                    <i />
-                  </span>
-                </div>
-              )}
-
-              {thing.type === "door" && (
-                <div className="tiny-door">
-                  <span className="tiny-door-knob" />
-                </div>
-              )}
-
-              {thing.type !== "sleepy" &&
-                thing.type !== "door" && (
-                  <strong>{thing.title}</strong>
-                )}
-
-              <small>{thing.text}</small>
-            </div>
-          ))}
+    <div className="page home-page">
+      <section className="hero-card">
+        <div className="hero-topline">
+          <span className="hero-time">Минск · {minskTime}</span>
+          <span className="hero-weather-dot">online</span>
         </div>
 
-        {/* МАТОВЫЙ ВЕРХНИЙ СЛОЙ */}
-        <div
-          className="there-veil"
-          aria-hidden="true"
-        >
-          <div className="veil-grain" />
-          <div className="veil-line veil-line-a" />
-          <div className="veil-line veil-line-b" />
-          <div className="veil-line veil-line-c" />
-        </div>
+        <div className="hero-icon">{icon}</div>
 
-        {/* КУРСОР / СВЕТ */}
-        <div
-          className="there-touch-light"
-          aria-hidden="true"
-        />
-
-        {/* ЗАГОЛОВОК */}
-        <header className="there-header">
-          <div>
-            <small>ДЛЯ КЭССИЧКИ</small>
-            <h1>Там</h1>
-          </div>
-
-          <span className="there-found-counter">
-            {foundCount
-              ? `${foundCount}/${HIDDEN_THINGS.length}`
-              : "ничего не видно"}
-          </span>
-        </header>
-
-        {/* НАМЁК ПРИ ПЕРВОМ ОТКРЫТИИ */}
-        {firstHint && (
-          <div className="there-first-hint">
-            <span />
-            <p>попробуй посмотреть ближе</p>
-          </div>
-        )}
-
-        {/* УЖЕ НАЙДЕННЫЕ ВЕЩИ */}
-        <div className="there-found-layer">
-          {found.map((id) => {
-            const thing = hiddenById[id];
-
-            if (!thing) return null;
-
-            return (
-              <button
-                key={id}
-                type="button"
-                className={`found-thing found-${thing.type}`}
-                style={{
-                  left: `${thing.x}%`,
-                  top: `${thing.y}%`,
-                }}
-                onClick={(event) => {
-                  event.stopPropagation();
-
-                  if (id === "door") {
-                    setDoorOpen(true);
-                  } else if (id === "sleepy") {
-                    showReaction("он снова уснул");
-                  } else if (id === "hello") {
-                    showReaction("привет ещё раз");
-                  } else if (id === "star") {
-                    showReaction("всё ещё твоя");
-                  } else if (id === "smile") {
-                    showReaction(":)");
-                  }
-                }}
-                aria-label={thing.text}
-              >
-                {thing.type === "sleepy" && (
-                  <div className="tiny-sleeper found-sleeper">
-                    <span className="tiny-ear ear-left" />
-                    <span className="tiny-ear ear-right" />
-                    <span className="tiny-face">
-                      <i />
-                      <i />
-                    </span>
-                  </div>
-                )}
-
-                {thing.type === "door" && (
-                  <div className="tiny-door found-door">
-                    <span className="tiny-door-knob" />
-                  </div>
-                )}
-
-                {thing.type !== "sleepy" &&
-                  thing.type !== "door" && (
-                    <strong>{thing.title}</strong>
-                  )}
-              </button>
-            );
-          })}
-        </div>
-
-        {reaction && (
-          <div className="there-reaction">
-            {reaction}
-          </div>
-        )}
-
-        {/* СЕКРЕТНАЯ ДВЕРЬ */}
-        {doorOpen && (
-          <div
-            className="there-door-scene"
-            onPointerDown={(event) =>
-              event.stopPropagation()
-            }
-          >
-            <button
-              className="there-door-close"
-              type="button"
-              onClick={() => setDoorOpen(false)}
-              aria-label="Закрыть"
-            >
-              ×
-            </button>
-
-            <div className="door-scene-light" />
-
-            <div className="door-scene-copy">
-              <small>ТЫ ВСЁ-ТАКИ НАШЛА ДВЕРЬ</small>
-
-              <p>
-                Не всё хорошее обязано лежать
-                на самом видном месте.
-              </p>
-
-              <span>
-                можешь оставить её открытой
-                ещё немного
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* СКРЫТАЯ МЕЛОЧЬ ПОСЛЕ ВСЕХ НАХОДОК */}
-        {foundCount === HIDDEN_THINGS.length &&
-          !doorOpen && (
-            <button
-              className="there-all-found"
-              type="button"
-              onClick={() =>
-                showReaction(
-                  "ладно. теперь ты знаешь, что тут есть."
-                )
-              }
-            >
-              <span>·</span>
-            </button>
-          )}
+        <p className="eyebrow">твой маленький уголок</p>
+        <h1>{greeting}</h1>
+        <p className="hero-text">{message}</p>
       </section>
 
-      {foundCount === HIDDEN_THINGS.length && (
-        <button
-          className="there-reset"
-          type="button"
-          onClick={resetThere}
-        >
-          спрятать всё обратно
-        </button>
+      <WeatherMini />
+
+      {schedule && (
+        <section className="next-note">
+          <div>
+            <small>Следующий привет</small>
+            <b>
+              {dayNames?.[day] || ""} · {schedule.time}
+            </b>
+          </div>
+
+          <span>{schedule.title}</span>
+        </section>
       )}
-    </main>
+
+      <section className="section-block">
+        <div className="section-heading">
+          <div>
+            <small>выбирай</small>
+            <h2>Куда заглянем?</h2>
+          </div>
+
+          <span>↘</span>
+        </div>
+
+        <div className="portal-grid">
+          <Link
+            className="portal-card dragon-card"
+            href="/dragon"
+          >
+            <span className="portal-icon">🐉</span>
+
+            <div>
+              <small>кто-то опять что-то делает</small>
+              <b>Дракоша</b>
+              <p>
+                Домик, дневник и очень важные
+                драконьи дела.
+              </p>
+            </div>
+
+            <i>→</i>
+          </Link>
+
+          <Link
+            className="portal-card love-card"
+            href="/for-you"
+          >
+            <span className="portal-icon">♥</span>
+
+            <div>
+              <small>оставлено специально</small>
+              <b>Для тебя</b>
+              <p>
+                Маленькие послания и уведомления.
+              </p>
+            </div>
+
+            <i>→</i>
+          </Link>
+        </div>
+      </section>
+
+      <p className="home-signature">
+        Обсидик был здесь ❤️
+      </p>
+    </div>
   );
 }
