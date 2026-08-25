@@ -777,6 +777,129 @@ export default function Home() {
         {`
 
         /* =========================
+           КНОПКА СВЕТА
+        ========================= */
+
+        .site-light-control {
+          width: 100%;
+          margin: 14px 0 18px;
+        }
+
+        .site-light-button {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 13px 14px;
+          border: 1px solid rgba(255,255,255,.09);
+          border-radius: 18px;
+          background: rgba(255,255,255,.045);
+          color: white;
+          text-align: left;
+          cursor: pointer;
+          -webkit-tap-highlight-color: transparent;
+          transition:
+            transform .2s ease,
+            background .45s ease,
+            border-color .45s ease,
+            box-shadow .45s ease;
+        }
+
+        .site-light-button:active {
+          transform: scale(.985);
+        }
+
+        .site-light-icon {
+          flex: 0 0 42px;
+          width: 42px;
+          height: 42px;
+          display: grid;
+          place-items: center;
+          border-radius: 14px;
+          background: rgba(255,255,255,.06);
+          font-size: 22px;
+          transition:
+            background .45s ease,
+            box-shadow .45s ease,
+            transform .45s ease;
+        }
+
+        .site-light-copy {
+          min-width: 0;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .site-light-copy strong {
+          font-size: 13px;
+          line-height: 1.25;
+        }
+
+        .site-light-copy small {
+          color: rgba(255,255,255,.48);
+          font-size: 10px;
+          line-height: 1.3;
+        }
+
+        .site-light-switch {
+          position: relative;
+          flex: 0 0 42px;
+          width: 42px;
+          height: 24px;
+          border-radius: 999px;
+          background: rgba(255,255,255,.12);
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+          transition: background .45s ease, box-shadow .45s ease;
+        }
+
+        .site-light-switch > span {
+          position: absolute;
+          left: 3px;
+          top: 3px;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background: rgba(255,255,255,.78);
+          box-shadow: 0 2px 8px rgba(0,0,0,.25);
+          transition:
+            transform .35s ease,
+            background .35s ease,
+            box-shadow .35s ease;
+        }
+
+        .site-light-control.lamp-on .site-light-button {
+          background:
+            linear-gradient(
+              135deg,
+              rgba(255,214,151,.18),
+              rgba(255,168,103,.10)
+            );
+          border-color: rgba(255,209,145,.30);
+          box-shadow:
+            0 10px 35px rgba(255,153,82,.10),
+            inset 0 0 28px rgba(255,220,170,.04);
+        }
+
+        .site-light-control.lamp-on .site-light-icon {
+          background: rgba(255,204,132,.16);
+          box-shadow: 0 0 24px rgba(255,184,104,.18);
+          transform: rotate(-5deg);
+        }
+
+        .site-light-control.lamp-on .site-light-switch {
+          background: rgba(255,183,96,.72);
+          box-shadow: 0 0 18px rgba(255,167,79,.18);
+        }
+
+        .site-light-control.lamp-on .site-light-switch > span {
+          transform: translateX(18px);
+          background: #fff6df;
+          box-shadow: 0 0 12px rgba(255,238,190,.65);
+        }
+
+        /* =========================
            НОВЫЕ ШТУКИ
         ========================= */
 
@@ -1407,6 +1530,11 @@ export default function Home() {
             inset 0 -8px 16px rgba(157,84,26,.20);
         }
 
+        .room-ending {
+          width: min(76%, 500px);
+          margin: 90px auto 0;
+          text-align: center;
+        }
         .room-goodbye { position:relative; z-index:2; margin:0; color:rgba(255,255,255,.85); font-size:clamp(20px,5vw,29px); font-weight:700; line-height:1.45; }
         .room-goodbye-small { position:relative; z-index:2; margin:10px 0 0; color:rgba(255,255,255,.38); font-size:11px; }
 
@@ -1648,6 +1776,37 @@ export default function Home() {
               </>
             )}
 
+        </div>
+
+        {/* =========================
+            СВЕТ — кнопка теперь выше
+        ========================= */}
+        <div className={`site-light-control ${lampOn ? "lamp-on" : ""}`}>
+          <button
+            type="button"
+            className="site-light-button"
+            onClick={() => setLampOn((current) => !current)}
+            aria-pressed={lampOn}
+          >
+            <span className="site-light-icon" aria-hidden="true">
+              {lampOn ? "💡" : "🌙"}
+            </span>
+
+            <span className="site-light-copy">
+              <strong>
+                {lampOn ? "Выключить свет" : "Включить свет"}
+              </strong>
+              <small>
+                {lampOn
+                  ? "вернуть обычный вайб"
+                  : "сделать здесь светлее и уютнее"}
+              </small>
+            </span>
+
+            <span className="site-light-switch" aria-hidden="true">
+              <span />
+            </span>
+          </button>
         </div>
 
         {/* =========================
@@ -1938,37 +2097,13 @@ export default function Home() {
           </p>
         </section>
 
-        {/* ЛАМПА — включает тёплый свет на весь сайт */}
-        <footer
-          className={`room-lamp-zone ${lampOn ? "lamp-on" : ""}`}
-          onClick={() => setLampOn((current) => !current)}
-          role="button"
-          tabIndex={0}
-          aria-pressed={lampOn}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              setLampOn((current) => !current);
-            }
-          }}
-        >
-          <div className="vibe-lamp" aria-hidden="true">
-            <div className="vibe-lamp-glow" />
-            <div className="vibe-lamp-shade" />
-            <div className="vibe-lamp-neck" />
-            <div className="vibe-lamp-base" />
-          </div>
-
+        {/* ФИНАЛ КОМНАТЫ */}
+        <footer className="room-ending">
           <p className="room-goodbye">
             Возвращайся сюда иногда. Здесь тебя всегда ждут.
           </p>
           <p className="room-goodbye-small">
-            {lampOn
-              ? "свет включён — теперь тут совсем уютно ✨"
-              : "береги себя, бус ❤️"}
-          </p>
-          <p className="lamp-hint">
-            {lampOn ? "тыкни, чтобы выключить свет" : "тыкни на лампу"}
+            береги себя, бус ❤️
           </p>
         </footer>
       </section>
