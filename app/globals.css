@@ -18563,3 +18563,77 @@ body {
   color:
     #ffb8bb !important;
 }
+/* =====================================================
+   СКРЫВАЕМ НИЖНЕЕ МЕНЮ,
+   КОГДА ОТКРЫТ ДОКУМЕНТ КАНЦЕЛЯРИИ
+===================================================== */
+
+.bottom-nav {
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+}
+
+
+/*
+  Если внутри сайта открыт chancery-modal,
+  нижняя навигация больше не перекрывает документ.
+*/
+
+.site-shell:has(.chancery-modal)
+.bottom-nav {
+  transform: translateY(
+    calc(
+      100% +
+      40px +
+      env(safe-area-inset-bottom)
+    )
+  ) !important;
+
+  opacity: 0 !important;
+
+  visibility: hidden !important;
+
+  pointer-events: none !important;
+}
+
+
+/* =====================================================
+   ДОПОЛНИТЕЛЬНОЕ МЕСТО СНИЗУ ДОКУМЕНТА
+   ДЛЯ IPHONE / ANDROID
+===================================================== */
+
+.chancery-file {
+  padding-bottom:
+    max(
+      24px,
+      env(safe-area-inset-bottom)
+    );
+}
+
+
+/* =====================================================
+   НА МОБИЛЬНОМ ДОКУМЕНТ ЗАНИМАЕТ
+   НОРМАЛЬНУЮ ВЫСОТУ ЭКРАНА
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .chancery-modal {
+    padding-bottom: 0 !important;
+  }
+
+
+  .chancery-file {
+    max-height:
+      100dvh !important;
+
+    padding-bottom:
+      calc(
+        24px +
+        env(safe-area-inset-bottom)
+      );
+  }
+
+}
