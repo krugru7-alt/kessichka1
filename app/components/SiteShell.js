@@ -140,7 +140,189 @@ function getMinskTimeClass() {
   return "time-night";
 }
 
+/* =====================================================
+   PUSH · VAPID HELPERS
+===================================================== */
 
+function urlBase64ToUint8Array(
+  base64String
+) {
+
+  const padding =
+    "=".repeat(
+      (
+        4 -
+        (
+          base64String.length %
+          4
+        )
+      ) %
+      4
+    );
+
+
+  const base64 =
+    (
+      base64String +
+      padding
+    )
+      .replace(
+        /-/g,
+        "+"
+      )
+      .replace(
+        /_/g,
+        "/"
+      );
+
+
+  const rawData =
+    window.atob(
+      base64
+    );
+
+
+  const outputArray =
+    new Uint8Array(
+      rawData.length
+    );
+
+
+  for (
+    let i = 0;
+    i < rawData.length;
+    i++
+  ) {
+
+    outputArray[i] =
+      rawData.charCodeAt(
+        i
+      );
+
+  }
+
+
+  return outputArray;
+}
+
+
+
+function arrayBufferToBase64Url(
+  buffer
+) {
+
+  if (!buffer) {
+    return "";
+  }
+
+
+  const bytes =
+    new Uint8Array(
+      buffer
+    );
+
+
+  let binary =
+    "";
+
+
+  for (
+    let i = 0;
+    i < bytes.length;
+    i++
+  ) {
+
+    binary +=
+      String.fromCharCode(
+        bytes[i]
+      );
+
+  }
+
+
+  return window
+    .btoa(
+      binary
+    )
+    .replace(
+      /\+/g,
+      "-"
+    )
+    .replace(
+      /\//g,
+      "_"
+    )
+    .replace(
+      /=+$/g,
+      ""
+    );
+}
+
+
+
+function normalizeVapidKey(
+  value
+) {
+
+  return String(
+    value || ""
+  )
+    .trim()
+    .replace(
+      /=+$/g,
+      ""
+    );
+
+}
+
+
+
+function subscriptionUsesKey(
+  subscription,
+  publicKey
+) {
+
+  if (!subscription) {
+    return false;
+  }
+
+
+  const subscriptionKey =
+    subscription
+      ?.options
+      ?.applicationServerKey;
+
+
+  /*
+    Если браузер не сообщает,
+    каким ключом создана подписка,
+    безопаснее пересоздать её.
+  */
+
+  if (!subscriptionKey) {
+    return false;
+  }
+
+
+  const current =
+    normalizeVapidKey(
+      publicKey
+    );
+
+
+  const existing =
+    normalizeVapidKey(
+      arrayBufferToBase64Url(
+        subscriptionKey
+      )
+    );
+
+
+  return (
+    current ===
+    existing
+  );
+}
 
 export default function SiteShell({
   children,
@@ -333,118 +515,457 @@ export default function SiteShell({
     router,
   ]);
   /* =====================================================
-   ПРИВЯЗЫВАЕМ PUSH К КЭССИЧКЕ / ОБСИДИКУ
-===================================================== */
+     PUSH
+     ПРОВЕРКА VAPID + АВТОМАТИЧЕСКАЯ МИГРАЦИЯ
+  ===================================================== */
 
-useEffect(() => {
+  useEffect(() => {
 
-  if (
-    !viewer?.user ||
-    !(
-      "serviceWorker" in
-      navigator
-    )
-  ) {
-    return;
-  }
+    if (
+      !viewer?.user
+    ) {
+      return;
+    }
 
 
-  let active =
-    true;
+    if (
+      !(
+        "serviceWorker" in
+        navigator
+      ) ||
+      !(
+        "Notification" in
+        window
+      )
+    ) {
+      return;
+    }
 
 
-  async function registerPushOwner() {
-
-    try {
-
-      const registration =
-        await navigator
-          .serviceWorker
-          .ready;
+    let active =
+      true;
 
 
-      const subscription =
-        await registration
-          .pushManager
-          ?.getSubscription();
+    let lastSyncedEndpoint =
+      null;
 
 
-      if (
-        !subscription ||
-        !active
-      ) {
-        return;
-      }
+    async function syncPush() {
+
+      try {
+
+        /*
+          Если уведомления ещё
+          не разрешены — сами
+          разрешение не запрашиваем.
+          Это остаётся задачей
+          кнопки подключения.
+        */
+
+        if (
+          Notification.permission !==
+          "granted"
+        ) {
+          return;
+        }
 
 
-      await fetch(
-        "/api/push/register",
-        {
+        const publicKey =
+          process.env
+            .NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 
-          method:
-            "POST",
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+        if (!publicKey) {
 
-          body:
-            JSON.stringify(
-              subscription.toJSON()
-            ),
+          console.error(
+            "NEXT_PUBLIC_VAPID_PUBLIC_KEY не найден"
+          );
+
+
+          return;
+        }
+
+
+        const normalizedPublicKey =
+          normalizeVapidKey(
+            publicKey
+          );
+
+
+        const registration =
+          await navigator
+            .serviceWorker
+            .ready;
+
+
+        if (
+          !registration
+            .pushManager
+        ) {
+          return;
+        }
+
+
+        let subscription =
+          await registration
+            .pushManager
+            .getSubscription();
+
+
+        /*
+          На некоторых браузерах
+          applicationServerKey может
+          быть недоступен.
+
+          Поэтому дополнительно
+          храним public key локально.
+        */
+
+        let savedPublicKey =
+          "";
+
+
+        try {
+
+          savedPublicKey =
+            normalizeVapidKey(
+              localStorage.getItem(
+                "our-world-vapid-public-key"
+              )
+            );
+
+        } catch {
+          savedPublicKey = "";
+        }
+
+
+        let shouldRecreate =
+          false;
+
+
+        if (subscription) {
+
+          const subscriptionKey =
+            subscription
+              ?.options
+              ?.applicationServerKey;
+
+
+          if (
+            subscriptionKey
+          ) {
+
+            shouldRecreate =
+              !subscriptionUsesKey(
+                subscription,
+                publicKey
+              );
+
+          } else if (
+            savedPublicKey
+          ) {
+
+            shouldRecreate =
+              savedPublicKey !==
+              normalizedPublicKey;
+
+          } else {
+
+            /*
+              Это первый запуск новой
+              логики, а определить ключ
+              существующей подписки
+              браузер не дал.
+
+              Один раз пересоздаём её,
+              после чего запоминаем
+              текущий public key.
+            */
+
+            shouldRecreate =
+              true;
+
+          }
 
         }
-      );
 
 
-    } catch (error) {
+        /* =================================================
+           СТАРАЯ ПОДПИСКА
+           ПЕРЕСОЗДАЁМ ПРИ СМЕНЕ VAPID
+        ================================================= */
 
-      console.error(
-        "Push owner:",
-        error
-      );
+        if (
+          subscription &&
+          shouldRecreate
+        ) {
+
+          console.log(
+            "Найден старый VAPID. Пересоздаю Push…"
+          );
+
+
+          try {
+
+            await subscription
+              .unsubscribe();
+
+          } catch (
+            unsubscribeError
+          ) {
+
+            console.warn(
+              "Старая Push-подписка уже недоступна:",
+              unsubscribeError
+            );
+
+          }
+
+
+          subscription =
+            null;
+
+
+          lastSyncedEndpoint =
+            null;
+
+        }
+
+
+        if (
+          !active
+        ) {
+          return;
+        }
+
+
+        /* =================================================
+           СОЗДАЁМ НОВУЮ ПОДПИСКУ
+        ================================================= */
+
+        if (
+          !subscription
+        ) {
+
+          subscription =
+            await registration
+              .pushManager
+              .subscribe({
+
+                userVisibleOnly:
+                  true,
+
+                applicationServerKey:
+                  urlBase64ToUint8Array(
+                    publicKey
+                  ),
+
+              });
+
+
+          console.log(
+            "Новая Push-подписка создана"
+          );
+
+        }
+
+
+        if (
+          !subscription ||
+          !active
+        ) {
+          return;
+        }
+
+
+        /*
+          Один и тот же endpoint
+          повторно каждые 20 секунд
+          не отправляем.
+        */
+
+        if (
+          subscription.endpoint ===
+          lastSyncedEndpoint
+        ) {
+          return;
+        }
+
+
+        /* =================================================
+           СТАРАЯ СИСТЕМА PUSH
+        ================================================= */
+
+        const legacyResponse =
+          await fetch(
+            "/api/subscribe",
+            {
+
+              method:
+                "POST",
+
+              headers: {
+
+                "Content-Type":
+                  "application/json",
+
+              },
+
+              body:
+                JSON.stringify(
+                  subscription
+                ),
+
+            }
+          );
+
+
+        if (
+          !legacyResponse.ok
+        ) {
+
+          const data =
+            await legacyResponse
+              .json()
+              .catch(
+                () => null
+              );
+
+
+          throw new Error(
+            data?.error ||
+            "Не удалось сохранить Push-подписку"
+          );
+
+        }
+
+
+        /* =================================================
+           ПРИВЯЗЫВАЕМ К КЭССИЧКЕ / ОБСИДИКУ
+        ================================================= */
+
+        const ownerResponse =
+          await fetch(
+            "/api/push/register",
+            {
+
+              method:
+                "POST",
+
+              headers: {
+
+                "Content-Type":
+                  "application/json",
+
+              },
+
+              body:
+                JSON.stringify(
+                  subscription.toJSON()
+                ),
+
+            }
+          );
+
+
+        if (
+          !ownerResponse.ok
+        ) {
+
+          const data =
+            await ownerResponse
+              .json()
+              .catch(
+                () => null
+              );
+
+
+          throw new Error(
+            data?.error ||
+            "Не удалось привязать Push к пользователю"
+          );
+
+        }
+
+
+        /*
+          Public key не секретный.
+          Он нужен только для того,
+          чтобы при следующей смене
+          VAPID понять, что подписка
+          устарела.
+        */
+
+        try {
+
+          localStorage.setItem(
+            "our-world-vapid-public-key",
+            publicKey
+          );
+
+        } catch {
+          // ничего страшного
+        }
+
+
+        lastSyncedEndpoint =
+          subscription.endpoint;
+
+
+        console.log(
+          "Push синхронизирован:",
+          viewer.user
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Push sync:",
+          error
+        );
+
+      }
 
     }
-  }
 
 
-  /*
-    Сразу проверяем существующую
-    подписку.
-  */
+    /*
+      Проверяем сразу после входа.
+    */
 
-  registerPushOwner();
-
-
-  /*
-    Если человек только сейчас
-    включил Push, подхватим подписку
-    автоматически.
-  */
-
-  const timer =
-    window.setInterval(
-      registerPushOwner,
-      20000
-    );
+    syncPush();
 
 
-  return () => {
+    /*
+      И периодически проверяем.
+      Если Push включили уже после
+      загрузки страницы, новая
+      подписка тоже подхватится.
+    */
 
-    active =
-      false;
+    const timer =
+      window.setInterval(
+        syncPush,
+        20000
+      );
 
 
-    window.clearInterval(
-      timer
-    );
+    return () => {
 
-  };
+      active =
+        false;
 
-}, [
-  viewer?.user,
-]);
+
+      window.clearInterval(
+        timer
+      );
+
+    };
+
+  }, [
+    viewer?.user,
+  ]);
 
 
 
