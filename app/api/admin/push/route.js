@@ -14,6 +14,10 @@ export const runtime =
   "nodejs";
 
 
+/* =====================================================
+   NEON
+===================================================== */
+
 function getSql() {
 
   const databaseUrl =
@@ -34,6 +38,10 @@ function getSql() {
   );
 }
 
+
+/* =====================================================
+   ТАБЛИЦА PUSH
+===================================================== */
 
 async function ensureTable(
   sql
@@ -56,8 +64,13 @@ async function ensureTable(
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `;
+
 }
 
+
+/* =====================================================
+   POST · ОТПРАВИТЬ PUSH КЭССИЧКЕ
+===================================================== */
 
 export async function POST(
   request
@@ -65,9 +78,9 @@ export async function POST(
 
   try {
 
-    /* =============================
+    /* =================================================
        ТОЛЬКО ОБСИДИК
-    ============================= */
+    ================================================= */
 
     const session =
       await getSession();
@@ -93,9 +106,9 @@ export async function POST(
     }
 
 
-    /* =============================
-       ТЕКСТ
-    ============================= */
+    /* =================================================
+       ТЕКСТ УВЕДОМЛЕНИЯ
+    ================================================= */
 
     const body =
       await request.json();
@@ -128,30 +141,103 @@ export async function POST(
     }
 
 
-    /* =============================
+    /* =================================================
        VAPID
-    ============================= */
+    ================================================= */
+
+    /*
+      Public key.
+
+      Основное имя:
+      NEXT_PUBLIC_VAPID_PUBLIC_KEY
+
+      Но оставляем поддержку
+      старого VAPID_PUBLIC_KEY,
+      если он когда-то так назывался.
+    */
 
     const publicKey =
-      process.env
-        .NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      String(
+        process.env
+          .NEXT_PUBLIC_VAPID_PUBLIC_KEY ||
+        process.env
+          .VAPID_PUBLIC_KEY ||
+        ""
+      ).trim();
 
+
+    /*
+      Private key.
+
+      Никогда не отправляется
+      в браузер.
+    */
 
     const privateKey =
-      process.env
-        .VAPID_PRIVATE_KEY;
+      String(
+        process.env
+          .VAPID_PRIVATE_KEY ||
+        ""
+      ).trim();
+
+
+    /*
+      Теперь вместо общего
+      "ключи не настроены"
+      узнаем конкретную проблему.
+    */
+
+    const missingKeys =
+      [];
+
+
+    if (!publicKey) {
+
+      missingKeys.push(
+        "NEXT_PUBLIC_VAPID_PUBLIC_KEY"
+      );
+
+    }
+
+
+    if (!privateKey) {
+
+      missingKeys.push(
+        "VAPID_PRIVATE_KEY"
+      );
+
+    }
 
 
     if (
-      !publicKey ||
-      !privateKey
+      missingKeys.length >
+      0
     ) {
+
+      console.error(
+        "ADMIN PUSH · отсутствуют ENV:",
+        missingKeys,
+        "VERCEL_ENV:",
+        process.env.VERCEL_ENV ||
+        "unknown"
+      );
+
 
       return Response.json(
         {
           ok: false,
+
           error:
-            "VAPID-ключи не настроены",
+            "Vercel не видит: " +
+            missingKeys.join(
+              ", "
+            ),
+
+          environment:
+            process.env
+              .VERCEL_ENV ||
+            "unknown",
+
         },
         {
           status: 500,
@@ -162,35 +248,115 @@ export async function POST(
 
 
     /*
-      VAPID разрешает https URL
-      проекта как subject.
+      Дополнительная проверка,
+      чтобы случайно не использовать
+      пустую/повреждённую строку.
     */
 
+    if (
+      publicKey.length <
+        20
+    ) {
+
+      return Response.json(
+        {
+          ok: false,
+
+          error:
+            "NEXT_PUBLIC_VAPID_PUBLIC_KEY выглядит некорректно",
+        },
+        {
+          status: 500,
+        }
+      );
+
+    }
+
+
+    if (
+      privateKey.length <
+        20
+    ) {
+
+      return Response.json(
+        {
+          ok: false,
+
+          error:
+            "VAPID_PRIVATE_KEY выглядит некорректно",
+        },
+        {
+          status: 500,
+        }
+      );
+
+    }
+
+
+    /* =================================================
+       VAPID SUBJECT
+    ================================================= */
+
     const projectUrl =
-      process.env
-        .VERCEL_PROJECT_PRODUCTION_URL;
+      String(
+        process.env
+          .VERCEL_PROJECT_PRODUCTION_URL ||
+        process.env
+          .VERCEL_URL ||
+        ""
+      ).trim();
 
 
     const subject =
-      process.env
-        .VAPID_SUBJECT ||
-      (
-        projectUrl
-          ? `https://${projectUrl}`
-          : "https://example.com"
+      String(
+        process.env
+          .VAPID_SUBJECT ||
+        (
+          projectUrl
+            ? `https://${projectUrl}`
+            : "https://example.com"
+        )
+      ).trim();
+
+
+    /*
+      Настраиваем web-push.
+    */
+
+    try {
+
+      webpush.setVapidDetails(
+        subject,
+        publicKey,
+        privateKey
+      );
+
+    } catch (error) {
+
+      console.error(
+        "setVapidDetails:",
+        error
       );
 
 
-    webpush.setVapidDetails(
-      subject,
-      publicKey,
-      privateKey
-    );
+      return Response.json(
+        {
+          ok: false,
+
+          error:
+            "VAPID-ключи найдены, но сама пара ключей некорректна",
+        },
+        {
+          status: 500,
+        }
+      );
+
+    }
 
 
-    /* =============================
-       БЕРЁМ ТОЛЬКО КЭССИЧКУ
-    ============================= */
+    /* =================================================
+       NEON
+    ================================================= */
 
     const sql =
       getSql();
@@ -201,6 +367,10 @@ export async function POST(
     );
 
 
+    /* =================================================
+       БЕРЁМ ТОЛЬКО УСТРОЙСТВА КЭССИЧКИ
+    ================================================= */
+
     const subscriptions =
       await sql`
         SELECT
@@ -208,7 +378,8 @@ export async function POST(
           p256dh,
           auth
 
-        FROM world_push_subscriptions
+        FROM
+          world_push_subscriptions
 
         WHERE
           user_name = 'kessi'
@@ -219,7 +390,8 @@ export async function POST(
 
 
     if (
-      subscriptions.length === 0
+      subscriptions.length ===
+      0
     ) {
 
       return Response.json(
@@ -237,9 +409,9 @@ export async function POST(
     }
 
 
-    /* =============================
-       УВЕДОМЛЕНИЕ
-    ============================= */
+    /* =================================================
+       PAYLOAD
+    ================================================= */
 
     const payload =
       JSON.stringify({
@@ -251,8 +423,9 @@ export async function POST(
           message,
 
         /*
-          Для совместимости
-          со старым sw.js.
+          Оставляем message
+          для совместимости
+          с текущим sw.js.
         */
 
         message,
@@ -261,7 +434,10 @@ export async function POST(
           "/",
 
         data: {
-          url: "/",
+
+          url:
+            "/",
+
         },
 
       });
@@ -274,6 +450,10 @@ export async function POST(
     let failed =
       0;
 
+
+    /* =================================================
+       ОТПРАВЛЯЕМ НА ВСЕ УСТРОЙСТВА КЭССИЧКИ
+    ================================================= */
 
     for (
       const item
@@ -322,54 +502,105 @@ export async function POST(
           );
 
 
+        console.error(
+          "Push error:",
+          {
+            statusCode,
+
+            message:
+              error?.message ||
+              "unknown",
+          }
+        );
+
+
         /*
-          Подписка умерла —
-          удаляем её из Neon.
+          404 / 410 означает,
+          что браузерная подписка
+          больше не существует.
+
+          Удаляем её из Neon.
         */
 
         if (
-          statusCode === 404 ||
-          statusCode === 410
+          statusCode ===
+            404 ||
+          statusCode ===
+            410
         ) {
 
-          await sql`
-            DELETE FROM world_push_subscriptions
+          try {
 
-            WHERE
-              endpoint = ${item.endpoint}
-          `;
+            await sql`
+              DELETE FROM
+                world_push_subscriptions
+
+              WHERE
+                endpoint =
+                  ${item.endpoint}
+            `;
+
+          } catch (
+            deleteError
+          ) {
+
+            console.error(
+              "Не удалось удалить старую Push-подписку:",
+              deleteError
+            );
+
+          }
 
         }
 
-
-        console.error(
-          "Push error:",
-          statusCode,
-          error?.message
-        );
-
       }
+
     }
 
 
-    return Response.json({
+    /* =================================================
+       РЕЗУЛЬТАТ
+    ================================================= */
 
-      ok:
-        sent > 0,
+    if (
+      sent ===
+      0
+    ) {
 
-      sent,
+      return Response.json(
+        {
+          ok: false,
 
-      failed,
+          sent,
 
-      total:
-        subscriptions.length,
+          failed,
 
-      error:
-        sent === 0
-          ? "Не удалось доставить уведомление"
-          : null,
+          total:
+            subscriptions.length,
 
-    });
+          error:
+            "Не удалось доставить уведомление",
+        },
+        {
+          status: 502,
+        }
+      );
+
+    }
+
+
+    return Response.json(
+      {
+        ok: true,
+
+        sent,
+
+        failed,
+
+        total:
+          subscriptions.length,
+      }
+    );
 
 
   } catch (error) {
@@ -385,6 +616,7 @@ export async function POST(
         ok: false,
 
         error:
+          error?.message ||
           "Не удалось отправить привет",
       },
       {
@@ -393,4 +625,5 @@ export async function POST(
     );
 
   }
+
 }
