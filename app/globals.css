@@ -23087,3 +23087,208 @@ body {
   color:
     #ffc0c6;
 }
+/* =========================================================
+   ADMIN · PUSH
+========================================================= */
+
+.admin-push-card {
+  min-height: 320px;
+}
+
+
+.admin-push-form {
+  display: grid;
+  gap: 8px;
+
+  margin-top: 15px;
+}
+
+
+.admin-push-form textarea {
+  width: 100%;
+
+  min-height: 88px;
+
+  resize: vertical;
+
+  padding:
+    12px 13px;
+
+  border:
+    1px solid
+    rgba(128, 68, 75, .14);
+
+  border-radius:
+    14px;
+
+  outline: none;
+
+  background:
+    rgba(255, 255, 255, .63);
+
+  color:
+    #4a3034;
+
+  font: inherit;
+
+  font-size: 11px;
+
+  line-height: 1.5;
+}
+
+
+.admin-push-form textarea:focus {
+  border-color:
+    rgba(178, 80, 91, .4);
+
+  box-shadow:
+    0 0 0 4px
+    rgba(178, 80, 91, .06);
+}
+
+
+.admin-push-counter {
+  color:
+    rgba(78, 49, 53, .35);
+
+  font-size: 7px;
+
+  text-align: right;
+}
+
+
+.admin-push-quick {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 5px;
+}
+
+
+.admin-push-quick button {
+  padding:
+    6px 8px;
+
+  border:
+    1px solid
+    rgba(133, 69, 76, .1);
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(255, 255, 255, .45);
+
+  color:
+    #865158;
+
+  font-size: 7px;
+
+  cursor: pointer;
+}
+
+
+.admin-push-send {
+  min-height: 43px;
+
+  margin-top: 3px;
+
+  border: 0;
+
+  border-radius:
+    13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #b95a65,
+      #a44853
+    );
+
+  color: white;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 22px
+    rgba(157, 68, 79, .16);
+}
+
+
+.admin-push-send:disabled {
+  opacity: .45;
+
+  cursor: default;
+}
+
+
+.admin-push-success,
+.admin-push-error {
+  margin-top: 10px;
+
+  padding:
+    9px 10px;
+
+  border-radius:
+    11px;
+
+  font-size: 8px;
+}
+
+
+.admin-push-success {
+  background:
+    rgba(88, 151, 107, .09);
+
+  color:
+    #477d55;
+}
+
+
+.admin-push-error {
+  background:
+    rgba(185, 76, 87, .09);
+
+  color:
+    #a54852;
+}
+
+
+/* DARK */
+
+.theme-dark
+.admin-push-form textarea {
+  border-color:
+    rgba(255, 255, 255, .09);
+
+  background:
+    rgba(255, 255, 255, .055);
+
+  color:
+    #fff3ee;
+}
+
+
+.theme-dark
+.admin-push-counter {
+  color:
+    rgba(255, 255, 255, .35);
+}
+
+
+.theme-dark
+.admin-push-quick button {
+  border-color:
+    rgba(255, 255, 255, .08);
+
+  background:
+    rgba(255, 255, 255, .05);
+
+  color:
+    #ffc2c8;
+}
