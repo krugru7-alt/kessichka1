@@ -22888,3 +22888,125 @@ body {
   }
 
 }
+/* =========================================================
+   НАШ МИРОК · ADMIN · СВЕТЛАЯ ТЕМА
+   Не даём погодной теме делать текст белым
+========================================================= */
+
+.theme-light .world-admin-page {
+  color: #493235 !important;
+}
+
+
+/* ГЛАВНАЯ КАРТОЧКА */
+
+.theme-light .world-admin-hero {
+  border-color: rgba(126, 70, 77, 0.13) !important;
+
+  background:
+    rgba(255, 250, 247, 0.94) !important;
+
+  color: #493235 !important;
+
+  box-shadow:
+    0 18px 45px
+    rgba(79, 52, 56, 0.08) !important;
+}
+
+
+.theme-light .world-admin-hero small {
+  color: #a9535d !important;
+}
+
+
+.theme-light .world-admin-hero h1 {
+  color: #432c30 !important;
+}
+
+
+.theme-light .world-admin-hero p {
+  color: #725c5f !important;
+
+  opacity: 1 !important;
+}
+
+
+.theme-light .world-admin-back {
+  color: #9f4c56 !important;
+}
+
+
+/* КАРТОЧКИ УПРАВЛЕНИЯ */
+
+.theme-light .world-admin-card {
+  border-color:
+    rgba(126, 70, 77, 0.12) !important;
+
+  background:
+    rgba(255, 250, 247, 0.94) !important;
+
+  color:
+    #493235 !important;
+
+  box-shadow:
+    0 12px 32px
+    rgba(79, 52, 56, 0.055) !important;
+}
+
+
+.theme-light .world-admin-card > span {
+  color:
+    #b15862 !important;
+}
+
+
+.theme-light .world-admin-card small {
+  color:
+    #a9535d !important;
+}
+
+
+.theme-light .world-admin-card h2 {
+  color:
+    #4a3034 !important;
+}
+
+
+.theme-light .world-admin-card p {
+  color:
+    #756064 !important;
+
+  opacity:
+    1 !important;
+}
+
+
+.theme-light .world-admin-card a,
+.theme-light .world-admin-card i {
+  color:
+    #a14550 !important;
+}
+
+
+/* КНОПКИ В ШАПКЕ */
+
+.theme-light .world-admin-link,
+.theme-light .world-viewer-chip {
+  border-color:
+    rgba(120, 67, 73, 0.13) !important;
+
+  background:
+    rgba(255, 255, 255, 0.72) !important;
+
+  color:
+    #4d3437 !important;
+}
+
+
+.theme-light .world-viewer-chip small {
+  color:
+    #846a6d !important;
+
+  opacity:
+    1 !important;
+}
