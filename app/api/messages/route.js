@@ -7,24 +7,15 @@ export const runtime =
   "nodejs";
 
 
-/* =====================================================
-   NEON
-===================================================== */
-
 function getSql() {
-
   const databaseUrl =
     process.env.DATABASE_URL;
 
-
   if (!databaseUrl) {
-
     throw new Error(
       "DATABASE_URL не найден"
     );
-
   }
-
 
   return neon(
     databaseUrl
@@ -38,6 +29,35 @@ const ALLOWED_SENDERS = [
 ];
 
 
+/* =====================================================
+   ПРОВЕРЯЕМ СТРУКТУРУ ТАБЛИЦЫ
+===================================================== */
+
+async function ensureTable(
+  sql
+) {
+  await sql`
+    CREATE TABLE IF NOT EXISTS kessi_messages (
+      id BIGSERIAL PRIMARY KEY,
+      sender TEXT NOT NULL,
+      message TEXT NOT NULL DEFAULT '',
+      drawing_image TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
+
+
+  /*
+    Если таблица была создана раньше
+    без рисунков — просто добавляем поле.
+  */
+
+  await sql`
+    ALTER TABLE kessi_messages
+    ADD COLUMN IF NOT EXISTS drawing_image TEXT
+  `;
+}
+
 
 /* =====================================================
    НОРМАЛИЗАЦИЯ
@@ -46,47 +66,41 @@ const ALLOWED_SENDERS = [
 function normalizeMessage(
   row
 ) {
-
   return {
-
     id:
       Number(
         row.id
       ),
 
-
     sender:
       row.sender,
 
-
     message:
       row.message || "",
-
 
     drawingImage:
       row.drawing_image ||
       null,
 
-
     createdAt:
       row.created_at,
-
   };
 }
 
 
-
 /* =====================================================
    GET
-   ПОСЛЕДНИЕ ПОСЛАНИЯ
 ===================================================== */
 
 export async function GET() {
-
   try {
-
     const sql =
       getSql();
+
+
+    await ensureTable(
+      sql
+    );
 
 
     const rows =
@@ -107,103 +121,80 @@ export async function GET() {
       `;
 
 
-    /*
-      Получаем новые первыми,
-      на экране разворачиваем
-      в нормальный порядок.
-    */
-
-    const messages =
-      rows
-        .map(
-          normalizeMessage
-        )
-        .reverse();
-
-
     return Response.json(
       {
+        ok: true,
 
-        ok:
-          true,
-
-
-        messages,
-
+        messages:
+          rows
+            .map(
+              normalizeMessage
+            )
+            .reverse(),
       },
       {
-
         headers: {
-
           "Cache-Control":
             "no-store",
-
         },
-
       }
     );
 
-
   } catch (error) {
-
     console.error(
-      "Ошибка получения посланий:",
+      "GET /api/messages:",
       error
     );
 
 
     return Response.json(
       {
-
-        ok:
-          false,
-
+        ok: false,
 
         error:
           "Не удалось получить послания",
 
+        details:
+          process.env.NODE_ENV ===
+          "development"
+            ? String(
+                error?.message ||
+                error
+              )
+            : undefined,
       },
       {
-
-        status:
-          500,
-
+        status: 500,
       }
     );
-
   }
 }
 
 
-
 /* =====================================================
    POST
-   ТЕКСТ ИЛИ РИСУНОК
 ===================================================== */
 
 export async function POST(
   request
 ) {
-
   try {
-
     const sql =
       getSql();
+
+
+    await ensureTable(
+      sql
+    );
 
 
     const body =
       await request.json();
 
 
-
-    /* ===============================================
-       ОТПРАВИТЕЛЬ
-    =============================================== */
-
     const sender =
       String(
-        body?.sender ||
-        ""
+        body?.sender || ""
       ).trim();
 
 
@@ -212,38 +203,23 @@ export async function POST(
         sender
       )
     ) {
-
       return Response.json(
         {
-
-          ok:
-            false,
-
+          ok: false,
 
           error:
             "Некорректный отправитель",
-
         },
         {
-
-          status:
-            400,
-
+          status: 400,
         }
       );
-
     }
 
 
-
-    /* ===============================================
-       ТЕКСТ
-    =============================================== */
-
     const message =
       String(
-        body?.message ||
-        ""
+        body?.message || ""
       )
         .trim()
         .slice(
@@ -251,11 +227,6 @@ export async function POST(
           180
         );
 
-
-
-    /* ===============================================
-       РИСУНОК
-    =============================================== */
 
     const drawingImage =
       String(
@@ -270,97 +241,60 @@ export async function POST(
         "data:image/"
       )
     ) {
-
       return Response.json(
         {
-
-          ok:
-            false,
-
+          ok: false,
 
           error:
             "Некорректный рисунок",
-
         },
         {
-
-          status:
-            400,
-
+          status: 400,
         }
       );
-
     }
 
 
     /*
-      Ограничение, чтобы случайно
-      не отправить огромную картинку.
+      Не даём отправить слишком
+      тяжёлую картинку.
     */
 
     if (
       drawingImage.length >
       700000
     ) {
-
       return Response.json(
         {
-
-          ok:
-            false,
-
+          ok: false,
 
           error:
             "Рисунок слишком большой",
-
         },
         {
-
-          status:
-            400,
-
+          status: 400,
         }
       );
-
     }
 
-
-
-    /* ===============================================
-       ДОЛЖЕН БЫТЬ ХОТЯ БЫ ТЕКСТ ИЛИ РИСУНОК
-    =============================================== */
 
     if (
       !message &&
       !drawingImage
     ) {
-
       return Response.json(
         {
-
-          ok:
-            false,
-
+          ok: false,
 
           error:
             "Послание пустое",
-
         },
         {
-
-          status:
-            400,
-
+          status: 400,
         }
       );
-
     }
 
-
-
-    /* ===============================================
-       СОХРАНЯЕМ
-    =============================================== */
 
     const rows =
       await sql`
@@ -388,45 +322,31 @@ export async function POST(
 
 
     return Response.json({
-
-      ok:
-        true,
-
+      ok: true,
 
       message:
         normalizeMessage(
           rows[0]
         ),
-
     });
 
-
   } catch (error) {
-
     console.error(
-      "Ошибка сохранения послания:",
+      "POST /api/messages:",
       error
     );
 
 
     return Response.json(
       {
-
-        ok:
-          false,
-
+        ok: false,
 
         error:
           "Не удалось оставить послание",
-
       },
       {
-
-        status:
-          500,
-
+        status: 500,
       }
     );
-
   }
 }
