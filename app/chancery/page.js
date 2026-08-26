@@ -9,37 +9,15 @@ import {
 
 import { DOCUMENTS } from "./documents";
 
+
 const FILTERS = [
-  {
-    id: "all",
-    label: "Все",
-  },
-
-  {
-    id: "sign",
-    label: "На подпись",
-  },
-
-  {
-    id: "active",
-    label: "Действующие",
-  },
-
-  {
-    id: "done",
-    label: "Исполненные",
-  },
-
-  {
-    id: "archive",
-    label: "Архив",
-  },
+  { id: "all", label: "Все" },
+  { id: "sign", label: "На подпись" },
+  { id: "active", label: "Действующие" },
+  { id: "done", label: "Исполненные" },
+  { id: "archive", label: "Архив" },
 ];
 
-
-/* =====================================================
-   ПОМОЩНИКИ
-===================================================== */
 
 function canDocumentBeSigned(document) {
   return (
@@ -53,9 +31,7 @@ function canDocumentBeSigned(document) {
 
 
 function formatSignedAt(value) {
-  if (!value) {
-    return "";
-  }
+  if (!value) return "";
 
   try {
     return new Date(value).toLocaleString(
@@ -74,9 +50,42 @@ function formatSignedAt(value) {
 }
 
 
-/* =====================================================
-   СТРАНИЦА
-===================================================== */
+function normalizeSignature(value) {
+  if (!value) return null;
+
+  if (
+    typeof value === "string" &&
+    value.startsWith("data:image")
+  ) {
+    return {
+      image: value,
+      signedAt: null,
+      x: 42,
+      y: 84,
+      width: 28,
+    };
+  }
+
+  return {
+    ...value,
+
+    x:
+      typeof value.x === "number"
+        ? value.x
+        : 42,
+
+    y:
+      typeof value.y === "number"
+        ? value.y
+        : 84,
+
+    width:
+      typeof value.width === "number"
+        ? value.width
+        : 28,
+  };
+}
+
 
 export default function ChanceryPage() {
   const [filter, setFilter] =
@@ -93,31 +102,40 @@ export default function ChanceryPage() {
   ] = useState(false);
 
   const [
-    savedSignatures,
-    setSavedSignatures,
-  ] = useState({});
+    placementMode,
+    setPlacementMode,
+  ] = useState(false);
 
   const [
     signatureHasInk,
     setSignatureHasInk,
   ] = useState(false);
 
+  const [
+    savedSignatures,
+    setSavedSignatures,
+  ] = useState({});
+
+
   const canvasRef =
+    useRef(null);
+
+  const documentStageRef =
     useRef(null);
 
   const drawingRef =
     useRef(false);
 
+  const signatureDragRef =
+    useRef(false);
+
 
   /* =====================================================
-     ЗАГРУЖАЕМ ПОДПИСИ
-
-     Сейчас они хранятся на телефоне.
-     Позже перенесём в Neon.
+     ЗАГРУЖАЕМ СОХРАНЁННЫЕ ПОДПИСИ
   ===================================================== */
 
   useEffect(() => {
-    const signatures = {};
+    const result = {};
 
     DOCUMENTS.forEach(
       (document) => {
@@ -127,26 +145,13 @@ export default function ChanceryPage() {
               `chancery-signature-${document.id}`
             );
 
-          if (!raw) {
-            return;
-          }
-
-          /*
-            Поддержка старого формата,
-            где сохранялась просто картинка.
-          */
+          if (!raw) return;
 
           if (
-            raw.startsWith(
-              "data:image"
-            )
+            raw.startsWith("data:image")
           ) {
-            signatures[
-              document.id
-            ] = {
-              image: raw,
-              signedAt: null,
-            };
+            result[document.id] =
+              normalizeSignature(raw);
 
             return;
           }
@@ -155,28 +160,73 @@ export default function ChanceryPage() {
             JSON.parse(raw);
 
           if (parsed?.image) {
-            signatures[
-              document.id
-            ] = parsed;
+            result[document.id] =
+              normalizeSignature(parsed);
           }
         } catch {
-          // Не критично.
+          // Для тестового этапа не критично.
         }
       }
     );
 
-    setSavedSignatures(
-      signatures
-    );
+    setSavedSignatures(result);
   }, []);
 
 
   /* =====================================================
-     НА ПОДПИСЬ
+     СОХРАНЕНИЕ ЗАПИСИ ПОДПИСИ
+  ===================================================== */
 
-     ВАЖНО:
-     сюда попадает и status: active,
-     если signable: true и подписи ещё нет.
+  function persistSignature(
+    documentId,
+    record
+  ) {
+    try {
+      localStorage.setItem(
+        `chancery-signature-${documentId}`,
+        JSON.stringify(record)
+      );
+    } catch {
+      // Позже здесь будет Neon.
+    }
+  }
+
+
+  function updateSignature(
+    documentId,
+    changes
+  ) {
+    setSavedSignatures(
+      (current) => {
+        const previous =
+          current[documentId];
+
+        if (!previous) {
+          return current;
+        }
+
+        const updated = {
+          ...previous,
+          ...changes,
+        };
+
+        persistSignature(
+          documentId,
+          updated
+        );
+
+        return {
+          ...current,
+          [documentId]:
+            updated,
+        };
+      }
+    );
+  }
+
+
+  /* =====================================================
+     НА ПОДПИСЬ
   ===================================================== */
 
   function isAwaitingSignature(
@@ -194,7 +244,7 @@ export default function ChanceryPage() {
 
 
   /* =====================================================
-     ФИЛЬТР
+     ДОКУМЕНТЫ
   ===================================================== */
 
   const visibleDocuments =
@@ -226,54 +276,47 @@ export default function ChanceryPage() {
     ]);
 
 
-  /* =====================================================
-     СЧЁТЧИКИ
-  ===================================================== */
+  const counts =
+    useMemo(
+      () => ({
+        all:
+          DOCUMENTS.length,
 
-  const counts = useMemo(
-    () => ({
-      all:
-        DOCUMENTS.length,
+        sign:
+          DOCUMENTS.filter(
+            (document) =>
+              canDocumentBeSigned(
+                document
+              ) &&
+              !savedSignatures[
+                document.id
+              ]
+          ).length,
 
-      sign:
-        DOCUMENTS.filter(
-          (document) =>
-            canDocumentBeSigned(
-              document
-            ) &&
-            !savedSignatures[
-              document.id
-            ]
-        ).length,
+        active:
+          DOCUMENTS.filter(
+            (document) =>
+              document.status ===
+              "active"
+          ).length,
 
-      active:
-        DOCUMENTS.filter(
-          (document) =>
-            document.status ===
-            "active"
-        ).length,
+        done:
+          DOCUMENTS.filter(
+            (document) =>
+              document.status ===
+              "done"
+          ).length,
 
-      done:
-        DOCUMENTS.filter(
-          (document) =>
-            document.status ===
-            "done"
-        ).length,
+        archive:
+          DOCUMENTS.filter(
+            (document) =>
+              document.status ===
+              "archive"
+          ).length,
+      }),
+      [savedSignatures]
+    );
 
-      archive:
-        DOCUMENTS.filter(
-          (document) =>
-            document.status ===
-            "archive"
-        ).length,
-    }),
-    [savedSignatures]
-  );
-
-
-  /* =====================================================
-     ОТКРЫТИЕ ДОКУМЕНТА
-  ===================================================== */
 
   function openDocument(
     document
@@ -282,49 +325,35 @@ export default function ChanceryPage() {
       document
     );
 
-    setSignatureMode(
-      false
-    );
-
-    setSignatureHasInk(
-      false
-    );
+    setSignatureMode(false);
+    setPlacementMode(false);
+    setSignatureHasInk(false);
   }
 
 
   function closeDocument() {
-    setSelectedDocument(
-      null
-    );
-
-    setSignatureMode(
-      false
-    );
-
-    setSignatureHasInk(
-      false
-    );
+    setSelectedDocument(null);
+    setSignatureMode(false);
+    setPlacementMode(false);
+    setSignatureHasInk(false);
   }
 
 
   /* =====================================================
-     CANVAS
+     CANVAS ДЛЯ РИСОВАНИЯ
   ===================================================== */
 
   function prepareCanvas() {
     const canvas =
       canvasRef.current;
 
-    if (!canvas) {
-      return;
-    }
+    if (!canvas) return;
 
     const rect =
       canvas.getBoundingClientRect();
 
     const ratio =
-      window.devicePixelRatio ||
-      1;
+      window.devicePixelRatio || 1;
 
     canvas.width =
       rect.width * ratio;
@@ -333,9 +362,7 @@ export default function ChanceryPage() {
       rect.height * ratio;
 
     const context =
-      canvas.getContext(
-        "2d"
-      );
+      canvas.getContext("2d");
 
     context.setTransform(
       ratio,
@@ -346,38 +373,29 @@ export default function ChanceryPage() {
       0
     );
 
-    context.lineWidth =
-      2.2;
-
-    context.lineCap =
-      "round";
-
-    context.lineJoin =
-      "round";
+    context.lineWidth = 2.4;
+    context.lineCap = "round";
+    context.lineJoin = "round";
 
     context.strokeStyle =
-      "#1f252c";
+      "#1c2d57";
   }
 
 
   useEffect(() => {
-    if (
-      !signatureMode
-    ) {
+    if (!signatureMode) {
       return;
     }
 
-    const timeout =
+    const timer =
       window.setTimeout(
-        () => {
-          prepareCanvas();
-        },
+        prepareCanvas,
         60
       );
 
     return () =>
       window.clearTimeout(
-        timeout
+        timer
       );
   }, [signatureMode]);
 
@@ -388,9 +406,7 @@ export default function ChanceryPage() {
     const canvas =
       canvasRef.current;
 
-    if (!canvas) {
-      return null;
-    }
+    if (!canvas) return null;
 
     const rect =
       canvas.getBoundingClientRect();
@@ -410,14 +426,12 @@ export default function ChanceryPage() {
   function startDrawing(
     event
   ) {
+    event.preventDefault();
+
     const canvas =
       canvasRef.current;
 
-    if (!canvas) {
-      return;
-    }
-
-    event.preventDefault();
+    if (!canvas) return;
 
     drawingRef.current =
       true;
@@ -431,14 +445,10 @@ export default function ChanceryPage() {
         event
       );
 
-    if (!point) {
-      return;
-    }
+    if (!point) return;
 
     const context =
-      canvas.getContext(
-        "2d"
-      );
+      canvas.getContext("2d");
 
     context.beginPath();
 
@@ -463,23 +473,17 @@ export default function ChanceryPage() {
     const canvas =
       canvasRef.current;
 
-    if (!canvas) {
-      return;
-    }
+    if (!canvas) return;
 
     const point =
       getCanvasPoint(
         event
       );
 
-    if (!point) {
-      return;
-    }
+    if (!point) return;
 
     const context =
-      canvas.getContext(
-        "2d"
-      );
+      canvas.getContext("2d");
 
     context.lineTo(
       point.x,
@@ -507,22 +511,14 @@ export default function ChanceryPage() {
   }
 
 
-  /* =====================================================
-     ОЧИСТИТЬ ПОДПИСЬ
-  ===================================================== */
-
   function clearSignature() {
     const canvas =
       canvasRef.current;
 
-    if (!canvas) {
-      return;
-    }
+    if (!canvas) return;
 
     const context =
-      canvas.getContext(
-        "2d"
-      );
+      canvas.getContext("2d");
 
     context.clearRect(
       0,
@@ -538,7 +534,7 @@ export default function ChanceryPage() {
 
 
   /* =====================================================
-     СОХРАНИТЬ ПОДПИСЬ
+     СОХРАНЯЕМ НАРИСОВАННУЮ ПОДПИСЬ
   ===================================================== */
 
   function saveSignature() {
@@ -560,20 +556,23 @@ export default function ChanceryPage() {
         ),
 
       signedAt:
-        new Date()
-          .toISOString(),
+        new Date().toISOString(),
+
+      /*
+        Начальное положение.
+        Потом подпись можно
+        перетащить пальцем.
+      */
+
+      x: 42,
+      y: 84,
+      width: 28,
     };
 
-    try {
-      localStorage.setItem(
-        `chancery-signature-${selectedDocument.id}`,
-        JSON.stringify(
-          record
-        )
-      );
-    } catch {
-      // Пока не критично.
-    }
+    persistSignature(
+      selectedDocument.id,
+      record
+    );
 
     setSavedSignatures(
       (current) => ({
@@ -585,12 +584,142 @@ export default function ChanceryPage() {
       })
     );
 
-    setSignatureMode(
-      false
+    setSignatureMode(false);
+
+    setSignatureHasInk(false);
+
+    setPlacementMode(true);
+  }
+
+
+  /* =====================================================
+     ПЕРЕТАСКИВАНИЕ ПОДПИСИ
+  ===================================================== */
+
+  function startSignatureDrag(
+    event
+  ) {
+    if (!placementMode) {
+      return;
+    }
+
+    event.preventDefault();
+
+    signatureDragRef.current =
+      true;
+
+    event.currentTarget
+      .setPointerCapture?.(
+        event.pointerId
+      );
+  }
+
+
+  function moveSignature(
+    event
+  ) {
+    if (
+      !signatureDragRef.current ||
+      !placementMode ||
+      !selectedDocument
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const stage =
+      documentStageRef.current;
+
+    if (!stage) return;
+
+    const rect =
+      stage.getBoundingClientRect();
+
+    let x =
+      (
+        (
+          event.clientX -
+          rect.left
+        ) /
+        rect.width
+      ) * 100;
+
+    let y =
+      (
+        (
+          event.clientY -
+          rect.top
+        ) /
+        rect.height
+      ) * 100;
+
+    x = Math.max(
+      8,
+      Math.min(92, x)
     );
 
-    setSignatureHasInk(
-      false
+    y = Math.max(
+      5,
+      Math.min(95, y)
+    );
+
+    updateSignature(
+      selectedDocument.id,
+      {
+        x,
+        y,
+      }
+    );
+  }
+
+
+  function stopSignatureDrag(
+    event
+  ) {
+    signatureDragRef.current =
+      false;
+
+    event.currentTarget
+      .releasePointerCapture?.(
+        event.pointerId
+      );
+  }
+
+
+  /* =====================================================
+     РАЗМЕР ПОДПИСИ
+  ===================================================== */
+
+  function resizeSignature(
+    amount
+  ) {
+    if (!selectedDocument) {
+      return;
+    }
+
+    const signature =
+      savedSignatures[
+        selectedDocument.id
+      ];
+
+    if (!signature) return;
+
+    const next =
+      Math.max(
+        15,
+        Math.min(
+          45,
+          signature.width +
+            amount
+        )
+      );
+
+    updateSignature(
+      selectedDocument.id,
+      {
+        width: next,
+      }
     );
   }
 
@@ -611,10 +740,8 @@ export default function ChanceryPage() {
         </div>
 
         <div>
-
           <small>
-            ЭЛЕКТРОННАЯ
-            КАНЦЕЛЯРИЯ
+            ЭЛЕКТРОННАЯ КАНЦЕЛЯРИЯ
           </small>
 
           <h1>
@@ -625,7 +752,6 @@ export default function ChanceryPage() {
             Управление договорчиков
             и иных особо важных бумаг
           </p>
-
         </div>
 
       </header>
@@ -636,7 +762,6 @@ export default function ChanceryPage() {
       <section className="chancery-summary">
 
         <div>
-
           <small>
             ДЕЛ В РЕЕСТРЕ
           </small>
@@ -644,12 +769,10 @@ export default function ChanceryPage() {
           <b>
             {counts.all}
           </b>
-
         </div>
 
 
         <div>
-
           <small>
             НА ПОДПИСЬ
           </small>
@@ -657,12 +780,10 @@ export default function ChanceryPage() {
           <b>
             {counts.sign}
           </b>
-
         </div>
 
 
         <div>
-
           <small>
             ДЕЙСТВУЮТ
           </small>
@@ -670,7 +791,6 @@ export default function ChanceryPage() {
           <b>
             {counts.active}
           </b>
-
         </div>
 
       </section>
@@ -688,8 +808,7 @@ export default function ChanceryPage() {
               type="button"
 
               className={
-                filter ===
-                item.id
+                filter === item.id
                   ? "active"
                   : ""
               }
@@ -700,7 +819,6 @@ export default function ChanceryPage() {
                 )
               }
             >
-
               <span>
                 {item.label}
               </span>
@@ -712,7 +830,6 @@ export default function ChanceryPage() {
                   ]
                 }
               </small>
-
             </button>
 
           )
@@ -752,24 +869,17 @@ export default function ChanceryPage() {
                 ];
 
               const signed =
-                Boolean(
-                  signature
-                );
+                Boolean(signature);
 
-              let displayStatus =
+              let statusText =
                 document.statusLabel;
 
               if (signed) {
-                if (
+                statusText =
                   document.status ===
                   "active"
-                ) {
-                  displayStatus =
-                    "Действует · Подписано";
-                } else {
-                  displayStatus =
-                    "Подписано";
-                }
+                    ? "Действует · Подписано"
+                    : "Подписано";
               }
 
               return (
@@ -800,9 +910,7 @@ export default function ChanceryPage() {
                   <div className="chancery-document-main">
 
                     <small>
-                      {
-                        document.type
-                      }
+                      {document.type}
                     </small>
 
                     <h2>
@@ -826,13 +934,9 @@ export default function ChanceryPage() {
                       `chancery-status status-${document.status}`
                     }
                   >
-
                     <span />
 
-                    {
-                      displayStatus
-                    }
-
+                    {statusText}
                   </div>
 
 
@@ -866,7 +970,7 @@ export default function ChanceryPage() {
 
 
       {/* =================================================
-          ОТКРЫТЫЙ ДОКУМЕНТ
+          ПРОСМОТР ДОКУМЕНТА
       ================================================= */}
 
       {selectedDocument && (
@@ -892,7 +996,6 @@ export default function ChanceryPage() {
 
               <button
                 type="button"
-
                 onClick={
                   closeDocument
                 }
@@ -901,7 +1004,7 @@ export default function ChanceryPage() {
               </button>
 
               <span>
-                ДЕЛО{" "}
+                №{" "}
                 {
                   selectedDocument
                     .number
@@ -914,115 +1017,48 @@ export default function ChanceryPage() {
             {!signatureMode && (
               <>
 
-                <section className="chancery-paper">
+                {/* НАСТОЯЩИЙ ДОКУМЕНТ */}
 
-                  <div className="paper-topline">
-                    КАНЦЕЛЯРИЯ К.
-                  </div>
+                <div className="chancery-original-wrap">
 
-
-                  <div className="paper-registration">
-
-                    <span>
-                      {
-                        selectedDocument
-                          .type
-                      }
-                    </span>
-
-                    <span>
-                      №{" "}
-                      {
-                        selectedDocument
-                          .number
-                      }
-                    </span>
-
-                  </div>
-
-
-                  <h2>
-                    {
-                      selectedDocument
-                        .title
+                  <div
+                    ref={
+                      documentStageRef
                     }
-                  </h2>
 
+                    className="chancery-original-stage"
+                  >
 
-                  <div className="paper-date">
-                    от{" "}
-                    {
-                      selectedDocument
-                        .date
-                    }
-                  </div>
+                    <img
+                      className="chancery-original-image"
 
-
-                  <div className="paper-divider" />
-
-
-                  <p className="paper-text">
-                    {
-                      selectedDocument
-                        .description
-                    }
-                  </p>
-
-
-                  <div className="paper-file-info">
-
-                    <small>
-                      ОРИГИНАЛ ДОКУМЕНТА
-                    </small>
-
-                    <strong>
-                      {
+                      src={
                         selectedDocument
-                          .fileName
+                          .fileUrl
                       }
-                    </strong>
 
-                    {selectedDocument.fileUrl ? (
-
-                      <a
-                        className="chancery-open-original"
-
-                        href={
-                          selectedDocument
-                            .fileUrl
-                        }
-
-                        target="_blank"
-
-                        rel="noreferrer"
-                      >
-                        Открыть оригинал
-                      </a>
-
-                    ) : (
-
-                      <span>
-                        Файл пока не
-                        загружен
-                      </span>
-
-                    )}
-
-                  </div>
+                      alt={
+                        selectedDocument
+                          .title
+                      }
+                    />
 
 
-                  {savedSignatures[
-                    selectedDocument.id
-                  ] && (
+                    {/* ПОДПИСЬ ПОВЕРХ ОРИГИНАЛА */}
 
-                    <div className="paper-signature">
-
-                      <small>
-                        ПОДПИСЬ
-                        СТОРОНЫ
-                      </small>
+                    {savedSignatures[
+                      selectedDocument.id
+                    ] && (
 
                       <img
+                        className={
+                          `chancery-document-signature ${
+                            placementMode
+                              ? "placing"
+                              : ""
+                          }`
+                        }
+
                         src={
                           savedSignatures[
                             selectedDocument
@@ -1031,124 +1067,227 @@ export default function ChanceryPage() {
                         }
 
                         alt="Подпись"
-                      />
 
-                      <span>
-                        Подписано:{" "}
-                        {
-                          formatSignedAt(
-                            savedSignatures[
+                        style={{
+                          left:
+                            `${savedSignatures[
                               selectedDocument
                                 .id
-                            ]
-                              .signedAt
-                          )
+                            ].x}%`,
+
+                          top:
+                            `${savedSignatures[
+                              selectedDocument
+                                .id
+                            ].y}%`,
+
+                          width:
+                            `${savedSignatures[
+                              selectedDocument
+                                .id
+                            ].width}%`,
+                        }}
+
+                        onPointerDown={
+                          startSignatureDrag
                         }
-                      </span>
 
-                    </div>
+                        onPointerMove={
+                          moveSignature
+                        }
 
-                  )}
+                        onPointerUp={
+                          stopSignatureDrag
+                        }
 
+                        onPointerCancel={
+                          stopSignatureDrag
+                        }
+                      />
 
-                  <div
-                    className={
-                      `paper-stamp stamp-${selectedDocument.status}`
-                    }
-                  >
-
-                    {savedSignatures[
-                      selectedDocument.id
-                    ]
-                      ? selectedDocument.status ===
-                        "active"
-                        ? "ДЕЙСТВУЕТ · ПОДПИСАНО"
-                        : "ПОДПИСАНО"
-
-                      : selectedDocument
-                          .statusLabel}
+                    )}
 
                   </div>
 
-
-                  <div className="paper-bottom">
-
-                    <span>
-                      К-2026
-                    </span>
-
-                    <span>
-                      Электронный
-                      экземпляр
-                    </span>
-
-                  </div>
-
-                </section>
+                </div>
 
 
-                <div className="chancery-file-actions">
+                {/* РЕЖИМ РАЗМЕЩЕНИЯ */}
 
-                  {isAwaitingSignature(
-                    selectedDocument
-                  ) && (
-
-                    <button
-                      type="button"
-
-                      className="chancery-sign-button"
-
-                      onClick={() =>
-                        setSignatureMode(
-                          true
-                        )
-                      }
-                    >
-                      Подписать документ
-                    </button>
-
-                  )}
-
-
-                  {savedSignatures[
+                {placementMode &&
+                  savedSignatures[
                     selectedDocument.id
                   ] && (
 
-                    <div className="chancery-signed-note">
-
-                      <span>
-                        ✓
-                      </span>
+                    <section className="signature-placement">
 
                       <div>
-
                         <b>
-                          Документ подписан
+                          Размести подпись
                         </b>
 
                         <small>
-                          {
-                            selectedDocument.status ===
-                            "active"
-                              ? "Документ продолжает действовать"
-                              : "Подпись зарегистрирована"
-                          }
+                          Перетащи её пальцем
+                          на нужную строку
+                          документа
                         </small>
+                      </div>
+
+
+                      <div className="signature-size-controls">
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            resizeSignature(
+                              -3
+                            )
+                          }
+                        >
+                          −
+                        </button>
+
+                        <span>
+                          размер
+                        </span>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            resizeSignature(
+                              3
+                            )
+                          }
+                        >
+                          +
+                        </button>
 
                       </div>
 
-                    </div>
+
+                      <button
+                        type="button"
+
+                        className="signature-place-confirm"
+
+                        onClick={() =>
+                          setPlacementMode(
+                            false
+                          )
+                        }
+                      >
+                        Закрепить подпись
+                      </button>
+
+                    </section>
 
                   )}
 
-                </div>
+
+                {/* ДЕЙСТВИЯ */}
+
+                {!placementMode && (
+
+                  <div className="chancery-file-actions">
+
+                    {isAwaitingSignature(
+                      selectedDocument
+                    ) && (
+
+                      <button
+                        type="button"
+
+                        className="chancery-sign-button"
+
+                        onClick={() =>
+                          setSignatureMode(
+                            true
+                          )
+                        }
+                      >
+                        Подписать документ
+                      </button>
+
+                    )}
+
+
+                    {savedSignatures[
+                      selectedDocument.id
+                    ] && (
+                      <>
+
+                        <div className="chancery-signed-note">
+
+                          <span>
+                            ✓
+                          </span>
+
+                          <div>
+
+                            <b>
+                              Документ подписан
+                            </b>
+
+                            <small>
+                              {
+                                formatSignedAt(
+                                  savedSignatures[
+                                    selectedDocument
+                                      .id
+                                  ]
+                                    .signedAt
+                                )
+                              }
+                            </small>
+
+                          </div>
+
+                        </div>
+
+
+                        <button
+                          type="button"
+
+                          className="chancery-edit-signature"
+
+                          onClick={() =>
+                            setPlacementMode(
+                              true
+                            )
+                          }
+                        >
+                          Изменить положение подписи
+                        </button>
+
+                      </>
+                    )}
+
+
+                    <a
+                      href={
+                        selectedDocument
+                          .fileUrl
+                      }
+
+                      target="_blank"
+
+                      rel="noreferrer"
+
+                      className="chancery-original-link"
+                    >
+                      Открыть оригинал отдельно
+                    </a>
+
+                  </div>
+
+                )}
 
               </>
             )}
 
 
             {/* =================================================
-                ПОДПИСЬ
+                РИСОВАНИЕ ПОДПИСИ
             ================================================= */}
 
             {signatureMode && (
@@ -1158,8 +1297,7 @@ export default function ChanceryPage() {
                 <div className="signature-heading">
 
                   <small>
-                    ПОДПИСАНИЕ
-                    ДОКУМЕНТА
+                    ЭЛЕКТРОННОЕ ПОДПИСАНИЕ
                   </small>
 
                   <h2>
@@ -1230,7 +1368,6 @@ export default function ChanceryPage() {
 
                   <button
                     type="button"
-
                     onClick={
                       clearSignature
                     }
@@ -1252,7 +1389,7 @@ export default function ChanceryPage() {
                       saveSignature
                     }
                   >
-                    Подписать
+                    Продолжить
                   </button>
 
                 </div>
@@ -1269,14 +1406,13 @@ export default function ChanceryPage() {
                     )
                   }
                 >
-                  отменить подписание
+                  отменить
                 </button>
 
 
                 <p className="signature-disclaimer">
-                  Внутренняя
-                  визуальная подпись
-                  Канцелярии.
+                  Визуальная внутренняя
+                  подпись Канцелярии.
                 </p>
 
               </section>
