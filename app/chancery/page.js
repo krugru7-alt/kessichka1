@@ -1,5 +1,5 @@
-<section className="home-chancery-intro">
-  ...
-</section>
+import Chancery from "../components/Chancery";
 
-<Chancery />
+export default function ChanceryPage() {
+  return <Chancery />;
+}
