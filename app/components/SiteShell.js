@@ -795,3 +795,116 @@ export default function SiteShell({
     </div>
   );
 }
+/* =====================================================
+   ПРИВЯЗЫВАЕМ PUSH К КЭССИЧКЕ / ОБСИДИКУ
+===================================================== */
+
+useEffect(() => {
+
+  if (
+    !viewer?.user ||
+    !(
+      "serviceWorker" in
+      navigator
+    )
+  ) {
+    return;
+  }
+
+
+  let active =
+    true;
+
+
+  async function registerPushOwner() {
+
+    try {
+
+      const registration =
+        await navigator
+          .serviceWorker
+          .ready;
+
+
+      const subscription =
+        await registration
+          .pushManager
+          ?.getSubscription();
+
+
+      if (
+        !subscription ||
+        !active
+      ) {
+        return;
+      }
+
+
+      await fetch(
+        "/api/push/register",
+        {
+
+          method:
+            "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body:
+            JSON.stringify(
+              subscription.toJSON()
+            ),
+
+        }
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Push owner:",
+        error
+      );
+
+    }
+  }
+
+
+  /*
+    Сразу проверяем существующую
+    подписку.
+  */
+
+  registerPushOwner();
+
+
+  /*
+    Если человек только сейчас
+    включил Push, подхватим подписку
+    автоматически.
+  */
+
+  const timer =
+    window.setInterval(
+      registerPushOwner,
+      20000
+    );
+
+
+  return () => {
+
+    active =
+      false;
+
+
+    window.clearInterval(
+      timer
+    );
+
+  };
+
+}, [
+  viewer?.user,
+]);
