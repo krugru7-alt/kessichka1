@@ -12667,3 +12667,680 @@ body:has(.traces-page) .topbar {
 
   cursor: not-allowed;
 }
+/* =========================================================
+   КАНЦЕЛЯРИЯ К. — LIGHT DOCUMENT VIEWER
+========================================================= */
+
+.chancery-page {
+  --ch-bg: #f3eee7;
+  --ch-panel: #fffdf9;
+  --ch-panel-2: #f8f3ec;
+  --ch-paper: #fffdf8;
+  --ch-ink: #2c2926;
+  --ch-muted: #81776e;
+  --ch-line: rgba(68, 52, 42, 0.12);
+  --ch-red: #80383d;
+
+  color: #2c2926;
+
+  background:
+    radial-gradient(
+      circle at 90% 3%,
+      rgba(128, 56, 61, 0.045),
+      transparent 24%
+    ),
+    #f3eee7;
+}
+
+
+/* ШАПКА */
+
+.chancery-page .chancery-header h1 {
+  color: #2b2825;
+}
+
+.chancery-page .chancery-header small {
+  color: #8e7d71;
+}
+
+.chancery-page .chancery-header p {
+  color: #81766d;
+}
+
+.chancery-page .chancery-seal {
+  color: #80383d;
+
+  border-color:
+    rgba(128, 56, 61, 0.3);
+
+  background:
+    rgba(128, 56, 61, 0.045);
+
+  box-shadow:
+    inset 0 0 0 4px
+      rgba(128, 56, 61, 0.025),
+    inset 0 0 0 7px
+      rgba(128, 56, 61, 0.06);
+}
+
+
+/* СВОДКА */
+
+.chancery-page .chancery-summary {
+  border-color:
+    rgba(66, 50, 41, 0.1);
+
+  background:
+    rgba(255, 253, 249, 0.92);
+
+  box-shadow:
+    0 12px 35px
+    rgba(71, 54, 42, 0.055);
+}
+
+.chancery-page .chancery-summary > div {
+  border-color:
+    rgba(66, 50, 41, 0.1);
+}
+
+.chancery-page .chancery-summary small {
+  color: #94877c;
+}
+
+.chancery-page .chancery-summary b {
+  color: #302c29;
+}
+
+
+/* ФИЛЬТРЫ */
+
+.chancery-page .chancery-filters button {
+  color: #766c64;
+
+  border-color:
+    rgba(65, 49, 40, 0.1);
+
+  background:
+    rgba(255, 253, 249, 0.75);
+}
+
+.chancery-page .chancery-filters button small {
+  color: #756a62;
+
+  background:
+    rgba(57, 45, 37, 0.06);
+}
+
+.chancery-page .chancery-filters button.active {
+  color: #fff;
+
+  border-color:
+    #80383d;
+
+  background:
+    #80383d;
+}
+
+.chancery-page .chancery-filters button.active small {
+  color: #fff;
+
+  background:
+    rgba(255, 255, 255, 0.16);
+}
+
+
+/* РЕЕСТР */
+
+.chancery-page .chancery-register {
+  border-color:
+    rgba(68, 52, 42, 0.1);
+
+  background:
+    rgba(255, 253, 249, 0.94);
+
+  box-shadow:
+    0 18px 45px
+    rgba(64, 48, 37, 0.07);
+}
+
+.chancery-page .chancery-register-head {
+  border-color:
+    rgba(68, 52, 42, 0.09);
+}
+
+.chancery-page .chancery-register-head small {
+  color: #887b71;
+}
+
+.chancery-page .chancery-register-head span {
+  color: #6c625a;
+
+  background:
+    rgba(59, 46, 38, 0.055);
+}
+
+
+/* ДОКУМЕНТЫ */
+
+.chancery-page .chancery-document {
+  color: #2d2926;
+
+  border-color:
+    rgba(68, 52, 42, 0.085);
+}
+
+.chancery-page .chancery-document:active {
+  background:
+    rgba(128, 56, 61, 0.035);
+}
+
+.chancery-page .chancery-document-number {
+  color: #776b61;
+
+  border-color:
+    rgba(69, 52, 42, 0.1);
+
+  background:
+    #f7f2eb;
+}
+
+.chancery-page .chancery-document-main small {
+  color: #95887e;
+}
+
+.chancery-page .chancery-document-main h2 {
+  color: #2c2926;
+}
+
+.chancery-page .chancery-document-main p {
+  color: #95887e;
+}
+
+.chancery-page .chancery-document-arrow {
+  color: #a3978d;
+}
+
+
+/* СТАТУСЫ */
+
+.chancery-page .status-active {
+  color: #55715a;
+
+  border-color:
+    rgba(85, 113, 90, 0.18);
+
+  background:
+    rgba(85, 113, 90, 0.07);
+}
+
+.chancery-page .status-sign {
+  color: #9a5f42;
+
+  border-color:
+    rgba(154, 95, 66, 0.18);
+
+  background:
+    rgba(154, 95, 66, 0.07);
+}
+
+.chancery-page .status-done {
+  color: #766d5e;
+
+  background:
+    rgba(118, 109, 94, 0.06);
+}
+
+.chancery-page .status-archive {
+  color: #81777e;
+
+  background:
+    rgba(129, 119, 126, 0.05);
+}
+
+
+/* FOOTER */
+
+.chancery-page .chancery-footer {
+  color: #a09388;
+}
+
+
+/* =========================================================
+   МОДАЛЬНОЕ ОКНО
+========================================================= */
+
+.chancery-page .chancery-modal {
+  background:
+    rgba(73, 59, 49, 0.22);
+
+  backdrop-filter:
+    blur(8px);
+}
+
+.chancery-page .chancery-file {
+  background:
+    #eee8df;
+
+  border-color:
+    rgba(76, 58, 47, 0.12);
+
+  box-shadow:
+    0 -20px 70px
+    rgba(59, 43, 33, 0.2);
+}
+
+.chancery-page .chancery-file-top {
+  background:
+    rgba(248, 244, 238, 0.94);
+
+  border-color:
+    rgba(69, 52, 42, 0.1);
+}
+
+.chancery-page .chancery-file-top button {
+  color: #675d56;
+
+  border-color:
+    rgba(68, 52, 42, 0.12);
+
+  background: #fffdf9;
+}
+
+.chancery-page .chancery-file-top span {
+  color: #85796f;
+}
+
+
+/* =========================================================
+   НАСТОЯЩИЙ ДОКУМЕНТ
+========================================================= */
+
+.chancery-page .chancery-original-wrap {
+  width:
+    min(calc(100% - 20px), 680px);
+
+  margin:
+    16px
+    auto;
+
+  padding-bottom: 2px;
+}
+
+.chancery-page .chancery-original-stage {
+  position: relative;
+
+  width: 100%;
+
+  line-height: 0;
+
+  overflow: hidden;
+
+  border-radius: 4px;
+
+  background: white;
+
+  box-shadow:
+    0 18px 45px
+      rgba(65, 47, 35, 0.19),
+    0 2px 6px
+      rgba(65, 47, 35, 0.08);
+}
+
+.chancery-page .chancery-original-image {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  user-select: none;
+
+  -webkit-user-drag: none;
+}
+
+
+/* =========================================================
+   ПОДПИСЬ НА НАСТОЯЩЕМ ДОКУМЕНТЕ
+========================================================= */
+
+.chancery-page .chancery-document-signature {
+  position: absolute;
+
+  z-index: 10;
+
+  height: auto;
+
+  transform:
+    translate(-50%, -50%);
+
+  object-fit: contain;
+
+  mix-blend-mode:
+    multiply;
+
+  pointer-events: none;
+
+  user-select: none;
+
+  -webkit-user-drag:
+    none;
+
+  filter:
+    contrast(1.15);
+}
+
+.chancery-page
+.chancery-document-signature.placing {
+  pointer-events: auto;
+
+  cursor: grab;
+
+  touch-action: none;
+
+  outline:
+    1px dashed
+    rgba(128, 56, 61, 0.45);
+
+  outline-offset: 5px;
+
+  border-radius: 4px;
+
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+.chancery-page
+.chancery-document-signature.placing:active {
+  cursor: grabbing;
+}
+
+
+/* =========================================================
+   РАЗМЕЩЕНИЕ ПОДПИСИ
+========================================================= */
+
+.chancery-page .signature-placement {
+  width:
+    min(calc(100% - 20px), 680px);
+
+  margin:
+    0
+    auto
+    24px;
+
+  padding: 15px;
+
+  display: grid;
+  gap: 13px;
+
+  border:
+    1px solid
+    rgba(67, 51, 41, 0.1);
+
+  border-radius: 16px;
+
+  color: #302c29;
+
+  background:
+    #fffdf9;
+
+  box-shadow:
+    0 10px 28px
+    rgba(67, 50, 38, 0.055);
+}
+
+.chancery-page .signature-placement > div:first-child {
+  display: grid;
+
+  gap: 3px;
+}
+
+.chancery-page .signature-placement b {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 17px;
+
+  font-weight: 600;
+}
+
+.chancery-page .signature-placement small {
+  color: #81766d;
+
+  font-size: 8px;
+
+  line-height: 1.45;
+}
+
+
+.chancery-page .signature-size-controls {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+}
+
+.chancery-page .signature-size-controls button {
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid
+    rgba(68, 52, 42, 0.12);
+
+  border-radius: 10px;
+
+  color: #39332f;
+
+  background:
+    #f5efe8;
+
+  font-size: 19px;
+
+  cursor: pointer;
+}
+
+.chancery-page .signature-size-controls span {
+  color: #8c8076;
+
+  font-size: 7px;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.1em;
+}
+
+
+.chancery-page .signature-place-confirm {
+  min-height: 48px;
+
+  border: 0;
+
+  border-radius: 12px;
+
+  color: white;
+
+  background:
+    #80383d;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.07em;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   КНОПКИ ПОД ДОКУМЕНТОМ
+========================================================= */
+
+.chancery-page .chancery-file-actions {
+  width:
+    min(calc(100% - 20px), 680px);
+}
+
+.chancery-page .chancery-sign-button {
+  color: white;
+
+  border: 0;
+
+  background:
+    #80383d;
+
+  box-shadow:
+    0 12px 24px
+    rgba(128, 56, 61, 0.15);
+}
+
+.chancery-page .chancery-signed-note {
+  color: #324436;
+
+  border-color:
+    rgba(74, 111, 80, 0.15);
+
+  background:
+    rgba(86, 125, 92, 0.08);
+}
+
+.chancery-page .chancery-signed-note b {
+  color: #405846;
+}
+
+.chancery-page .chancery-signed-note small {
+  color: #708075;
+}
+
+
+.chancery-page .chancery-edit-signature,
+.chancery-page .chancery-original-link {
+  width: 100%;
+
+  min-height: 43px;
+
+  margin-top: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    rgba(69, 52, 42, 0.11);
+
+  border-radius: 11px;
+
+  color: #695e56;
+
+  background:
+    rgba(255, 253, 249, 0.72);
+
+  font-size: 7px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   ЭКРАН РИСОВАНИЯ ПОДПИСИ
+========================================================= */
+
+.chancery-page .signature-heading small {
+  color: #8f8176;
+}
+
+.chancery-page .signature-heading h2 {
+  color: #302b28;
+}
+
+.chancery-page .signature-heading p {
+  color: #81766d;
+}
+
+.chancery-page .signature-document-mini {
+  border-color:
+    rgba(68, 52, 42, 0.1);
+
+  background:
+    rgba(255, 253, 249, 0.82);
+}
+
+.chancery-page .signature-document-mini span {
+  color: #8c7f74;
+}
+
+.chancery-page .signature-document-mini b {
+  color: #37312d;
+}
+
+.chancery-page .signature-pad {
+  background: #fffdf8;
+
+  box-shadow:
+    0 15px 35px
+    rgba(65, 48, 36, 0.12);
+}
+
+.chancery-page .signature-controls button {
+  color: #5e554e;
+
+  border-color:
+    rgba(68, 52, 42, 0.12);
+
+  background:
+    #fffdf9;
+}
+
+.chancery-page
+.signature-controls
+.signature-confirm {
+  color: white;
+
+  border: 0;
+
+  background:
+    #80383d;
+}
+
+.chancery-page
+.signature-confirm:disabled {
+  opacity: 0.35;
+}
+
+.chancery-page .signature-cancel {
+  color: #8c8076;
+}
+
+.chancery-page .signature-disclaimer {
+  color: #9c9086;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 620px) {
+
+  .chancery-page .chancery-original-wrap {
+    width:
+      calc(100% - 12px);
+
+    margin-top: 10px;
+  }
+
+  .chancery-page .signature-placement,
+  .chancery-page .chancery-file-actions {
+    width:
+      calc(100% - 12px);
+  }
+
+}
