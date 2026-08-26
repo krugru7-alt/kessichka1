@@ -1166,7 +1166,87 @@ window.setTimeout(
 
     }
   }
+/* =====================================================
+   УДАЛИТЬ ПОСЛАНИЕ
+===================================================== */
 
+async function deleteMessage(
+  id
+) {
+  const confirmed =
+    window.confirm(
+      "Удалить это послание?"
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+    const response =
+      await fetch(
+        "/api/messages",
+        {
+          method: "DELETE",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body:
+            JSON.stringify({
+              id,
+              sender,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      !data?.ok
+    ) {
+      throw new Error(
+        data?.error ||
+        "Ошибка удаления"
+      );
+    }
+
+
+    /*
+      Сразу убираем карточку
+      без перезагрузки страницы.
+    */
+
+    setMessages(
+      (current) =>
+        current.filter(
+          (item) =>
+            item.id !== id
+        )
+    );
+
+
+    setError("");
+
+  } catch (error) {
+    console.error(
+      error
+    );
+
+
+    setError(
+      "Не получилось удалить послание"
+    );
+  }
+}
 
 
   const visibleMessages =
@@ -1323,6 +1403,19 @@ window.setTimeout(
               >
 
                 <header>
+                {item.sender === sender && (
+  <button
+    type="button"
+    className="mini-message-delete"
+    onClick={() =>
+      deleteMessage(
+        item.id
+      )
+    }
+  >
+    удалить
+  </button>
+)}
 
                   <b>
                     {
