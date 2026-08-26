@@ -21826,3 +21826,11 @@ body {
   }
 
 }
+/* Полностью убираем старый блок хранителей */
+
+.home-keepers,
+.home-keepers-grid,
+.home-keeper,
+.home-keepers-hint {
+  display: none !important;
+}
