@@ -19440,3 +19440,1701 @@ body {
   }
 
 }
+/* =========================================================
+   HOME V4 · МЯГКИЙ РЕДИЗАЙН
+========================================================= */
+
+.home-v4 {
+  width:
+    min(
+      100%,
+      880px
+    );
+
+  margin:
+    0 auto;
+
+  color:
+    #382a2a;
+}
+
+
+/* =========================================================
+   НОВАЯ ТИПОГРАФИКА
+========================================================= */
+
+.home-v4 h1,
+.home-v4 h2,
+.home-v4 h3,
+.mini-messages h2 {
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-weight:
+    500;
+
+  letter-spacing:
+    -0.025em;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.home-v4-hero {
+  position:
+    relative;
+
+  overflow:
+    hidden;
+
+  padding:
+    25px;
+
+  border:
+    1px solid
+    rgba(
+      137,
+      72,
+      78,
+      0.1
+    );
+
+  border-radius:
+    27px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        255,
+        249,
+        246,
+        0.92
+      ),
+      rgba(
+        247,
+        214,
+        215,
+        0.76
+      )
+    );
+
+  box-shadow:
+    0 20px 50px
+    rgba(
+      80,
+      48,
+      48,
+      0.08
+    );
+
+  backdrop-filter:
+    blur(
+      15px
+    );
+}
+
+
+.home-v4-hero::after {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  width:
+    220px;
+
+  height:
+    220px;
+
+  right:
+    -70px;
+
+  bottom:
+    -110px;
+
+  border-radius:
+    50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(
+        255,
+        255,
+        255,
+        0.76
+      ),
+      transparent 70%
+    );
+
+  pointer-events:
+    none;
+}
+
+
+.home-v4-hero-top {
+  position:
+    relative;
+
+  z-index:
+    1;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    12px;
+
+  margin-bottom:
+    28px;
+
+  color:
+    rgba(
+      62,
+      45,
+      45,
+      0.57
+    );
+
+  font-size:
+    11px;
+
+  font-weight:
+    700;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.home-v4-live {
+  color:
+    #a45258;
+}
+
+
+.home-v4-hero-main {
+  position:
+    relative;
+
+  z-index:
+    1;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    1fr auto;
+
+  gap:
+    18px;
+
+  align-items:
+    end;
+}
+
+
+.home-v4-hero-main small {
+  color:
+    #a65c61;
+
+  font-size:
+    10px;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.16em;
+}
+
+
+.home-v4-hero-main h1 {
+  max-width:
+    600px;
+
+  margin:
+    9px 0 14px;
+
+  color:
+    #3a2728;
+
+  font-size:
+    clamp(
+      36px,
+      7vw,
+      60px
+    );
+
+  line-height:
+    0.98;
+}
+
+
+.home-v4-hero-main h1 span {
+  color:
+    #c5555d;
+
+  font-size:
+    0.68em;
+}
+
+
+.home-v4-hero-main p {
+  max-width:
+    510px;
+
+  margin:
+    0;
+
+  color:
+    rgba(
+      58,
+      39,
+      40,
+      0.68
+    );
+
+  font-size:
+    14px;
+
+  line-height:
+    1.65;
+}
+
+
+.home-v4-weather-mark {
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  width:
+    64px;
+
+  height:
+    64px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.7
+    );
+
+  border-radius:
+    22px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.42
+    );
+
+  font-size:
+    31px;
+}
+
+
+/* =========================================================
+   СЛЕДУЮЩЕЕ УВЕДОМЛЕНИЕ
+========================================================= */
+
+.home-v4-next {
+  border:
+    1px solid
+    rgba(
+      137,
+      72,
+      78,
+      0.08
+    ) !important;
+
+  background:
+    rgba(
+      255,
+      251,
+      248,
+      0.72
+    ) !important;
+
+  backdrop-filter:
+    blur(
+      14px
+    );
+}
+
+
+/* =========================================================
+   ДРАКОША + БУСЬКА
+========================================================= */
+
+.home-keepers {
+  margin-top:
+    14px;
+
+  padding:
+    18px;
+
+  border:
+    1px solid
+    rgba(
+      140,
+      75,
+      80,
+      0.1
+    );
+
+  border-radius:
+    24px;
+
+  background:
+    rgba(
+      255,
+      250,
+      247,
+      0.78
+    );
+
+  box-shadow:
+    0 15px 40px
+    rgba(
+      73,
+      47,
+      47,
+      0.055
+    );
+
+  backdrop-filter:
+    blur(
+      16px
+    );
+}
+
+
+.home-keepers > header {
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    center;
+
+  margin-bottom:
+    15px;
+}
+
+
+.home-keepers > header small {
+  color:
+    #a05c62;
+
+  font-size:
+    9px;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.14em;
+}
+
+
+.home-keepers > header span {
+  color:
+    #d98f94;
+}
+
+
+.home-keepers-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    10px;
+}
+
+
+.home-keeper {
+  display:
+    grid;
+
+  grid-template-columns:
+    78px 1fr;
+
+  gap:
+    13px;
+
+  align-items:
+    center;
+
+  min-height:
+    116px;
+
+  padding:
+    12px;
+
+  border:
+    1px solid
+    rgba(
+      137,
+      72,
+      78,
+      0.08
+    );
+
+  border-radius:
+    19px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.54
+    );
+}
+
+
+.home-keeper h3 {
+  margin:
+    0 0 5px;
+
+  color:
+    #472e30;
+
+  font-size:
+    21px;
+}
+
+
+.home-keeper p {
+  margin:
+    0;
+
+  color:
+    rgba(
+      68,
+      48,
+      49,
+      0.59
+    );
+
+  font-size:
+    11px;
+
+  line-height:
+    1.5;
+}
+
+
+.home-drakosha-mini {
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  width:
+    76px;
+
+  height:
+    76px;
+
+  overflow:
+    hidden;
+
+  border-radius:
+    50%;
+
+  background:
+    radial-gradient(
+      circle,
+      #fff,
+      #f5d6d7
+    );
+}
+
+
+.home-drakosha-mini img {
+  width:
+    82px;
+
+  height:
+    82px;
+
+  object-fit:
+    contain;
+}
+
+
+.home-buska {
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  width:
+    76px;
+
+  height:
+    76px;
+
+  border:
+    1px solid
+    rgba(
+      202,
+      105,
+      113,
+      0.14
+    );
+
+  border-radius:
+    50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 30%,
+      #fff,
+      #f5cfd1
+    );
+
+  box-shadow:
+    inset
+    0 0 20px
+    rgba(
+      255,
+      255,
+      255,
+      0.75
+    );
+}
+
+
+.home-buska span {
+  color:
+    #c85e66;
+
+  font-size:
+    30px;
+
+  filter:
+    drop-shadow(
+      0 5px 10px
+      rgba(
+        188,
+        74,
+        83,
+        0.18
+      )
+    );
+}
+
+
+.home-keepers-hint {
+  display:
+    block;
+
+  margin-top:
+    11px;
+
+  color:
+    rgba(
+      71,
+      48,
+      49,
+      0.44
+    );
+
+  font-size:
+    9px;
+
+  text-align:
+    center;
+}
+
+
+/* =========================================================
+   ПОСЛАНИЯ
+========================================================= */
+
+.mini-messages {
+  margin-top:
+    14px;
+
+  padding:
+    19px;
+
+  border:
+    1px solid
+    rgba(
+      137,
+      72,
+      78,
+      0.1
+    );
+
+  border-radius:
+    24px;
+
+  background:
+    rgba(
+      255,
+      250,
+      247,
+      0.82
+    );
+
+  box-shadow:
+    0 15px 40px
+    rgba(
+      73,
+      47,
+      47,
+      0.06
+    );
+
+  backdrop-filter:
+    blur(
+      16px
+    );
+}
+
+
+.mini-messages-head {
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    flex-start;
+
+  gap:
+    14px;
+
+  margin-bottom:
+    14px;
+}
+
+
+.mini-messages-head small {
+  color:
+    #a45c62;
+
+  font-size:
+    9px;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.13em;
+}
+
+
+.mini-messages-head h2 {
+  margin:
+    5px 0 0;
+
+  color:
+    #412c2d;
+
+  font-size:
+    27px;
+}
+
+
+.mini-messages-head > span {
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  width:
+    36px;
+
+  height:
+    36px;
+
+  border-radius:
+    50%;
+
+  background:
+    #f6dddd;
+
+  color:
+    #be5961;
+}
+
+
+.mini-message-author {
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  align-items:
+    center;
+
+  gap:
+    6px;
+
+  margin-bottom:
+    13px;
+}
+
+
+.mini-message-author > span {
+  margin-right:
+    4px;
+
+  color:
+    rgba(
+      62,
+      43,
+      44,
+      0.48
+    );
+
+  font-size:
+    10px;
+}
+
+
+.mini-message-author button {
+  padding:
+    7px 11px;
+
+  border:
+    1px solid
+    rgba(
+      140,
+      75,
+      80,
+      0.1
+    );
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.62
+    );
+
+  color:
+    #745052;
+
+  font-size:
+    10px;
+
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
+}
+
+
+.mini-message-author button.active {
+  border-color:
+    #c66a71;
+
+  background:
+    #c66a71;
+
+  color:
+    white;
+}
+
+
+.mini-message-feed {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    9px;
+}
+
+
+.mini-message-card {
+  min-height:
+    100px;
+
+  padding:
+    13px;
+
+  border:
+    1px solid
+    rgba(
+      139,
+      80,
+      84,
+      0.1
+    );
+
+  border-radius:
+    17px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.7
+    );
+}
+
+
+.mini-message-card.mine {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        250,
+        229,
+        230,
+        0.92
+      ),
+      rgba(
+        255,
+        249,
+        247,
+        0.94
+      )
+    );
+}
+
+
+.mini-message-card header {
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  gap:
+    8px;
+
+  margin-bottom:
+    11px;
+}
+
+
+.mini-message-card header b {
+  color:
+    #533537;
+
+  font-family:
+    Georgia,
+    serif;
+
+  font-size:
+    14px;
+
+  font-weight:
+    500;
+}
+
+
+.mini-message-card header small {
+  color:
+    rgba(
+      64,
+      46,
+      47,
+      0.38
+    );
+
+  font-size:
+    8px;
+}
+
+
+.mini-message-card p {
+  margin:
+    0;
+
+  color:
+    #533f40;
+
+  font-size:
+    12px;
+
+  line-height:
+    1.55;
+
+  overflow-wrap:
+    anywhere;
+}
+
+
+.mini-message-empty {
+  grid-column:
+    1 /
+    -1;
+
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  min-height:
+    120px;
+
+  border:
+    1px dashed
+    rgba(
+      146,
+      86,
+      91,
+      0.15
+    );
+
+  border-radius:
+    17px;
+
+  color:
+    rgba(
+      66,
+      46,
+      48,
+      0.48
+    );
+
+  font-size:
+    11px;
+
+  text-align:
+    center;
+}
+
+
+.mini-message-empty span {
+  color:
+    #c76870;
+
+  font-size:
+    22px;
+}
+
+
+.mini-message-empty b {
+  color:
+    #624346;
+}
+
+
+.mini-message-empty small {
+  font-size:
+    9px;
+}
+
+
+.mini-message-open {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  width:
+    100%;
+
+  margin-top:
+    10px;
+
+  padding:
+    13px 15px;
+
+  border:
+    1px solid
+    rgba(
+      137,
+      72,
+      78,
+      0.12
+    );
+
+  border-radius:
+    15px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.58
+    );
+
+  color:
+    #573d3f;
+
+  font-size:
+    11px;
+
+  cursor:
+    pointer;
+}
+
+
+.mini-message-open b {
+  color:
+    #b4565d;
+
+  font-size:
+    17px;
+}
+
+
+.mini-message-form {
+  margin-top:
+    10px;
+
+  padding:
+    10px;
+
+  border:
+    1px solid
+    rgba(
+      137,
+      72,
+      78,
+      0.1
+    );
+
+  border-radius:
+    17px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.58
+    );
+}
+
+
+.mini-message-form textarea {
+  width:
+    100%;
+
+  min-height:
+    85px;
+
+  resize:
+    none;
+
+  border:
+    0;
+
+  outline:
+    none;
+
+  background:
+    transparent;
+
+  color:
+    #493234;
+
+  font:
+    inherit;
+
+  font-size:
+    12px;
+
+  line-height:
+    1.55;
+}
+
+
+.mini-message-form-bottom {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    flex-end;
+
+  gap:
+    7px;
+
+  padding-top:
+    8px;
+
+  border-top:
+    1px solid
+    rgba(
+      130,
+      75,
+      80,
+      0.08
+    );
+}
+
+
+.mini-message-form-bottom small {
+  margin-right:
+    auto;
+
+  color:
+    rgba(
+      62,
+      43,
+      44,
+      0.4
+    );
+
+  font-size:
+    8px;
+}
+
+
+.mini-message-form-bottom button {
+  padding:
+    8px 11px;
+
+  border:
+    0;
+
+  border-radius:
+    10px;
+
+  background:
+    #f0e4e2;
+
+  color:
+    #654749;
+
+  font-size:
+    9px;
+
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
+}
+
+
+.mini-message-form-bottom button.primary {
+  background:
+    #b95d65;
+
+  color:
+    white;
+}
+
+
+.mini-message-form-bottom button:disabled {
+  opacity:
+    0.45;
+}
+
+
+.mini-message-error {
+  margin:
+    8px 0 0;
+
+  color:
+    #a94d55;
+
+  font-size:
+    9px;
+}
+
+
+/* =========================================================
+   КАНЦЕЛЯРИЯ НА ГЛАВНОЙ
+========================================================= */
+
+.home-v4-departments {
+  margin-top:
+    18px;
+}
+
+
+.home-v4-serious {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        255,
+        251,
+        248,
+        0.91
+      ),
+      rgba(
+        247,
+        225,
+        224,
+        0.88
+      )
+    ) !important;
+
+  border:
+    1px solid
+    rgba(
+      139,
+      74,
+      79,
+      0.1
+    ) !important;
+
+  color:
+    #432e30 !important;
+
+  box-shadow:
+    0 18px 45px
+    rgba(
+      79,
+      48,
+      50,
+      0.07
+    ) !important;
+}
+
+
+.home-v4-serious
+.department-copy h3 {
+  color:
+    #432e30 !important;
+
+  font-family:
+    Georgia,
+    serif;
+
+  font-size:
+    32px !important;
+
+  font-weight:
+    500 !important;
+}
+
+
+.home-v4-serious
+.department-copy p {
+  color:
+    rgba(
+      67,
+      46,
+      48,
+      0.6
+    ) !important;
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+.theme-dark
+.home-v4 {
+  color:
+    #f7efea;
+}
+
+
+.theme-dark
+.home-v4-hero,
+.theme-dark
+.home-keepers,
+.theme-dark
+.mini-messages {
+  border-color:
+    rgba(
+      255,
+      255,
+      255,
+      0.08
+    );
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        41,
+        45,
+        47,
+        0.94
+      ),
+      rgba(
+        54,
+        43,
+        45,
+        0.93
+      )
+    );
+
+  box-shadow:
+    0 18px 48px
+    rgba(
+      0,
+      0,
+      0,
+      0.18
+    );
+}
+
+
+.theme-dark
+.home-v4-hero-top,
+.theme-dark
+.home-v4-hero-main p {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.62
+    );
+}
+
+
+.theme-dark
+.home-v4-hero-main h1,
+.theme-dark
+.home-keeper h3,
+.theme-dark
+.mini-messages-head h2 {
+  color:
+    #fff8f2;
+}
+
+
+.theme-dark
+.home-keeper p,
+.theme-dark
+.home-keepers-hint {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.54
+    );
+}
+
+
+.theme-dark
+.home-keeper,
+.theme-dark
+.mini-message-card,
+.theme-dark
+.mini-message-form,
+.theme-dark
+.mini-message-open {
+  border-color:
+    rgba(
+      255,
+      255,
+      255,
+      0.08
+    );
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.055
+    );
+}
+
+
+.theme-dark
+.mini-message-card.mine {
+  background:
+    rgba(
+      150,
+      70,
+      77,
+      0.14
+    );
+}
+
+
+.theme-dark
+.mini-message-card p,
+.theme-dark
+.mini-message-card header b {
+  color:
+    #fff2ed;
+}
+
+
+.theme-dark
+.mini-message-card header small,
+.theme-dark
+.mini-message-author > span {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.42
+    );
+}
+
+
+.theme-dark
+.mini-message-author button {
+  border-color:
+    rgba(
+      255,
+      255,
+      255,
+      0.09
+    );
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.06
+    );
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.7
+    );
+}
+
+
+.theme-dark
+.mini-message-author button.active {
+  background:
+    #a8565d;
+
+  color:
+    white;
+}
+
+
+.theme-dark
+.mini-message-form textarea {
+  color:
+    #fff4ef;
+}
+
+
+.theme-dark
+.home-v4-serious {
+  border-color:
+    rgba(
+      255,
+      255,
+      255,
+      0.08
+    ) !important;
+
+  background:
+    linear-gradient(
+      145deg,
+      #292e30,
+      #34292b
+    ) !important;
+}
+
+
+.theme-dark
+.home-v4-serious
+.department-copy h3 {
+  color:
+    #fff7f1 !important;
+}
+
+
+.theme-dark
+.home-v4-serious
+.department-copy p {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.58
+    ) !important;
+}
+
+
+/* =========================================================
+   PHONE
+========================================================= */
+
+@media (
+  max-width:
+  620px
+) {
+
+  .home-v4 {
+    padding-inline:
+      11px;
+  }
+
+
+  .home-v4-hero {
+    padding:
+      20px;
+
+    border-radius:
+      23px;
+  }
+
+
+  .home-v4-hero-top {
+    margin-bottom:
+      25px;
+  }
+
+
+  .home-v4-hero-main h1 {
+    font-size:
+      39px;
+  }
+
+
+  .home-v4-weather-mark {
+    width:
+      52px;
+
+    height:
+      52px;
+
+    border-radius:
+      18px;
+
+    font-size:
+      25px;
+  }
+
+
+  .home-keepers {
+    padding:
+      14px;
+  }
+
+
+  .home-keepers-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .home-keeper {
+    min-height:
+      96px;
+
+    grid-template-columns:
+      66px 1fr;
+  }
+
+
+  .home-drakosha-mini,
+  .home-buska {
+    width:
+      62px;
+
+    height:
+      62px;
+  }
+
+
+  .home-drakosha-mini img {
+    width:
+      68px;
+
+    height:
+      68px;
+  }
+
+
+  .mini-messages {
+    padding:
+      15px;
+  }
+
+
+  .mini-messages-head h2 {
+    font-size:
+      24px;
+  }
+
+
+  .mini-message-feed {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .mini-message-card {
+    min-height:
+      0;
+  }
+
+
+  .mini-message-form-bottom {
+    flex-wrap:
+      wrap;
+  }
+
+}
