@@ -1,5 +1,13 @@
-import Chancery from "../components/Chancery";
 
-export default function ChanceryPage() {
-  return <Chancery />;
-}
+<small>
+  ЭЛЕКТРОННАЯ КАНЦЕЛЯРИЯ
+</small>
+
+<h1>
+  Всё серьёзно
+</h1>
+
+<p>
+  Управление договорчиков
+  и иных особо важных бумаг
+</p>
