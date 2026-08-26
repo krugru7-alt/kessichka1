@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import WeatherMini from "./components/WeatherMini";
+import MiniMessages from "./components/MiniMessages";
 
 import {
   getCurrentScheduleItem,
@@ -19,109 +20,130 @@ import {
 
 const messages = [
   "Просто напоминаю: ты очень важная буська. ❤️",
+
   "Сегодня не обязательно успеть всё. Правда.",
+
   "Если день вредничает — вредничай в ответ совсем чуть-чуть.",
+
   "Пусть сегодня найдётся хотя бы один момент, который тебя порадует.",
+
   "Где-то далеко один Обсидик очень хочет, чтобы у тебя всё было хорошо.",
+
   "Поесть, попить воды и иногда отдыхать — официальный план.",
+
   "Тьмок без причины 💋",
 ];
 
 
-/* =====================================================
-   МИНСКОЕ ВРЕМЯ
-===================================================== */
-
-function getMinskHour(date = new Date()) {
+function getMinskHour(
+  date = new Date()
+) {
   return Number(
     new Intl.DateTimeFormat(
       "en-US",
       {
-        timeZone: "Europe/Minsk",
-        hour: "numeric",
-        hourCycle: "h23",
+        timeZone:
+          "Europe/Minsk",
+
+        hour:
+          "numeric",
+
+        hourCycle:
+          "h23",
       }
-    ).format(date)
+    ).format(
+      date
+    )
   );
 }
 
 
-/* =====================================================
-   ПРИВЕТСТВИЕ
-===================================================== */
-
-function getGreeting(hour) {
+function getGreeting(
+  hour
+) {
   if (
     hour >= 6 &&
     hour < 12
   ) {
     return [
-      "Доброе утро, бус ❤️",
+      "Доброе утро, бус",
       "🌅",
     ];
   }
+
 
   if (
     hour >= 12 &&
     hour < 18
   ) {
     return [
-      "Хорошего дня, бус ❤️",
+      "Хорошего дня, бус",
       "☀️",
     ];
   }
+
 
   if (
     hour >= 18 &&
     hour < 22
   ) {
     return [
-      "Добрый вечер, бус ❤️",
+      "Добрый вечер, бус",
       "🌆",
     ];
   }
 
+
   return [
-    "Спокойной ночи, бус ❤️",
+    "Спокойной ночи, бус",
     "🌙",
   ];
 }
 
 
-/* =====================================================
-   ГЛАВНАЯ
-===================================================== */
-
 export default function HomePage() {
-  const [now, setNow] =
-    useState(new Date());
+
+  const [
+    now,
+    setNow,
+  ] = useState(
+    new Date()
+  );
 
 
   useEffect(() => {
+
     const timer =
       setInterval(
-        () => {
+        () =>
           setNow(
             new Date()
-          );
-        },
+          ),
         30000
       );
+
 
     return () =>
       clearInterval(
         timer
       );
+
   }, []);
 
 
   const hour =
-    getMinskHour(now);
+    getMinskHour(
+      now
+    );
+
 
   const [
     greeting,
     icon,
-  ] = getGreeting(hour);
+  ] =
+    getGreeting(
+      hour
+    );
 
 
   const minskTime =
@@ -140,12 +162,10 @@ export default function HomePage() {
         hourCycle:
           "h23",
       }
-    ).format(now);
+    ).format(
+      now
+    );
 
-
-  /* =====================================================
-     СООБЩЕНИЕ ДНЯ
-  ===================================================== */
 
   const dateKey =
     new Intl.DateTimeFormat(
@@ -163,145 +183,309 @@ export default function HomePage() {
         day:
           "2-digit",
       }
-    ).format(now);
+    ).format(
+      now
+    );
 
 
   const message =
-    useMemo(() => {
-      const seed =
-        Number(
-          dateKey.replace(
-            /\D/g,
-            ""
-          )
-        ) || 1;
+    useMemo(
+      () => {
 
-      return messages[
-        seed %
+        const seed =
+          Number(
+            dateKey.replace(
+              /\D/g,
+              ""
+            )
+          ) ||
+          1;
+
+
+        return messages[
+          seed %
           messages.length
-      ];
-    }, [dateKey]);
+        ];
+
+      },
+      [
+        dateKey,
+      ]
+    );
 
 
-  /* =====================================================
-     БЛИЖАЙШЕЕ СОБЫТИЕ
-  ===================================================== */
+  let schedule =
+    null;
 
-  let schedule = null;
-  let day = null;
+
+  let day =
+    null;
+
 
   try {
+
     schedule =
       getCurrentScheduleItem();
 
+
     day =
       getCurrentDay();
+
   } catch {
-    schedule = null;
-    day = null;
+
+    schedule =
+      null;
+
+
+    day =
+      null;
+
   }
 
 
   return (
-    <div className="page home-page">
+    <div className="page home-page home-v4">
 
-      {/* ===============================================
+
+      {/* =================================================
           ПРИВЕТСТВИЕ
-      =============================================== */}
+      ================================================= */}
 
-      <section className="hero-card">
+      <section className="home-v4-hero">
 
-        <div className="hero-topline">
 
-          <span className="hero-time">
+        <div className="home-v4-hero-top">
+
+          <span>
             Минск · {minskTime}
           </span>
 
-          <span className="hero-weather-dot">
-            online
+
+          <span className="home-v4-live">
+            ● online
           </span>
 
         </div>
 
 
-        <div className="hero-icon">
-          {icon}
+        <div className="home-v4-hero-main">
+
+          <div>
+
+            <small>
+              ТВОЙ МАЛЕНЬКИЙ УГОЛОК
+            </small>
+
+
+            <h1>
+              {greeting}
+              <span>
+                {" "}♥
+              </span>
+            </h1>
+
+
+            <p>
+              {message}
+            </p>
+
+          </div>
+
+
+          <div className="home-v4-weather-mark">
+            {icon}
+          </div>
+
         </div>
-
-
-        <p className="eyebrow">
-          твой маленький уголок
-        </p>
-
-
-        <h1>
-          {greeting}
-        </h1>
-
-
-        <p className="hero-text">
-          {message}
-        </p>
 
       </section>
 
 
-      {/* ===============================================
-          ПОГОДА
-      =============================================== */}
+
+      {/* =================================================
+          ПОГОДА МИНСКА
+      ================================================= */}
 
       <WeatherMini />
 
 
-      {/* ===============================================
-          БЛИЖАЙШЕЕ УВЕДОМЛЕНИЕ
-      =============================================== */}
 
-      {schedule && (
+      {/* =================================================
+          СЛЕДУЮЩИЙ ПРИВЕТ
+      ================================================= */}
 
-        <section className="next-note">
+      {
+        schedule &&
+        (
 
-          <div>
+          <section className="next-note home-v4-next">
 
-            <small>
-              Следующий привет
-            </small>
+            <div>
 
-            <b>
-              {dayNames?.[day] || ""}
-              {" · "}
-              {schedule.time}
-            </b>
+              <small>
+                Следующий привет
+              </small>
+
+
+              <b>
+
+                {
+                  dayNames?.[
+                    day
+                  ] ||
+                  ""
+                }
+
+                {" · "}
+
+                {
+                  schedule.time
+                }
+
+              </b>
+
+            </div>
+
+
+            <span>
+              {
+                schedule.title
+              }
+            </span>
+
+          </section>
+
+        )
+      }
+
+
+
+      {/* =================================================
+          ДРАКОША + БУСЬКА
+
+          Сам плавающий Дракоша остаётся
+          в SiteShell и продолжает реагировать
+          на нажатие.
+      ================================================= */}
+
+      <section className="home-keepers">
+
+
+        <header>
+
+          <small>
+            НАШИ МАЛЕНЬКИЕ ХРАНИТЕЛИ
+          </small>
+
+
+          <span>
+            ✦
+          </span>
+
+        </header>
+
+
+        <div className="home-keepers-grid">
+
+
+          <div className="home-keeper">
+
+
+            <div className="home-drakosha-mini">
+
+              <img
+                src="/drakosha.png"
+                alt="Дракоша"
+              />
+
+            </div>
+
+
+            <div>
+
+              <h3>
+                Дракоша
+              </h3>
+
+
+              <p>
+                Где-то рядом и всегда готов к тьмоку.
+              </p>
+
+            </div>
 
           </div>
 
 
-          <span>
-            {schedule.title}
-          </span>
-
-        </section>
-
-      )}
+          <div className="home-keeper home-keeper-buska">
 
 
-      {/* ===============================================
+            <div className="home-buska">
+
+              <span>
+                ♥
+              </span>
+
+            </div>
+
+
+            <div>
+
+              <h3>
+                Буська
+              </h3>
+
+
+              <p>
+                Хранит хорошее настроение и маленькие моменты.
+              </p>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+
+        <small className="home-keepers-hint">
+          P.S. плавающего Дракошу можно потыкать 👀
+        </small>
+
+      </section>
+
+
+
+      {/* =================================================
+          ПОСЛАНИЯ
+      ================================================= */}
+
+      <MiniMessages />
+
+
+
+      {/* =================================================
           ОТДЕЛЫ
-      =============================================== */}
+      ================================================= */}
 
-      <section className="home-departments">
+      <section className="home-departments home-v4-departments">
+
 
         <div className="home-departments-head">
 
           <div>
+
             <small>
               ОТДЕЛЫ
             </small>
 
+
             <h2>
               Куда заглянем?
             </h2>
+
           </div>
+
 
           <span>
             ↓
@@ -310,20 +494,18 @@ export default function HomePage() {
         </div>
 
 
-        {/* =============================================
-            ВСЁ СЕРЬЁЗНО
-        ============================================= */}
-
         <Link
           href="/chancery"
-          className="home-department-card serious-department"
+          className="home-department-card serious-department home-v4-serious"
         >
+
 
           <div className="department-card-top">
 
             <span className="department-number">
               ОТДЕЛ №01
             </span>
+
 
             <span className="department-status">
               РАБОТАЕТ
@@ -343,9 +525,11 @@ export default function HomePage() {
               ЭЛЕКТРОННАЯ КАНЦЕЛЯРИЯ
             </small>
 
+
             <h3>
               Всё серьёзно
             </h3>
+
 
             <p>
               Договорчики, акты,
@@ -363,24 +547,24 @@ export default function HomePage() {
               открыть отдел
             </span>
 
+
             <b>
               →
             </b>
 
           </div>
 
+
         </Link>
 
       </section>
 
 
-      {/* ===============================================
-          ПОДПИСЬ
-      =============================================== */}
 
       <p className="home-signature">
-        Обсидик был здесь ❤️
+        Обсидик был здесь ♥
       </p>
+
 
     </div>
   );
