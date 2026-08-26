@@ -21834,3 +21834,78 @@ body {
 .home-keepers-hint {
   display: none !important;
 }
+/* =========================================================
+   УДАЛЕНИЕ ПОСЛАНИЯ
+========================================================= */
+
+.mini-message-card {
+  position: relative;
+}
+
+
+.mini-message-delete {
+  position: absolute;
+
+  top: 10px;
+  right: 10px;
+
+  padding: 4px 7px;
+
+  border: 0;
+  border-radius: 999px;
+
+  background:
+    rgba(157, 74, 82, 0.08);
+
+  color:
+    rgba(130, 55, 63, 0.64);
+
+  font-size: 8px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  opacity: 0;
+
+  transition:
+    opacity 0.18s ease,
+    background 0.18s ease;
+}
+
+
+.mini-message-card:hover
+.mini-message-delete {
+  opacity: 1;
+}
+
+
+.mini-message-delete:hover {
+  background:
+    rgba(157, 74, 82, 0.16);
+
+  color:
+    #9f4650;
+}
+
+
+/* На телефоне всегда видна */
+
+@media (max-width: 620px) {
+
+  .mini-message-delete {
+    opacity: 1;
+  }
+
+}
+
+
+/* Тёмная тема */
+
+.theme-dark
+.mini-message-delete {
+  background:
+    rgba(255, 150, 160, 0.08);
+
+  color:
+    rgba(255, 190, 196, 0.7);
+}
