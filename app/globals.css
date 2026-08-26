@@ -21138,3 +21138,691 @@ body {
   }
 
 }
+/* =========================================================
+   ДРАКОША · ПОЛНОЭКРАННЫЙ ТЬМОК
+========================================================= */
+
+.drakosha-kiss-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 999999;
+
+  display: grid;
+
+  place-items: center;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(255, 215, 220, 0.92) 0%,
+      rgba(223, 117, 129, 0.84) 42%,
+      rgba(91, 39, 48, 0.92) 100%
+    );
+
+  backdrop-filter:
+    blur(12px);
+
+  -webkit-backdrop-filter:
+    blur(12px);
+
+  animation:
+    drakoshaKissScreen
+    1.45s
+    ease
+    forwards;
+}
+
+
+.drakosha-kiss-center {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  animation:
+    drakoshaKissCenter
+    1.35s
+    cubic-bezier(
+      0.17,
+      0.84,
+      0.44,
+      1
+    )
+    forwards;
+}
+
+
+.drakosha-kiss-lips {
+  font-size:
+    clamp(
+      90px,
+      20vw,
+      190px
+    );
+
+  line-height: 1;
+
+  filter:
+    drop-shadow(
+      0 20px 35px
+      rgba(71, 19, 31, 0.28)
+    );
+}
+
+
+.drakosha-kiss-center strong {
+  margin-top:
+    8px;
+
+  color:
+    #fff9f7;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(
+      58px,
+      15vw,
+      150px
+    );
+
+  font-weight:
+    500;
+
+  line-height:
+    0.9;
+
+  letter-spacing:
+    -0.055em;
+
+  text-transform:
+    lowercase;
+
+  text-shadow:
+    0 12px 34px
+    rgba(75, 22, 34, 0.28);
+}
+
+
+.drakosha-kiss-heart {
+  position: absolute;
+
+  z-index: 1;
+
+  color:
+    rgba(255, 247, 246, 0.84);
+
+  font-size:
+    35px;
+
+  animation:
+    drakoshaKissHeart
+    1.35s
+    ease-out
+    forwards;
+}
+
+
+.drakosha-kiss-heart.heart-one {
+  left: 12%;
+  bottom: 15%;
+
+  animation-delay:
+    0.02s;
+}
+
+
+.drakosha-kiss-heart.heart-two {
+  left: 27%;
+  bottom: 5%;
+
+  font-size:
+    22px;
+
+  animation-delay:
+    0.14s;
+}
+
+
+.drakosha-kiss-heart.heart-three {
+  right: 13%;
+  bottom: 20%;
+
+  font-size:
+    50px;
+
+  animation-delay:
+    0.08s;
+}
+
+
+.drakosha-kiss-heart.heart-four {
+  right: 30%;
+  bottom: 8%;
+
+  font-size:
+    25px;
+
+  animation-delay:
+    0.18s;
+}
+
+
+.drakosha-kiss-heart.heart-five {
+  left: 50%;
+  bottom: 0;
+
+  font-size:
+    30px;
+
+  animation-delay:
+    0.22s;
+}
+
+
+@keyframes drakoshaKissScreen {
+
+  0% {
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  76% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+
+}
+
+
+@keyframes drakoshaKissCenter {
+
+  0% {
+    opacity: 0;
+
+    transform:
+      translateY(48vh)
+      scale(0.18)
+      rotate(-12deg);
+  }
+
+  30% {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1.18)
+      rotate(4deg);
+  }
+
+  48% {
+    transform:
+      translateY(0)
+      scale(0.96)
+      rotate(0);
+  }
+
+  72% {
+    opacity: 1;
+
+    transform:
+      scale(1);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      scale(1.65);
+  }
+
+}
+
+
+@keyframes drakoshaKissHeart {
+
+  0% {
+    opacity: 0;
+
+    transform:
+      translateY(60px)
+      scale(0.35)
+      rotate(-15deg);
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateY(-65vh)
+      scale(1.7)
+      rotate(18deg);
+  }
+
+}
+
+
+
+/* =========================================================
+   МИНИ-ЭКРАНЧИК · СОХРАНЁННЫЙ РИСУНОК
+========================================================= */
+
+.mini-message-drawing {
+  overflow: hidden;
+
+  margin-top:
+    10px;
+
+  padding:
+    5px;
+
+  border:
+    1px solid
+    rgba(125, 56, 64, 0.1);
+
+  border-radius:
+    13px;
+
+  background:
+    rgba(255, 255, 255, 0.72);
+}
+
+
+.mini-message-drawing img {
+  display: block;
+
+  width: 100%;
+
+  max-height:
+    220px;
+
+  object-fit:
+    contain;
+}
+
+
+
+/* =========================================================
+   ПОЛЕ РИСОВАНИЯ
+========================================================= */
+
+.mini-draw-section {
+  margin-top:
+    10px;
+
+  padding-top:
+    12px;
+
+  border-top:
+    1px solid
+    rgba(125, 56, 64, 0.1);
+}
+
+
+.mini-draw-title {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap:
+    10px;
+
+  margin-bottom:
+    8px;
+}
+
+
+.mini-draw-title span {
+  color:
+    #593b3e;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    14px;
+}
+
+
+.mini-draw-title small {
+  color:
+    rgba(68, 45, 48, 0.42);
+
+  font-size:
+    9px;
+}
+
+
+
+/* =========================================================
+   БУМАГА
+========================================================= */
+
+.mini-draw-paper {
+  position: relative;
+
+  overflow: hidden;
+
+  width: 100%;
+
+  height:
+    155px;
+
+  border:
+    1px solid
+    rgba(125, 56, 64, 0.13);
+
+  border-radius:
+    16px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 253, 251, 0.99),
+      rgba(251, 243, 240, 0.96)
+    );
+
+  box-shadow:
+    inset
+    0 1px 8px
+    rgba(89, 52, 55, 0.035);
+}
+
+
+.mini-draw-paper::after {
+  content: "";
+
+  position: absolute;
+
+  left: 18px;
+
+  right: 18px;
+
+  bottom: 30px;
+
+  height:
+    1px;
+
+  background:
+    rgba(125, 56, 64, 0.12);
+
+  pointer-events: none;
+}
+
+
+.mini-draw-paper canvas {
+  position: relative;
+
+  z-index: 2;
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  cursor:
+    crosshair;
+
+  touch-action:
+    none;
+}
+
+
+.mini-draw-placeholder {
+  position: absolute;
+
+  z-index: 1;
+
+  left: 50%;
+
+  top: 50%;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  width:
+    100%;
+
+  color:
+    rgba(92, 59, 62, 0.25);
+
+  font-family:
+    Georgia,
+    serif;
+
+  font-size:
+    13px;
+
+  text-align:
+    center;
+
+  pointer-events:
+    none;
+}
+
+
+
+/* =========================================================
+   ИНСТРУМЕНТЫ РИСОВАНИЯ
+========================================================= */
+
+.mini-draw-tools {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    6px;
+
+  margin-top:
+    7px;
+}
+
+
+.mini-draw-tools button {
+  min-height:
+    37px;
+
+  padding:
+    7px;
+
+  border:
+    1px solid
+    rgba(125, 56, 64, 0.1);
+
+  border-radius:
+    11px;
+
+  background:
+    rgba(255, 255, 255, 0.6);
+
+  color:
+    #624347;
+
+  font-size:
+    9px;
+
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+
+.mini-draw-tools button.active {
+  border-color:
+    rgba(176, 83, 94, 0.32);
+
+  background:
+    rgba(190, 92, 103, 0.13);
+
+  color:
+    #a34752;
+}
+
+
+.mini-draw-tools button:disabled {
+  opacity:
+    0.34;
+
+  cursor:
+    default;
+}
+
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+.theme-dark
+.mini-message-drawing {
+  border-color:
+    rgba(255, 255, 255, 0.08);
+
+  background:
+    #f7efeb;
+}
+
+
+.theme-dark
+.mini-draw-title span {
+  color:
+    #fff3ee;
+}
+
+
+.theme-dark
+.mini-draw-title small {
+  color:
+    rgba(255, 255, 255, 0.4);
+}
+
+
+/*
+  Бумагу специально оставляем светлой
+  даже в тёмной теме.
+*/
+
+.theme-dark
+.mini-draw-paper {
+  border-color:
+    rgba(255, 255, 255, 0.12);
+
+  background:
+    linear-gradient(
+      180deg,
+      #fffaf6,
+      #f7ece8
+    );
+}
+
+
+.theme-dark
+.mini-draw-tools button {
+  border-color:
+    rgba(255, 255, 255, 0.09);
+
+  background:
+    rgba(255, 255, 255, 0.055);
+
+  color:
+    rgba(255, 255, 255, 0.76);
+}
+
+
+.theme-dark
+.mini-draw-tools button.active {
+  border-color:
+    rgba(236, 157, 165, 0.27);
+
+  background:
+    rgba(176, 75, 87, 0.2);
+
+  color:
+    #ffc1c7;
+}
+
+
+
+/* =========================================================
+   ТЕЛЕФОН
+========================================================= */
+
+@media (
+  max-width:
+  620px
+) {
+
+  .mini-draw-paper {
+    height:
+      175px;
+  }
+
+
+  .mini-draw-tools button {
+    min-height:
+      40px;
+
+    font-size:
+      9px;
+  }
+
+
+  .drakosha-kiss-lips {
+    font-size:
+      110px;
+  }
+
+
+  .drakosha-kiss-center strong {
+    font-size:
+      68px;
+  }
+
+}
