@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import {
   useEffect,
   useMemo,
@@ -27,7 +29,7 @@ const messages = [
 
 
 /* =====================================================
-   ТЕКУЩИЙ ЧАС ПО МИНСКУ
+   МИНСКОЕ ВРЕМЯ
 ===================================================== */
 
 function getMinskHour(date = new Date()) {
@@ -95,10 +97,6 @@ export default function HomePage() {
     useState(new Date());
 
 
-  /* =====================================================
-     ОБНОВЛЕНИЕ ВРЕМЕНИ
-  ===================================================== */
-
   useEffect(() => {
     const timer =
       setInterval(
@@ -116,10 +114,6 @@ export default function HomePage() {
       );
   }, []);
 
-
-  /* =====================================================
-     МИНСК
-  ===================================================== */
 
   const hour =
     getMinskHour(now);
@@ -190,7 +184,7 @@ export default function HomePage() {
 
 
   /* =====================================================
-     БЛИЖАЙШЕЕ СОБЫТИЕ РАСПИСАНИЯ
+     БЛИЖАЙШЕЕ СОБЫТИЕ
   ===================================================== */
 
   let schedule = null;
@@ -207,10 +201,6 @@ export default function HomePage() {
     day = null;
   }
 
-
-  /* =====================================================
-     РЕНДЕР
-  ===================================================== */
 
   return (
     <div className="page home-page">
@@ -293,6 +283,95 @@ export default function HomePage() {
         </section>
 
       )}
+
+
+      {/* ===============================================
+          ОТДЕЛЫ
+      =============================================== */}
+
+      <section className="home-departments">
+
+        <div className="home-departments-head">
+
+          <div>
+            <small>
+              ОТДЕЛЫ
+            </small>
+
+            <h2>
+              Куда заглянем?
+            </h2>
+          </div>
+
+          <span>
+            ↓
+          </span>
+
+        </div>
+
+
+        {/* =============================================
+            ВСЁ СЕРЬЁЗНО
+        ============================================= */}
+
+        <Link
+          href="/chancery"
+          className="home-department-card serious-department"
+        >
+
+          <div className="department-card-top">
+
+            <span className="department-number">
+              ОТДЕЛ №01
+            </span>
+
+            <span className="department-status">
+              РАБОТАЕТ
+            </span>
+
+          </div>
+
+
+          <div className="department-icon">
+            ⚖
+          </div>
+
+
+          <div className="department-copy">
+
+            <small>
+              ЭЛЕКТРОННАЯ КАНЦЕЛЯРИЯ
+            </small>
+
+            <h3>
+              Всё серьёзно
+            </h3>
+
+            <p>
+              Договорчики, акты,
+              заявления и прочие
+              бумаги чрезвычайной
+              важности.
+            </p>
+
+          </div>
+
+
+          <div className="department-card-bottom">
+
+            <span>
+              открыть отдел
+            </span>
+
+            <b>
+              →
+            </b>
+
+          </div>
+
+        </Link>
+
+      </section>
 
 
       {/* ===============================================
