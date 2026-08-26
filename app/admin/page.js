@@ -1,3 +1,4 @@
+import PushSender from "./PushSender";
 import Link from "next/link";
 
 import {
@@ -77,30 +78,8 @@ export default async function AdminPage() {
       <section className="world-admin-grid">
 
 
-        <article className="world-admin-card">
-
-          <span>
-            ✉
-          </span>
-
-          <small>
-            ПОСЛАНИЯ
-          </small>
-
-          <h2>
-            Послания
-          </h2>
-
-          <p>
-            Тексты, рисунки и история наших записок.
-          </p>
-
-          <i>
-            скоро здесь
-          </i>
-
-        </article>
-
+       
+<PushSender />
 
 
         <article className="world-admin-card">
