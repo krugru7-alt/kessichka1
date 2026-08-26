@@ -1,13 +1,5 @@
+<section className="home-chancery-intro">
+  ...
+</section>
 
-<small>
-  ЭЛЕКТРОННАЯ КАНЦЕЛЯРИЯ
-</small>
-
-<h1>
-  Всё серьёзно
-</h1>
-
-<p>
-  Управление договорчиков
-  и иных особо важных бумаг
-</p>
+<Chancery />
