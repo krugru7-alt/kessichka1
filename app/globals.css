@@ -12632,3 +12632,38 @@ body:has(.traces-page) .topbar {
   }
 
 }
+/* =====================================================
+   КАНЦЕЛЯРИЯ — ДОПОЛНЕНИЯ
+===================================================== */
+
+.chancery-page .chancery-open-original {
+  width: fit-content;
+
+  margin-top: 7px;
+  padding: 8px 12px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(63, 47, 38, 0.16);
+  border-radius: 8px;
+
+  color: #382f2a;
+  background: rgba(255, 255, 255, 0.38);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.07em;
+  text-decoration: none;
+
+  text-transform: uppercase;
+}
+
+.chancery-page
+.signature-confirm:disabled {
+  opacity: 0.35;
+
+  cursor: not-allowed;
+}
