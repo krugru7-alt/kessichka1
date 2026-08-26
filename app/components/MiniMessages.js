@@ -77,11 +77,9 @@ export default function MiniMessages() {
 
 
   const [
-    sender,
-    setSender,
-  ] = useState(
-    "obsid"
-  );
+  viewer,
+  setViewer,
+] = useState(null);
 
 
   const [
@@ -240,15 +238,6 @@ export default function MiniMessages() {
      ПЕРВЫЙ ЗАПУСК
   ===================================================== */
 
-  useEffect(() => {
-
-    try {
-
-      const saved =
-        localStorage.getItem(
-          "kessi-message-author"
-        );
-
 
       if (
         saved === "obsid" ||
@@ -296,29 +285,6 @@ export default function MiniMessages() {
   /* =====================================================
      ВЫБИРАЕМ, КТО ПИШЕТ
   ===================================================== */
-
-  function chooseSender(
-    value
-  ) {
-
-    setSender(
-      value
-    );
-
-
-    try {
-
-      localStorage.setItem(
-        "kessi-message-author",
-        value
-      );
-
-    } catch {
-      // ничего страшного
-    }
-  }
-
-
 
   /* =====================================================
      ПОДГОТОВКА CANVAS
@@ -1097,6 +1063,34 @@ export default function MiniMessages() {
 
       const data =
         await response.json();
+      if (
+  response.status === 401
+) {
+
+  window.location.href =
+    "/login";
+
+  return;
+}
+
+
+if (
+  !response.ok ||
+  !data?.ok
+) {
+
+  throw new Error(
+    data?.error ||
+    "Не удалось загрузить послания"
+  );
+
+}
+
+
+setViewer(
+  data.viewer
+);
+
 
 
       if (
@@ -1196,13 +1190,15 @@ async function deleteMessage(
               "application/json",
           },
 
-          body:
-            JSON.stringify({
-              id,
-              sender,
-            }),
-        }
-      );
+         body:
+  JSON.stringify({
+
+    message:
+      text,
+
+    drawingImage,
+
+  }),
 
 
     const data =
@@ -1287,54 +1283,23 @@ async function deleteMessage(
 
       </header>
 
+<div className="mini-message-current-author">
 
+  <span>
+    Сейчас здесь
+  </span>
 
-      {/* =================================================
-          КТО ПИШЕТ
-      ================================================= */}
+  <b>
+    {
+      viewer === "kessi"
+        ? "Кэссичка"
+        : "Обсидик"
+    }
+  </b>
 
-      <div className="mini-message-author">
+</div>
 
-        <span>
-          Пишу как:
-        </span>
-
-
-        <button
-          type="button"
-          className={
-            sender === "obsid"
-              ? "active"
-              : ""
-          }
-          onClick={() =>
-            chooseSender(
-              "obsid"
-            )
-          }
-        >
-          Обсидик
-        </button>
-
-
-        <button
-          type="button"
-          className={
-            sender === "kessi"
-              ? "active"
-              : ""
-          }
-          onClick={() =>
-            chooseSender(
-              "kessi"
-            )
-          }
-        >
-          Кэссичка
-        </button>
-
-      </div>
-
+      
 
 
       {/* =================================================
@@ -1403,7 +1368,7 @@ async function deleteMessage(
               >
 
                 <header>
-                {item.sender === sender && (
+                {item.sender === viewer && (
   <button
     type="button"
     className="mini-message-delete"
