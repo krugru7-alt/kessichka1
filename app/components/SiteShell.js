@@ -10,27 +10,23 @@ import DrakoshaBuddy from "./DrakoshaBuddy";
 
 
 /* =====================================================
-   ПОГОДА
+   ТИП ПОГОДЫ
 ===================================================== */
 
 function getWeatherClass(code) {
   const value = Number(code);
 
-  // ясно
   if (value === 0) {
     return "weather-clear";
   }
 
-  // облачно
   if (
-    value === 1 ||
-    value === 2 ||
-    value === 3
+    value >= 1 &&
+    value <= 3
   ) {
     return "weather-cloudy";
   }
 
-  // туман
   if (
     value === 45 ||
     value === 48
@@ -38,7 +34,6 @@ function getWeatherClass(code) {
     return "weather-fog";
   }
 
-  // дождь / морось / ливень
   if (
     (value >= 51 &&
       value <= 67) ||
@@ -48,7 +43,6 @@ function getWeatherClass(code) {
     return "weather-rain";
   }
 
-  // снег
   if (
     (value >= 71 &&
       value <= 77) ||
@@ -58,7 +52,6 @@ function getWeatherClass(code) {
     return "weather-snow";
   }
 
-  // гроза
   if (
     value >= 95 &&
     value <= 99
@@ -71,10 +64,7 @@ function getWeatherClass(code) {
 
 
 /* =====================================================
-   ВРЕМЯ ПО МИНСКУ
-
-   Оно теперь НЕ определяет основной цвет.
-   Только слегка меняет оттенок погоды.
+   ВРЕМЯ МИНСКА
 ===================================================== */
 
 function getMinskTimeClass() {
@@ -127,9 +117,9 @@ export default function SiteShell({
   children,
 }) {
   const [
-    lightOn,
-    setLightOn,
-  ] = useState(false);
+    theme,
+    setTheme,
+  ] = useState("light");
 
   const [
     ready,
@@ -152,22 +142,30 @@ export default function SiteShell({
 
 
   /* =====================================================
-     НАСТРОЙКИ + SERVICE WORKER
+     ЗАГРУЖАЕМ ТЕМУ
   ===================================================== */
 
   useEffect(() => {
     try {
       const saved =
         localStorage.getItem(
-          "kessi-light"
-        ) === "1";
+          "kessi-theme"
+        );
 
-      setLightOn(saved);
+      if (
+        saved === "dark" ||
+        saved === "light"
+      ) {
+        setTheme(saved);
+      }
     } catch {
-      // не критично
+      // ничего страшного
     }
 
     setReady(true);
+
+
+    /* SERVICE WORKER */
 
     if (
       "serviceWorker" in
@@ -207,9 +205,7 @@ export default function SiteShell({
 
 
   /* =====================================================
-     РЕАЛЬНАЯ ПОГОДА
-
-     Обновляем каждые 10 минут.
+     ПОГОДА
   ===================================================== */
 
   useEffect(() => {
@@ -273,22 +269,24 @@ export default function SiteShell({
 
 
   /* =====================================================
-     ДОПОЛНИТЕЛЬНЫЙ ТЁПЛЫЙ СВЕТ
+     СВЕТЛАЯ / ТЁМНАЯ ТЕМА
   ===================================================== */
 
-  function toggleLight() {
-    setLightOn(
+  function toggleTheme() {
+    setTheme(
       (current) => {
         const next =
-          !current;
+          current === "light"
+            ? "dark"
+            : "light";
 
         try {
           localStorage.setItem(
-            "kessi-light",
-            next ? "1" : "0"
+            "kessi-theme",
+            next
           );
         } catch {
-          // не критично
+          // ничего страшного
         }
 
         return next;
@@ -297,18 +295,18 @@ export default function SiteShell({
   }
 
 
+  const dark =
+    theme === "dark";
+
+
   return (
     <div
       className={`
         site-shell
-        weather-theme-v2
+        weather-theme-v3
+        theme-${theme}
         ${weatherClass}
         ${timeClass}
-        ${
-          lightOn
-            ? "light-on"
-            : ""
-        }
         ${
           ready
             ? "ready"
@@ -317,9 +315,7 @@ export default function SiteShell({
       `}
     >
 
-      {/* ===============================================
-          ПОГОДНЫЙ ФОН
-      =============================================== */}
+      {/* ПОГОДНЫЙ ФОН */}
 
       <div
         className="site-ambient"
@@ -347,15 +343,7 @@ export default function SiteShell({
       </div>
 
 
-      <div
-        className="site-light-wash"
-        aria-hidden="true"
-      />
-
-
-      {/* ===============================================
-          ВЕРХ
-      =============================================== */}
+      {/* ВЕРХНЯЯ ПАНЕЛЬ */}
 
       <header className="topbar">
 
@@ -384,38 +372,42 @@ export default function SiteShell({
         </a>
 
 
+        {/* ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ */}
+
         <button
-          className={`global-light ${
-            lightOn
-              ? "on"
-              : ""
-          }`}
           type="button"
-          onClick={toggleLight}
-          aria-pressed={lightOn}
+          className="theme-toggle"
+          onClick={toggleTheme}
+          aria-pressed={dark}
           title={
-            lightOn
-              ? "Убрать тёплый свет"
-              : "Добавить тёплый свет"
+            dark
+              ? "Включить светлую тему"
+              : "Включить тёмную тему"
           }
         >
 
-          <span>
-            {lightOn
-              ? "💡"
+          <span className="theme-toggle-icon">
+            {dark
+              ? "🌙"
               : "☀️"}
           </span>
 
-          <i />
+          <span
+            className={`theme-toggle-switch ${
+              dark
+                ? "dark"
+                : ""
+            }`}
+          >
+            <i />
+          </span>
 
         </button>
 
       </header>
 
 
-      {/* ===============================================
-          СТРАНИЦА
-      =============================================== */}
+      {/* КОНТЕНТ */}
 
       <main className="site-content">
         {children}
