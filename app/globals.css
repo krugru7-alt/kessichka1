@@ -18522,3 +18522,44 @@ body {
   }
 
 }
+/* =========================================
+   КАНЦЕЛЯРИЯ — УДАЛЕНИЕ ПОДПИСИ
+========================================= */
+
+.chancery-delete-signature {
+  margin-top: 10px;
+
+  border-color:
+    rgba(128, 51, 54, 0.25) !important;
+
+  background:
+    rgba(128, 51, 54, 0.06) !important;
+
+  color:
+    #803336 !important;
+}
+
+.chancery-delete-signature:hover {
+  background:
+    rgba(128, 51, 54, 0.12) !important;
+}
+
+.chancery-delete-signature:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+
+/* ТЁМНАЯ ТЕМА */
+
+.theme-dark
+.chancery-delete-signature {
+  border-color:
+    rgba(255, 165, 165, 0.22) !important;
+
+  background:
+    rgba(160, 60, 65, 0.12) !important;
+
+  color:
+    #ffb8bb !important;
+}
