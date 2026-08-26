@@ -1,141 +1,188 @@
-"use client";
+import Link from "next/link";
 
-import { useState } from "react";
+import {
+  redirect,
+} from "next/navigation";
 
-export default function AdminPage() {
-  const [secret, setSecret] = useState("");
+import {
+  getSession,
+} from "../lib/auth";
 
-  const [message, setMessage] = useState(
-    "бусссс ты те надулась"
-  );
 
-  const [sending, setSending] = useState(false);
-  const [status, setStatus] = useState("");
+export default async function AdminPage() {
 
-  async function sendNow() {
-    try {
-      setSending(true);
-      setStatus("Отправляю…");
+  const session =
+    await getSession();
 
-      const response = await fetch(
-        "/api/send-push",
-        {
-          method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${secret}`,
-          },
+  if (
+    !session
+  ) {
 
-          body: JSON.stringify({
-            title: "Внеплановый привет ❤️",
-            body: message,
-          }),
-        }
-      );
+    redirect(
+      "/login"
+    );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data?.error || "Ошибка отправки"
-        );
-      }
-
-      if (data.sent > 0) {
-        setStatus(
-          `Улетело сразу ❤️ Отправлено: ${data.sent}`
-        );
-      } else {
-        setStatus(
-          `Не отправилось. Подписок: ${data.total || 0}`
-        );
-
-        console.log(data.errors);
-      }
-    } catch (error) {
-      setStatus(
-        error?.message || "Ошибка"
-      );
-    } finally {
-      setSending(false);
-    }
   }
 
+
+  if (
+    session.role !==
+    "admin"
+  ) {
+
+    redirect(
+      "/"
+    );
+
+  }
+
+
   return (
-    <main
-      style={{
-        minHeight: "100svh",
-        padding: "40px 18px",
-        display: "grid",
-        placeItems: "center",
-      }}
-    >
-      <div
-        style={{
-          width: "min(100%, 450px)",
-          padding: "22px",
-          borderRadius: "24px",
-          background: "rgba(255,255,255,.06)",
-        }}
-      >
-        <h1>Отправить сейчас</h1>
 
-        <input
-          type="password"
-          placeholder="PUSH_SECRET"
-          value={secret}
-          onChange={(e) =>
-            setSecret(e.target.value)
-          }
-          style={{
-            width: "100%",
-            padding: "13px",
-            marginBottom: "12px",
-            borderRadius: "12px",
-          }}
-        />
+    <div className="page world-admin-page">
 
-        <textarea
-          value={message}
-          onChange={(e) =>
-            setMessage(e.target.value)
-          }
-          rows={4}
-          style={{
-            width: "100%",
-            padding: "13px",
-            borderRadius: "12px",
-          }}
-        />
 
-        <button
-          onClick={sendNow}
-          disabled={sending}
-          style={{
-            width: "100%",
-            marginTop: "14px",
-            padding: "14px",
-            borderRadius: "14px",
-            cursor: "pointer",
-          }}
+      <section className="world-admin-hero">
+
+
+        <small>
+          НАШ МИРОК · УПРАВЛЕНИЕ
+        </small>
+
+
+        <h1>
+          Панель Обсидика
+        </h1>
+
+
+        <p>
+          Здесь будем управлять тем,
+          что появляется в нашем мирке.
+        </p>
+
+
+        <Link
+          href="/"
+          className="world-admin-back"
         >
-          {sending
-            ? "Отправляю…"
-            : "Отправить прямо сейчас ❤️"}
-        </button>
+          ← Вернуться в наш мирок
+        </Link>
 
-        {status && (
-          <p
-            style={{
-              textAlign: "center",
-              marginTop: "12px",
-            }}
-          >
-            {status}
+
+      </section>
+
+
+
+      <section className="world-admin-grid">
+
+
+        <article className="world-admin-card">
+
+          <span>
+            ✉
+          </span>
+
+          <small>
+            ПОСЛАНИЯ
+          </small>
+
+          <h2>
+            Послания
+          </h2>
+
+          <p>
+            Тексты, рисунки и история наших записок.
           </p>
-        )}
-      </div>
-    </main>
+
+          <i>
+            скоро здесь
+          </i>
+
+        </article>
+
+
+
+        <article className="world-admin-card">
+
+          <span>
+            🔔
+          </span>
+
+          <small>
+            ПРИВЕТЫ
+          </small>
+
+          <h2>
+            Push
+          </h2>
+
+          <p>
+            Отсюда будем отправлять Кэссичке приветы на телефон.
+          </p>
+
+          <i>
+            подключим дальше
+          </i>
+
+        </article>
+
+
+
+        <article className="world-admin-card">
+
+          <span>
+            ⚖
+          </span>
+
+          <small>
+            ОТДЕЛ №01
+          </small>
+
+          <h2>
+            Всё серьёзно
+          </h2>
+
+          <p>
+            Документы, подписи, статусы и журнал Канцелярии.
+          </p>
+
+          <Link href="/chancery">
+            Открыть →
+          </Link>
+
+        </article>
+
+
+
+        <article className="world-admin-card">
+
+          <span>
+            ☀
+          </span>
+
+          <small>
+            ГЛАВНАЯ
+          </small>
+
+          <h2>
+            Наш мирок
+          </h2>
+
+          <p>
+            Позже здесь поменяем сообщения дня и расписание.
+          </p>
+
+          <Link href="/">
+            Посмотреть →
+          </Link>
+
+        </article>
+
+
+      </section>
+
+
+    </div>
   );
 }
