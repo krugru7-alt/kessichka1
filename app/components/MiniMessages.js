@@ -1112,10 +1112,38 @@ export default function MiniMessages() {
       }
 
 
-      closeComposer();
+     const savedMessage =
+  data.message;
 
 
-      await loadMessages();
+if (savedMessage) {
+  setMessages(
+    (current) => [
+      ...current,
+      savedMessage,
+    ].slice(-12)
+  );
+}
+
+
+closeComposer();
+
+
+/*
+  Обновляем серверный список
+  отдельно.
+
+  Даже если интернет мигнул,
+  уже сохранённое послание
+  не будет выглядеть как ошибка.
+*/
+
+window.setTimeout(
+  () => {
+    loadMessages();
+  },
+  300
+);
 
 
     } catch (error) {
