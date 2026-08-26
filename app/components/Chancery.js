@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 
-import { DOCUMENTS } from "./documents";
+import { DOCUMENTS } from "../chancery/documents";
 
 
 const FILTERS = [
@@ -730,7 +730,7 @@ export default function ChanceryPage() {
   ===================================================== */
 
   return (
-    <main className="chancery-page">
+  <section className="chancery-page chancery-embedded">
 
       {/* ШАПКА */}
 
@@ -1426,6 +1426,6 @@ export default function ChanceryPage() {
 
       )}
 
-    </main>
+   </section>
   );
 }
