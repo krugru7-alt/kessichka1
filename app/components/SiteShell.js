@@ -1,117 +1,220 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
 import BottomNav from "./BottomNav";
 import DrakoshaBuddy from "./DrakoshaBuddy";
 
+
+/* =====================================================
+   ПОГОДА
+===================================================== */
+
 function getWeatherClass(code) {
-  if (code === 0) {
+  const value = Number(code);
+
+  // ясно
+  if (value === 0) {
     return "weather-clear";
   }
 
-  if ([1, 2, 3].includes(code)) {
+  // облачно
+  if (
+    value === 1 ||
+    value === 2 ||
+    value === 3
+  ) {
     return "weather-cloudy";
   }
 
-  if ([45, 48].includes(code)) {
+  // туман
+  if (
+    value === 45 ||
+    value === 48
+  ) {
     return "weather-fog";
   }
 
+  // дождь / морось / ливень
   if (
-    [
-      51,
-      53,
-      55,
-      56,
-      57,
-      61,
-      63,
-      65,
-      66,
-      67,
-      80,
-      81,
-      82,
-    ].includes(code)
+    (value >= 51 &&
+      value <= 67) ||
+    (value >= 80 &&
+      value <= 82)
   ) {
     return "weather-rain";
   }
 
+  // снег
   if (
-    [71, 73, 75, 77, 85, 86].includes(
-      code
-    )
+    (value >= 71 &&
+      value <= 77) ||
+    value === 85 ||
+    value === 86
   ) {
     return "weather-snow";
   }
 
-  if ([95, 96, 99].includes(code)) {
+  // гроза
+  if (
+    value >= 95 &&
+    value <= 99
+  ) {
     return "weather-storm";
   }
 
-  return "weather-normal";
+  return "weather-cloudy";
 }
+
+
+/* =====================================================
+   ВРЕМЯ ПО МИНСКУ
+
+   Оно теперь НЕ определяет основной цвет.
+   Только слегка меняет оттенок погоды.
+===================================================== */
 
 function getMinskTimeClass() {
   const hour = Number(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "Europe/Minsk",
-      hour: "numeric",
-      hourCycle: "h23",
-    }).format(new Date())
+    new Intl.DateTimeFormat(
+      "en-US",
+      {
+        timeZone:
+          "Europe/Minsk",
+
+        hour:
+          "numeric",
+
+        hourCycle:
+          "h23",
+      }
+    ).format(new Date())
   );
 
-  if (hour >= 6 && hour < 11) {
+  if (
+    hour >= 5 &&
+    hour < 12
+  ) {
     return "time-morning";
   }
 
-  if (hour >= 11 && hour < 18) {
+  if (
+    hour >= 12 &&
+    hour < 18
+  ) {
     return "time-day";
   }
 
-  if (hour >= 18 && hour < 22) {
+  if (
+    hour >= 18 &&
+    hour < 22
+  ) {
     return "time-evening";
   }
 
   return "time-night";
 }
 
+
+/* =====================================================
+   SITE SHELL
+===================================================== */
+
 export default function SiteShell({
   children,
 }) {
-  const [lightOn, setLightOn] =
-    useState(false);
+  const [
+    lightOn,
+    setLightOn,
+  ] = useState(false);
 
-  const [ready, setReady] =
-    useState(false);
+  const [
+    ready,
+    setReady,
+  ] = useState(false);
 
-  const [weatherClass, setWeatherClass] =
-    useState("weather-normal");
+  const [
+    weatherClass,
+    setWeatherClass,
+  ] = useState(
+    "weather-cloudy"
+  );
 
-  const [timeClass, setTimeClass] =
-    useState("time-night");
+  const [
+    timeClass,
+    setTimeClass,
+  ] = useState(
+    "time-day"
+  );
+
+
+  /* =====================================================
+     НАСТРОЙКИ + SERVICE WORKER
+  ===================================================== */
 
   useEffect(() => {
-    const saved =
-      localStorage.getItem(
-        "kessi-light"
-      ) === "1";
+    try {
+      const saved =
+        localStorage.getItem(
+          "kessi-light"
+        ) === "1";
 
-    setLightOn(saved);
-    setTimeClass(
-      getMinskTimeClass()
-    );
+      setLightOn(saved);
+    } catch {
+      // не критично
+    }
 
     setReady(true);
 
-    if ("serviceWorker" in navigator) {
+    if (
+      "serviceWorker" in
+      navigator
+    ) {
       navigator.serviceWorker
         .register("/sw.js")
         .catch(() => {});
     }
   }, []);
 
+
+  /* =====================================================
+     ВРЕМЯ МИНСКА
+  ===================================================== */
+
   useEffect(() => {
+    function updateTime() {
+      setTimeClass(
+        getMinskTimeClass()
+      );
+    }
+
+    updateTime();
+
+    const timer =
+      window.setInterval(
+        updateTime,
+        60000
+      );
+
+    return () =>
+      window.clearInterval(
+        timer
+      );
+  }, []);
+
+
+  /* =====================================================
+     РЕАЛЬНАЯ ПОГОДА
+
+     Обновляем каждые 10 минут.
+  ===================================================== */
+
+  useEffect(() => {
+    let active = true;
+
     async function loadWeather() {
       try {
         const response =
@@ -122,95 +225,137 @@ export default function SiteShell({
             }
           );
 
+        if (!response.ok) {
+          throw new Error(
+            "weather error"
+          );
+        }
+
         const data =
           await response.json();
 
-        if (
-          typeof data?.weatherCode ===
-          "number"
-        ) {
-          setWeatherClass(
-            getWeatherClass(
-              data.weatherCode
-            )
-          );
+        if (!active) {
+          return;
         }
-      } catch {
+
         setWeatherClass(
-          "weather-normal"
+          getWeatherClass(
+            data.weatherCode
+          )
+        );
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        setWeatherClass(
+          "weather-cloudy"
         );
       }
     }
 
     loadWeather();
 
-    const weatherTimer =
-      setInterval(
+    const timer =
+      window.setInterval(
         loadWeather,
         10 * 60 * 1000
       );
 
     return () => {
-      clearInterval(weatherTimer);
+      active = false;
+
+      window.clearInterval(
+        timer
+      );
     };
   }, []);
 
-  useEffect(() => {
-    const timeTimer =
-      setInterval(() => {
-        setTimeClass(
-          getMinskTimeClass()
-        );
-      }, 60 * 1000);
 
-    return () => {
-      clearInterval(timeTimer);
-    };
-  }, []);
+  /* =====================================================
+     ДОПОЛНИТЕЛЬНЫЙ ТЁПЛЫЙ СВЕТ
+  ===================================================== */
 
   function toggleLight() {
-    setLightOn((current) => {
-      const next = !current;
+    setLightOn(
+      (current) => {
+        const next =
+          !current;
 
-      localStorage.setItem(
-        "kessi-light",
-        next ? "1" : "0"
-      );
+        try {
+          localStorage.setItem(
+            "kessi-light",
+            next ? "1" : "0"
+          );
+        } catch {
+          // не критично
+        }
 
-      return next;
-    });
+        return next;
+      }
+    );
   }
+
 
   return (
     <div
       className={`
         site-shell
+        weather-theme-v2
         ${weatherClass}
         ${timeClass}
-        ${lightOn ? "light-on" : ""}
-        ${ready ? "ready" : ""}
+        ${
+          lightOn
+            ? "light-on"
+            : ""
+        }
+        ${
+          ready
+            ? "ready"
+            : ""
+        }
       `}
     >
+
+      {/* ===============================================
+          ПОГОДНЫЙ ФОН
+      =============================================== */}
+
       <div
         className="site-ambient"
         aria-hidden="true"
       />
 
+
       <div
         className="weather-effects"
         aria-hidden="true"
       >
-        <div className="rain-layer" />
-        <div className="snow-layer" />
-        <div className="fog-layer" />
-        <div className="storm-layer" />
+
         <div className="sun-layer" />
+
+        <div className="cloud-layer" />
+
+        <div className="rain-layer" />
+
+        <div className="fog-layer" />
+
+        <div className="snow-layer" />
+
+        <div className="storm-layer" />
+
       </div>
+
 
       <div
         className="site-light-wash"
         aria-hidden="true"
       />
+
+
+      {/* ===============================================
+          ВЕРХ
+      =============================================== */}
 
       <header className="topbar">
 
@@ -230,31 +375,35 @@ export default function SiteShell({
             </b>
 
             <small>
-              маленький уголок в интернете
+              маленький уголок
+              в интернете
             </small>
 
           </span>
 
         </a>
 
+
         <button
           className={`global-light ${
-            lightOn ? "on" : ""
+            lightOn
+              ? "on"
+              : ""
           }`}
           type="button"
           onClick={toggleLight}
           aria-pressed={lightOn}
           title={
             lightOn
-              ? "Выключить свет"
-              : "Включить свет"
+              ? "Убрать тёплый свет"
+              : "Добавить тёплый свет"
           }
         >
 
           <span>
             {lightOn
               ? "💡"
-              : "🌙"}
+              : "☀️"}
           </span>
 
           <i />
@@ -263,9 +412,15 @@ export default function SiteShell({
 
       </header>
 
+
+      {/* ===============================================
+          СТРАНИЦА
+      =============================================== */}
+
       <main className="site-content">
         {children}
       </main>
+
 
       <DrakoshaBuddy />
 
