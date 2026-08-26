@@ -1,20 +1,34 @@
 import { neon } from "@neondatabase/serverless";
 
-export const dynamic = "force-dynamic";
-export const runtime = "nodejs";
+export const dynamic =
+  "force-dynamic";
 
+export const runtime =
+  "nodejs";
+
+
+/* =====================================================
+   NEON
+===================================================== */
 
 function getSql() {
+
   const databaseUrl =
     process.env.DATABASE_URL;
 
+
   if (!databaseUrl) {
+
     throw new Error(
       "DATABASE_URL не найден"
     );
+
   }
 
-  return neon(databaseUrl);
+
+  return neon(
+    databaseUrl
+  );
 }
 
 
@@ -24,29 +38,53 @@ const ALLOWED_SENDERS = [
 ];
 
 
-function normalizeMessage(row) {
+
+/* =====================================================
+   НОРМАЛИЗАЦИЯ
+===================================================== */
+
+function normalizeMessage(
+  row
+) {
+
   return {
+
     id:
-      Number(row.id),
+      Number(
+        row.id
+      ),
+
 
     sender:
       row.sender,
 
+
     message:
-      row.message,
+      row.message || "",
+
+
+    drawingImage:
+      row.drawing_image ||
+      null,
+
 
     createdAt:
       row.created_at,
+
   };
 }
 
 
+
 /* =====================================================
-   ПОЛУЧИТЬ ПОСЛЕДНИЕ ПОСЛАНИЯ
+   GET
+   ПОСЛЕДНИЕ ПОСЛАНИЯ
 ===================================================== */
 
 export async function GET() {
+
   try {
+
     const sql =
       getSql();
 
@@ -57,6 +95,7 @@ export async function GET() {
           id,
           sender,
           message,
+          drawing_image,
           created_at
 
         FROM kessi_messages
@@ -64,13 +103,14 @@ export async function GET() {
         ORDER BY
           created_at DESC
 
-        LIMIT 8
+        LIMIT 12
       `;
 
 
     /*
-      В базе получаем от новых к старым,
-      а на экране показываем по порядку.
+      Получаем новые первыми,
+      на экране разворачиваем
+      в нормальный порядок.
     */
 
     const messages =
@@ -83,18 +123,29 @@ export async function GET() {
 
     return Response.json(
       {
-        ok: true,
+
+        ok:
+          true,
+
+
         messages,
+
       },
       {
+
         headers: {
+
           "Cache-Control":
             "no-store",
+
         },
+
       }
     );
 
+
   } catch (error) {
+
     console.error(
       "Ошибка получения посланий:",
       error
@@ -103,27 +154,39 @@ export async function GET() {
 
     return Response.json(
       {
-        ok: false,
+
+        ok:
+          false,
+
 
         error:
           "Не удалось получить послания",
+
       },
       {
-        status: 500,
+
+        status:
+          500,
+
       }
     );
+
   }
 }
 
 
+
 /* =====================================================
-   ОСТАВИТЬ ПОСЛАНИЕ
+   POST
+   ТЕКСТ ИЛИ РИСУНОК
 ===================================================== */
 
 export async function POST(
   request
 ) {
+
   try {
+
     const sql =
       getSql();
 
@@ -132,15 +195,55 @@ export async function POST(
       await request.json();
 
 
+
+    /* ===============================================
+       ОТПРАВИТЕЛЬ
+    =============================================== */
+
     const sender =
       String(
-        body?.sender || ""
+        body?.sender ||
+        ""
       ).trim();
 
 
+    if (
+      !ALLOWED_SENDERS.includes(
+        sender
+      )
+    ) {
+
+      return Response.json(
+        {
+
+          ok:
+            false,
+
+
+          error:
+            "Некорректный отправитель",
+
+        },
+        {
+
+          status:
+            400,
+
+        }
+      );
+
+    }
+
+
+
+    /* ===============================================
+       ТЕКСТ
+    =============================================== */
+
     const message =
       String(
-        body?.message || ""
+        body?.message ||
+        ""
       )
         .trim()
         .slice(
@@ -149,51 +252,129 @@ export async function POST(
         );
 
 
+
+    /* ===============================================
+       РИСУНОК
+    =============================================== */
+
+    const drawingImage =
+      String(
+        body?.drawingImage ||
+        ""
+      ).trim();
+
+
     if (
-      !ALLOWED_SENDERS.includes(
-        sender
+      drawingImage &&
+      !drawingImage.startsWith(
+        "data:image/"
       )
     ) {
+
       return Response.json(
         {
-          ok: false,
+
+          ok:
+            false,
+
 
           error:
-            "Некорректный отправитель",
+            "Некорректный рисунок",
+
         },
         {
-          status: 400,
+
+          status:
+            400,
+
         }
       );
+
     }
 
 
-    if (!message) {
+    /*
+      Ограничение, чтобы случайно
+      не отправить огромную картинку.
+    */
+
+    if (
+      drawingImage.length >
+      700000
+    ) {
+
       return Response.json(
         {
-          ok: false,
+
+          ok:
+            false,
+
+
+          error:
+            "Рисунок слишком большой",
+
+        },
+        {
+
+          status:
+            400,
+
+        }
+      );
+
+    }
+
+
+
+    /* ===============================================
+       ДОЛЖЕН БЫТЬ ХОТЯ БЫ ТЕКСТ ИЛИ РИСУНОК
+    =============================================== */
+
+    if (
+      !message &&
+      !drawingImage
+    ) {
+
+      return Response.json(
+        {
+
+          ok:
+            false,
+
 
           error:
             "Послание пустое",
+
         },
         {
-          status: 400,
+
+          status:
+            400,
+
         }
       );
+
     }
 
+
+
+    /* ===============================================
+       СОХРАНЯЕМ
+    =============================================== */
 
     const rows =
       await sql`
         INSERT INTO kessi_messages (
           sender,
           message,
+          drawing_image,
           created_at
         )
 
         VALUES (
           ${sender},
           ${message},
+          ${drawingImage || null},
           NOW()
         )
 
@@ -201,20 +382,27 @@ export async function POST(
           id,
           sender,
           message,
+          drawing_image,
           created_at
       `;
 
 
     return Response.json({
-      ok: true,
+
+      ok:
+        true,
+
 
       message:
         normalizeMessage(
           rows[0]
         ),
+
     });
 
+
   } catch (error) {
+
     console.error(
       "Ошибка сохранения послания:",
       error
@@ -223,14 +411,22 @@ export async function POST(
 
     return Response.json(
       {
-        ok: false,
+
+        ok:
+          false,
+
 
         error:
           "Не удалось оставить послание",
+
       },
       {
-        status: 500,
+
+        status:
+          500,
+
       }
     );
+
   }
 }
