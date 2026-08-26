@@ -1,5 +1,10 @@
 import { neon } from "@neondatabase/serverless";
 
+import {
+  getSession,
+} from "../../lib/auth";
+
+
 export const dynamic =
   "force-dynamic";
 
@@ -8,14 +13,19 @@ export const runtime =
 
 
 function getSql() {
+
   const databaseUrl =
     process.env.DATABASE_URL;
 
+
   if (!databaseUrl) {
+
     throw new Error(
       "DATABASE_URL не найден"
     );
+
   }
+
 
   return neon(
     databaseUrl
@@ -23,19 +33,15 @@ function getSql() {
 }
 
 
-const ALLOWED_SENDERS = [
-  "obsid",
-  "kessi",
-];
-
 
 /* =====================================================
-   ПРОВЕРЯЕМ СТРУКТУРУ ТАБЛИЦЫ
+   ТАБЛИЦА
 ===================================================== */
 
 async function ensureTable(
   sql
 ) {
+
   await sql`
     CREATE TABLE IF NOT EXISTS kessi_messages (
       id BIGSERIAL PRIMARY KEY,
@@ -47,11 +53,6 @@ async function ensureTable(
   `;
 
 
-  /*
-    Если таблица была создана раньше
-    без рисунков — просто добавляем поле.
-  */
-
   await sql`
     ALTER TABLE kessi_messages
     ADD COLUMN IF NOT EXISTS drawing_image TEXT
@@ -59,14 +60,17 @@ async function ensureTable(
 }
 
 
+
 /* =====================================================
-   НОРМАЛИЗАЦИЯ
+   ФОРМАТ
 ===================================================== */
 
 function normalizeMessage(
   row
 ) {
+
   return {
+
     id:
       Number(
         row.id
@@ -79,13 +83,48 @@ function normalizeMessage(
       row.message || "",
 
     drawingImage:
-      row.drawing_image ||
-      null,
+      row.drawing_image || null,
 
     createdAt:
       row.created_at,
+
   };
 }
+
+
+
+/* =====================================================
+   НЕТ СЕССИИ
+===================================================== */
+
+function unauthorized() {
+
+  return Response.json(
+    {
+
+      ok:
+        false,
+
+      error:
+        "Нужно войти в Наш мирок",
+
+    },
+    {
+
+      status:
+        401,
+
+      headers: {
+
+        "Cache-Control":
+          "no-store",
+
+      },
+
+    }
+  );
+}
+
 
 
 /* =====================================================
@@ -93,7 +132,20 @@ function normalizeMessage(
 ===================================================== */
 
 export async function GET() {
+
   try {
+
+    const session =
+      await getSession();
+
+
+    if (!session) {
+
+      return unauthorized();
+
+    }
+
+
     const sql =
       getSql();
 
@@ -123,7 +175,12 @@ export async function GET() {
 
     return Response.json(
       {
-        ok: true,
+
+        ok:
+          true,
+
+        viewer:
+          session.user,
 
         messages:
           rows
@@ -131,16 +188,23 @@ export async function GET() {
               normalizeMessage
             )
             .reverse(),
+
       },
       {
+
         headers: {
+
           "Cache-Control":
             "no-store",
+
         },
+
       }
     );
 
+
   } catch (error) {
+
     console.error(
       "GET /api/messages:",
       error
@@ -149,26 +213,25 @@ export async function GET() {
 
     return Response.json(
       {
-        ok: false,
+
+        ok:
+          false,
 
         error:
           "Не удалось получить послания",
 
-        details:
-          process.env.NODE_ENV ===
-          "development"
-            ? String(
-                error?.message ||
-                error
-              )
-            : undefined,
       },
       {
-        status: 500,
+
+        status:
+          500,
+
       }
     );
+
   }
 }
+
 
 
 /* =====================================================
@@ -178,7 +241,20 @@ export async function GET() {
 export async function POST(
   request
 ) {
+
   try {
+
+    const session =
+      await getSession();
+
+
+    if (!session) {
+
+      return unauthorized();
+
+    }
+
+
     const sql =
       getSql();
 
@@ -192,29 +268,18 @@ export async function POST(
       await request.json();
 
 
+    /*
+      ВАЖНО:
+
+      sender больше вообще
+      не принимаем от браузера.
+
+      Автор определяется
+      исключительно cookie.
+    */
+
     const sender =
-      String(
-        body?.sender || ""
-      ).trim();
-
-
-    if (
-      !ALLOWED_SENDERS.includes(
-        sender
-      )
-    ) {
-      return Response.json(
-        {
-          ok: false,
-
-          error:
-            "Некорректный отправитель",
-        },
-        {
-          status: 400,
-        }
-      );
-    }
+      session.user;
 
 
     const message =
@@ -230,8 +295,7 @@ export async function POST(
 
     const drawingImage =
       String(
-        body?.drawingImage ||
-        ""
+        body?.drawingImage || ""
       ).trim();
 
 
@@ -241,40 +305,51 @@ export async function POST(
         "data:image/"
       )
     ) {
+
       return Response.json(
         {
-          ok: false,
+
+          ok:
+            false,
 
           error:
             "Некорректный рисунок",
+
         },
         {
-          status: 400,
+
+          status:
+            400,
+
         }
       );
+
     }
 
-
-    /*
-      Не даём отправить слишком
-      тяжёлую картинку.
-    */
 
     if (
       drawingImage.length >
       700000
     ) {
+
       return Response.json(
         {
-          ok: false,
+
+          ok:
+            false,
 
           error:
             "Рисунок слишком большой",
+
         },
         {
-          status: 400,
+
+          status:
+            400,
+
         }
       );
+
     }
 
 
@@ -282,17 +357,25 @@ export async function POST(
       !message &&
       !drawingImage
     ) {
+
       return Response.json(
         {
-          ok: false,
+
+          ok:
+            false,
 
           error:
             "Послание пустое",
+
         },
         {
-          status: 400,
+
+          status:
+            400,
+
         }
       );
+
     }
 
 
@@ -322,15 +405,20 @@ export async function POST(
 
 
     return Response.json({
-      ok: true,
+
+      ok:
+        true,
 
       message:
         normalizeMessage(
           rows[0]
         ),
+
     });
 
+
   } catch (error) {
+
     console.error(
       "POST /api/messages:",
       error
@@ -339,26 +427,49 @@ export async function POST(
 
     return Response.json(
       {
-        ok: false,
+
+        ok:
+          false,
 
         error:
           "Не удалось оставить послание",
+
       },
       {
-        status: 500,
+
+        status:
+          500,
+
       }
     );
+
   }
 }
+
+
+
 /* =====================================================
    DELETE
-   УДАЛИТЬ СВОЁ ПОСЛАНИЕ
+   ТОЛЬКО СВОЁ ПОСЛАНИЕ
 ===================================================== */
 
 export async function DELETE(
   request
 ) {
+
   try {
+
+    const session =
+      await getSession();
+
+
+    if (!session) {
+
+      return unauthorized();
+
+    }
+
+
     const sql =
       getSql();
 
@@ -378,50 +489,40 @@ export async function DELETE(
       );
 
 
-    const sender =
-      String(
-        body?.sender || ""
-      ).trim();
-
-
     if (
-      !Number.isInteger(id) ||
+      !Number.isInteger(
+        id
+      ) ||
       id <= 0
     ) {
+
       return Response.json(
         {
-          ok: false,
+
+          ok:
+            false,
+
           error:
-            "Некорректный id",
+            "Некорректное послание",
+
         },
         {
-          status: 400,
+
+          status:
+            400,
+
         }
       );
-    }
 
-
-    if (
-      !ALLOWED_SENDERS.includes(
-        sender
-      )
-    ) {
-      return Response.json(
-        {
-          ok: false,
-          error:
-            "Некорректный отправитель",
-        },
-        {
-          status: 400,
-        }
-      );
     }
 
 
     /*
-      Удаляем только если совпадает
-      и ID послания, и автор.
+      Даже если через консоль
+      подставить чужой ID,
+      удалить его нельзя.
+
+      sender берётся из cookie.
     */
 
     const rows =
@@ -430,7 +531,7 @@ export async function DELETE(
 
         WHERE
           id = ${id}
-          AND sender = ${sender}
+          AND sender = ${session.user}
 
         RETURNING id
       `;
@@ -439,25 +540,41 @@ export async function DELETE(
     if (
       rows.length === 0
     ) {
+
       return Response.json(
         {
-          ok: false,
+
+          ok:
+            false,
+
           error:
-            "Послание не найдено",
+            "Можно удалить только своё послание",
+
         },
         {
-          status: 404,
+
+          status:
+            403,
+
         }
       );
+
     }
 
 
     return Response.json({
-      ok: true,
-      deletedId: id,
+
+      ok:
+        true,
+
+      deletedId:
+        id,
+
     });
 
+
   } catch (error) {
+
     console.error(
       "DELETE /api/messages:",
       error
@@ -466,13 +583,21 @@ export async function DELETE(
 
     return Response.json(
       {
-        ok: false,
+
+        ok:
+          false,
+
         error:
           "Не удалось удалить послание",
+
       },
       {
-        status: 500,
+
+        status:
+          500,
+
       }
     );
+
   }
 }
