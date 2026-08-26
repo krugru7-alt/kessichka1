@@ -23,7 +23,7 @@ function getSql() {
 
 
 /* =====================================================
-   ПРЕОБРАЗОВАНИЕ СТРОКИ ИЗ БАЗЫ
+   ПРЕОБРАЗОВАНИЕ СТРОКИ
 ===================================================== */
 
 function normalizeRow(row) {
@@ -77,6 +77,7 @@ export async function GET() {
       ORDER BY updated_at DESC
     `;
 
+
     return Response.json(
       {
         ok: true,
@@ -99,6 +100,7 @@ export async function GET() {
       "Ошибка получения подписей:",
       error
     );
+
 
     return Response.json(
       {
@@ -131,11 +133,15 @@ export async function POST(
       await request.json();
 
 
-    /* DOCUMENT ID */
-
     const documentId =
       String(
         body?.documentId || ""
+      ).trim();
+
+
+    const image =
+      String(
+        body?.image || ""
       ).trim();
 
 
@@ -143,7 +149,6 @@ export async function POST(
       return Response.json(
         {
           ok: false,
-
           error:
             "documentId не указан",
         },
@@ -154,14 +159,6 @@ export async function POST(
     }
 
 
-    /* ИЗОБРАЖЕНИЕ ПОДПИСИ */
-
-    const image =
-      String(
-        body?.image || ""
-      ).trim();
-
-
     if (
       !image.startsWith(
         "data:image/"
@@ -170,7 +167,6 @@ export async function POST(
       return Response.json(
         {
           ok: false,
-
           error:
             "Некорректная подпись",
         },
@@ -180,8 +176,6 @@ export async function POST(
       );
     }
 
-
-    /* КООРДИНАТЫ */
 
     const rawX =
       Number(body?.x);
@@ -231,16 +225,16 @@ export async function POST(
         : 27;
 
 
-    /* ДАТА */
-
     let signedAt =
       new Date();
+
 
     if (body?.signedAt) {
       const parsed =
         new Date(
           body.signedAt
         );
+
 
       if (
         Number.isNaN(
@@ -250,7 +244,6 @@ export async function POST(
         return Response.json(
           {
             ok: false,
-
             error:
               "Некорректная дата",
           },
@@ -260,14 +253,11 @@ export async function POST(
         );
       }
 
+
       signedAt =
         parsed;
     }
 
-
-    /* =================================================
-       INSERT / UPDATE
-    ================================================= */
 
     const rows = await sql`
       INSERT INTO chancery_signatures (
@@ -340,12 +330,95 @@ export async function POST(
       error
     );
 
+
     return Response.json(
       {
         ok: false,
 
         error:
           "Не удалось сохранить подпись",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
+
+/* =====================================================
+   DELETE
+   УДАЛИТЬ ПОДПИСЬ
+===================================================== */
+
+export async function DELETE(
+  request
+) {
+  try {
+    const sql =
+      getSql();
+
+
+    const body =
+      await request.json();
+
+
+    const documentId =
+      String(
+        body?.documentId || ""
+      ).trim();
+
+
+    if (!documentId) {
+      return Response.json(
+        {
+          ok: false,
+
+          error:
+            "documentId не указан",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+
+    const rows = await sql`
+      DELETE FROM
+        chancery_signatures
+
+      WHERE
+        document_id =
+          ${documentId}
+
+      RETURNING
+        document_id
+    `;
+
+
+    return Response.json({
+      ok: true,
+
+      deleted:
+        rows.length > 0,
+
+      documentId,
+    });
+
+  } catch (error) {
+    console.error(
+      "Ошибка удаления подписи:",
+      error
+    );
+
+
+    return Response.json(
+      {
+        ok: false,
+
+        error:
+          "Не удалось удалить подпись",
       },
       {
         status: 500,
