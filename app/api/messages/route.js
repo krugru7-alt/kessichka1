@@ -350,3 +350,129 @@ export async function POST(
     );
   }
 }
+/* =====================================================
+   DELETE
+   УДАЛИТЬ СВОЁ ПОСЛАНИЕ
+===================================================== */
+
+export async function DELETE(
+  request
+) {
+  try {
+    const sql =
+      getSql();
+
+
+    await ensureTable(
+      sql
+    );
+
+
+    const body =
+      await request.json();
+
+
+    const id =
+      Number(
+        body?.id
+      );
+
+
+    const sender =
+      String(
+        body?.sender || ""
+      ).trim();
+
+
+    if (
+      !Number.isInteger(id) ||
+      id <= 0
+    ) {
+      return Response.json(
+        {
+          ok: false,
+          error:
+            "Некорректный id",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+
+    if (
+      !ALLOWED_SENDERS.includes(
+        sender
+      )
+    ) {
+      return Response.json(
+        {
+          ok: false,
+          error:
+            "Некорректный отправитель",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+
+    /*
+      Удаляем только если совпадает
+      и ID послания, и автор.
+    */
+
+    const rows =
+      await sql`
+        DELETE FROM kessi_messages
+
+        WHERE
+          id = ${id}
+          AND sender = ${sender}
+
+        RETURNING id
+      `;
+
+
+    if (
+      rows.length === 0
+    ) {
+      return Response.json(
+        {
+          ok: false,
+          error:
+            "Послание не найдено",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+
+    return Response.json({
+      ok: true,
+      deletedId: id,
+    });
+
+  } catch (error) {
+    console.error(
+      "DELETE /api/messages:",
+      error
+    );
+
+
+    return Response.json(
+      {
+        ok: false,
+        error:
+          "Не удалось удалить послание",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
