@@ -1,27 +1,53 @@
-import { sql } from "@vercel/postgres";
+import { neon } from "@neondatabase/serverless";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 
 /* =====================================================
-   ПРЕОБРАЗУЕМ СТРОКУ ИЗ БАЗЫ
+   ПОДКЛЮЧЕНИЕ К NEON
+===================================================== */
+
+function getSql() {
+  const databaseUrl =
+    process.env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    throw new Error(
+      "DATABASE_URL не найден"
+    );
+  }
+
+  return neon(databaseUrl);
+}
+
+
+/* =====================================================
+   ПРЕОБРАЗОВАНИЕ СТРОКИ ИЗ БАЗЫ
 ===================================================== */
 
 function normalizeRow(row) {
   return {
-    documentId: row.document_id,
+    documentId:
+      row.document_id,
 
-    image: row.signature_image,
+    image:
+      row.signature_image,
 
-    signedAt: row.signed_at,
+    signedAt:
+      row.signed_at,
 
-    x: Number(row.x),
+    x:
+      Number(row.x),
 
-    y: Number(row.y),
+    y:
+      Number(row.y),
 
-    width: Number(row.width),
+    width:
+      Number(row.width),
 
-    updatedAt: row.updated_at,
+    updatedAt:
+      row.updated_at,
   };
 }
 
@@ -33,7 +59,10 @@ function normalizeRow(row) {
 
 export async function GET() {
   try {
-    const result = await sql`
+    const sql =
+      getSql();
+
+    const rows = await sql`
       SELECT
         document_id,
         signature_image,
@@ -42,7 +71,9 @@ export async function GET() {
         y,
         width,
         updated_at
+
       FROM chancery_signatures
+
       ORDER BY updated_at DESC
     `;
 
@@ -51,7 +82,7 @@ export async function GET() {
         ok: true,
 
         signatures:
-          result.rows.map(
+          rows.map(
             normalizeRow
           ),
       },
@@ -62,6 +93,7 @@ export async function GET() {
         },
       }
     );
+
   } catch (error) {
     console.error(
       "Ошибка получения подписей:",
@@ -71,6 +103,7 @@ export async function GET() {
     return Response.json(
       {
         ok: false,
+
         error:
           "Не удалось получить подписи",
       },
@@ -87,19 +120,22 @@ export async function GET() {
    СОХРАНИТЬ / ОБНОВИТЬ ПОДПИСЬ
 ===================================================== */
 
-export async function POST(request) {
+export async function POST(
+  request
+) {
   try {
+    const sql =
+      getSql();
+
     const body =
       await request.json();
+
+
+    /* DOCUMENT ID */
 
     const documentId =
       String(
         body?.documentId || ""
-      ).trim();
-
-    const image =
-      String(
-        body?.image || ""
       ).trim();
 
 
@@ -107,6 +143,7 @@ export async function POST(request) {
       return Response.json(
         {
           ok: false,
+
           error:
             "documentId не указан",
         },
@@ -117,6 +154,14 @@ export async function POST(request) {
     }
 
 
+    /* ИЗОБРАЖЕНИЕ ПОДПИСИ */
+
+    const image =
+      String(
+        body?.image || ""
+      ).trim();
+
+
     if (
       !image.startsWith(
         "data:image/"
@@ -125,6 +170,7 @@ export async function POST(request) {
       return Response.json(
         {
           ok: false,
+
           error:
             "Некорректная подпись",
         },
@@ -135,57 +181,95 @@ export async function POST(request) {
     }
 
 
+    /* КООРДИНАТЫ */
+
+    const rawX =
+      Number(body?.x);
+
+    const rawY =
+      Number(body?.y);
+
+    const rawWidth =
+      Number(body?.width);
+
+
     const x =
-      Number.isFinite(
-        Number(body.x)
-      )
-        ? Number(body.x)
+      Number.isFinite(rawX)
+        ? Math.max(
+            0,
+            Math.min(
+              100,
+              rawX
+            )
+          )
         : 50;
 
 
     const y =
-      Number.isFinite(
-        Number(body.y)
-      )
-        ? Number(body.y)
+      Number.isFinite(rawY)
+        ? Math.max(
+            0,
+            Math.min(
+              100,
+              rawY
+            )
+          )
         : 86;
 
 
     const width =
       Number.isFinite(
-        Number(body.width)
+        rawWidth
       )
-        ? Number(body.width)
+        ? Math.max(
+            10,
+            Math.min(
+              60,
+              rawWidth
+            )
+          )
         : 27;
 
 
-    const signedAt =
-      body.signedAt
-        ? new Date(
-            body.signedAt
-          )
-        : new Date();
+    /* ДАТА */
 
+    let signedAt =
+      new Date();
 
-    if (
-      Number.isNaN(
-        signedAt.getTime()
-      )
-    ) {
-      return Response.json(
-        {
-          ok: false,
-          error:
-            "Некорректная дата",
-        },
-        {
-          status: 400,
-        }
-      );
+    if (body?.signedAt) {
+      const parsed =
+        new Date(
+          body.signedAt
+        );
+
+      if (
+        Number.isNaN(
+          parsed.getTime()
+        )
+      ) {
+        return Response.json(
+          {
+            ok: false,
+
+            error:
+              "Некорректная дата",
+          },
+          {
+            status: 400,
+          }
+        );
+      }
+
+      signedAt =
+        parsed;
     }
 
 
-    const result = await sql`
+    /* =================================================
+       INSERT / UPDATE
+    ================================================= */
+
+    const rows = await sql`
       INSERT INTO chancery_signatures (
         document_id,
         signature_image,
@@ -206,9 +290,12 @@ export async function POST(request) {
         NOW()
       )
 
-      ON CONFLICT (document_id)
+      ON CONFLICT (
+        document_id
+      )
 
       DO UPDATE SET
+
         signature_image =
           EXCLUDED.signature_image,
 
@@ -243,9 +330,10 @@ export async function POST(request) {
 
       signature:
         normalizeRow(
-          result.rows[0]
+          rows[0]
         ),
     });
+
   } catch (error) {
     console.error(
       "Ошибка сохранения подписи:",
@@ -255,6 +343,7 @@ export async function POST(request) {
     return Response.json(
       {
         ok: false,
+
         error:
           "Не удалось сохранить подпись",
       },
