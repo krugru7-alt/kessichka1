@@ -18637,3 +18637,806 @@ body {
   }
 
 }
+/* =========================================================
+   КАНЦЕЛЯРИЯ · НОРМАЛЬНАЯ ТЁМНАЯ ТЕМА
+   ВСТАВИТЬ В САМЫЙ КОНЕЦ globals.css
+========================================================= */
+
+
+/* =========================================================
+   ОСНОВНАЯ СТРАНИЦА
+========================================================= */
+
+.theme-dark .chancery-page {
+  color: #f4eee7 !important;
+}
+
+
+/* =========================================================
+   ШАПКА "ВСЁ СЕРЬЁЗНО"
+========================================================= */
+
+.theme-dark .chancery-department-head {
+  background:
+    linear-gradient(
+      145deg,
+      #272b2d 0%,
+      #202426 100%
+    ) !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.08) !important;
+
+  color: #f6f0e9 !important;
+}
+
+
+.theme-dark
+.chancery-department-copy small {
+  color: #c4878b !important;
+}
+
+
+.theme-dark
+.chancery-department-copy h1 {
+  color: #fffaf4 !important;
+}
+
+
+.theme-dark
+.chancery-department-copy p {
+  color:
+    rgba(255, 250, 244, 0.72) !important;
+}
+
+
+.theme-dark
+.chancery-big-stamp {
+  border-color:
+    rgba(210, 119, 126, 0.55) !important;
+
+  color: #e19297 !important;
+}
+
+
+.theme-dark
+.chancery-big-stamp::before,
+.theme-dark
+.chancery-big-stamp::after {
+  border-color:
+    rgba(210, 119, 126, 0.28) !important;
+}
+
+
+.theme-dark
+.chancery-big-stamp span,
+.theme-dark
+.chancery-big-stamp small {
+  color: #e19297 !important;
+}
+
+
+/* =========================================================
+   "ТРЕБУЮТ ВНИМАНИЯ"
+========================================================= */
+
+.theme-dark .chancery-attention {
+  background:
+    linear-gradient(
+      135deg,
+      #653337 0%,
+      #4f292d 100%
+    ) !important;
+
+  border-color:
+    rgba(232, 151, 157, 0.24) !important;
+
+  box-shadow:
+    0 12px 30px
+    rgba(0, 0, 0, 0.18) !important;
+}
+
+
+.theme-dark
+.chancery-attention small {
+  color: #f0a5aa !important;
+}
+
+
+.theme-dark
+.chancery-attention b {
+  color: #fff7f3 !important;
+}
+
+
+.theme-dark
+.chancery-attention span {
+  color:
+    rgba(255, 247, 243, 0.68) !important;
+}
+
+
+.theme-dark
+.chancery-attention strong {
+  background:
+    rgba(255, 255, 255, 0.12) !important;
+
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   СТАТИСТИКА
+========================================================= */
+
+.theme-dark .chancery-stats {
+  background: #292e30 !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08) !important;
+
+  box-shadow:
+    0 10px 26px
+    rgba(0, 0, 0, 0.14) !important;
+}
+
+
+.theme-dark
+.chancery-stats > div {
+  border-color:
+    rgba(255, 255, 255, 0.08) !important;
+}
+
+
+.theme-dark
+.chancery-stats small {
+  color:
+    rgba(255, 255, 255, 0.56) !important;
+}
+
+
+.theme-dark
+.chancery-stats b {
+  color: #fff8f0 !important;
+}
+
+
+/* =========================================================
+   РЕЕСТР
+========================================================= */
+
+.theme-dark .chancery-registry {
+  background: #202527 !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08) !important;
+
+  box-shadow:
+    0 18px 44px
+    rgba(0, 0, 0, 0.18) !important;
+}
+
+
+/* =========================================================
+   ЗАГОЛОВОК РЕЕСТРА
+========================================================= */
+
+.theme-dark
+.chancery-registry-head {
+  border-color:
+    rgba(255, 255, 255, 0.08) !important;
+}
+
+
+.theme-dark
+.chancery-registry-head small {
+  color: #c9878c !important;
+}
+
+
+.theme-dark
+.chancery-registry-head h2 {
+  color: #fff9f2 !important;
+}
+
+
+.theme-dark
+.chancery-registry-head > span {
+  background: #343a3d !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08) !important;
+
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   ФИЛЬТРЫ
+========================================================= */
+
+.theme-dark
+.chancery-filters {
+  border-color:
+    rgba(255, 255, 255, 0.08) !important;
+}
+
+
+.theme-dark
+.chancery-filters button {
+  background: #292f31 !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.09) !important;
+
+  color:
+    rgba(255, 255, 255, 0.72) !important;
+
+  box-shadow: none !important;
+}
+
+
+.theme-dark
+.chancery-filters button:hover {
+  background: #33393c !important;
+
+  color: #ffffff !important;
+}
+
+
+.theme-dark
+.chancery-filters button.active {
+  background: #91484d !important;
+
+  border-color: #91484d !important;
+
+  color: #ffffff !important;
+}
+
+
+.theme-dark
+.chancery-filters button span {
+  background:
+    rgba(255, 255, 255, 0.1) !important;
+
+  color: inherit !important;
+}
+
+
+.theme-dark
+.chancery-filters button.active span {
+  background:
+    rgba(255, 255, 255, 0.17) !important;
+
+  color: #ffffff !important;
+}
+
+
+/* =========================================================
+   КАРТОЧКИ ДОКУМЕНТОВ
+========================================================= */
+
+.theme-dark .chancery-case {
+  background: #2b3033 !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.075) !important;
+
+  color: #ffffff !important;
+}
+
+
+.theme-dark
+.chancery-case:hover {
+  background: #33393c !important;
+
+  border-color:
+    rgba(210, 130, 136, 0.25) !important;
+}
+
+
+/* НОМЕР СЛЕВА */
+
+.theme-dark
+.chancery-case-index {
+  background:
+    rgba(255, 255, 255, 0.035) !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.12) !important;
+
+  color:
+    rgba(255, 255, 255, 0.72) !important;
+}
+
+
+/* ТИП + ДАТА */
+
+.theme-dark
+.chancery-case-copy small {
+  color:
+    rgba(255, 255, 255, 0.55) !important;
+}
+
+
+/* НАЗВАНИЕ ДОКУМЕНТА */
+
+.theme-dark
+.chancery-case-copy h3 {
+  color: #fffaf4 !important;
+
+  text-shadow: none !important;
+}
+
+
+/* НОМЕР ДОКУМЕНТА */
+
+.theme-dark
+.chancery-case-copy p {
+  color:
+    rgba(255, 255, 255, 0.55) !important;
+}
+
+
+/* СТРЕЛКА */
+
+.theme-dark
+.chancery-case-arrow {
+  color: #d79599 !important;
+}
+
+
+/* =========================================================
+   СТАТУС ДОКУМЕНТА
+========================================================= */
+
+.theme-dark
+.chancery-case-status {
+  background:
+    rgba(209, 137, 73, 0.13) !important;
+
+  border:
+    1px solid
+    rgba(209, 137, 73, 0.25) !important;
+
+  color: #e9b377 !important;
+}
+
+
+.theme-dark
+.chancery-case-status.signed {
+  background:
+    rgba(97, 163, 116, 0.13) !important;
+
+  border-color:
+    rgba(97, 163, 116, 0.25) !important;
+
+  color: #9ad0a9 !important;
+}
+
+
+/* =========================================================
+   ПУСТОЙ СПИСОК
+========================================================= */
+
+.theme-dark .chancery-empty {
+  background: #292f31 !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.08) !important;
+}
+
+
+.theme-dark
+.chancery-empty b {
+  color: #fff9f2 !important;
+}
+
+
+.theme-dark
+.chancery-empty span {
+  color:
+    rgba(255, 255, 255, 0.58) !important;
+}
+
+
+/* =========================================================
+   ПОДПИСЬ ПОД РЕЕСТРОМ
+========================================================= */
+
+.theme-dark
+.chancery-register-note {
+  color:
+    rgba(255, 255, 255, 0.42) !important;
+}
+
+
+/* =========================================================
+   ОТКРЫТЫЙ ДОКУМЕНТ
+========================================================= */
+
+.theme-dark .chancery-file {
+  background: #202527 !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.09) !important;
+
+  color: #f7f1e9 !important;
+
+  box-shadow:
+    0 24px 80px
+    rgba(0, 0, 0, 0.48) !important;
+}
+
+
+.theme-dark
+.chancery-file-header {
+  background: #292e31 !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.08) !important;
+}
+
+
+.theme-dark
+.chancery-file-header button {
+  color: #fff !important;
+}
+
+
+.theme-dark
+.chancery-file-header small {
+  color:
+    rgba(255, 255, 255, 0.48) !important;
+}
+
+
+.theme-dark
+.chancery-file-header b {
+  color: #fff8f0 !important;
+}
+
+
+.theme-dark
+.chancery-file-status {
+  color: #dfa0a4 !important;
+}
+
+
+/* =========================================================
+   МЕТА ДАННЫЕ ОТКРЫТОГО ДОКУМЕНТА
+========================================================= */
+
+.theme-dark
+.chancery-file-meta small {
+  color: #c9878c !important;
+}
+
+
+.theme-dark
+.chancery-file-meta h2 {
+  color: #fffaf4 !important;
+}
+
+
+.theme-dark
+.chancery-file-meta p {
+  color:
+    rgba(255, 255, 255, 0.55) !important;
+}
+
+
+/* =========================================================
+   БЛОК ОРИГИНАЛА
+========================================================= */
+
+.theme-dark
+.chancery-original-section {
+  background: #171b1d !important;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.08) !important;
+}
+
+
+.theme-dark
+.chancery-original-label {
+  color:
+    rgba(255, 255, 255, 0.55) !important;
+}
+
+
+.theme-dark
+.chancery-original-label a {
+  color: #dda0a4 !important;
+}
+
+
+/*
+  Сам оригинал документа НЕ затемняем.
+  Бумага должна оставаться настоящего цвета.
+*/
+
+.theme-dark
+.chancery-original-image {
+  filter: none !important;
+
+  opacity: 1 !important;
+}
+
+
+/* =========================================================
+   ПОДПИСАНО
+========================================================= */
+
+.theme-dark
+.chancery-signed-info {
+  background:
+    rgba(72, 129, 88, 0.12) !important;
+
+  border-color:
+    rgba(106, 173, 124, 0.22) !important;
+}
+
+
+.theme-dark
+.chancery-signed-info b {
+  color: #dff2e3 !important;
+}
+
+
+.theme-dark
+.chancery-signed-info small {
+  color:
+    rgba(220, 242, 226, 0.6) !important;
+}
+
+
+.theme-dark
+.chancery-signed-stamp {
+  color: #92cda1 !important;
+
+  border-color:
+    rgba(120, 190, 139, 0.45) !important;
+}
+
+
+/* =========================================================
+   ПАНЕЛЬ РАЗМЕЩЕНИЯ ПОДПИСИ
+========================================================= */
+
+.theme-dark
+.chancery-placement-panel {
+  background: #292f31 !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.09) !important;
+}
+
+
+.theme-dark
+.chancery-placement-panel b {
+  color: #fff8f0 !important;
+}
+
+
+.theme-dark
+.chancery-placement-panel span,
+.theme-dark
+.chancery-placement-panel small {
+  color:
+    rgba(255, 255, 255, 0.58) !important;
+}
+
+
+/* =========================================================
+   ЭКРАН ПОДПИСИ
+========================================================= */
+
+.theme-dark
+.chancery-sign-screen {
+  color: #fff8f0 !important;
+}
+
+
+.theme-dark
+.chancery-sign-head small {
+  color: #d08a90 !important;
+}
+
+
+.theme-dark
+.chancery-sign-head h2 {
+  color: #fffaf4 !important;
+}
+
+
+.theme-dark
+.chancery-sign-head p {
+  color:
+    rgba(255, 255, 255, 0.62) !important;
+}
+
+
+.theme-dark
+.chancery-sign-document {
+  background: #292f31 !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.08) !important;
+}
+
+
+.theme-dark
+.chancery-sign-document small {
+  color:
+    rgba(255, 255, 255, 0.5) !important;
+}
+
+
+.theme-dark
+.chancery-sign-document b {
+  color: #fffaf4 !important;
+}
+
+
+.theme-dark
+.chancery-sign-document span {
+  color:
+    rgba(255, 255, 255, 0.55) !important;
+}
+
+
+/* =========================================================
+   ПОЛЕ ДЛЯ РИСОВАНИЯ ПОДПИСИ
+
+   Здесь специально оставляем светлую бумагу,
+   потому что синяя подпись на ней читается лучше.
+========================================================= */
+
+.theme-dark
+.chancery-sign-pad {
+  background: #f4eee5 !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.12) !important;
+}
+
+
+.theme-dark
+.chancery-sign-pad > span {
+  color:
+    rgba(30, 40, 55, 0.5) !important;
+}
+
+
+.theme-dark
+.chancery-sign-line {
+  background:
+    rgba(30, 40, 55, 0.22) !important;
+}
+
+
+/* =========================================================
+   КНОПКИ ПОДПИСИ
+========================================================= */
+
+.theme-dark
+.chancery-sign-buttons button {
+  background: #303638 !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.1) !important;
+
+  color: #f8f3ed !important;
+}
+
+
+.theme-dark
+.chancery-sign-buttons button:hover {
+  background: #393f42 !important;
+}
+
+
+.theme-dark
+.chancery-sign-buttons button.primary {
+  background: #91484d !important;
+
+  border-color: #91484d !important;
+
+  color: #ffffff !important;
+}
+
+
+.theme-dark
+.chancery-sign-buttons button:disabled {
+  opacity: 0.38 !important;
+}
+
+
+.theme-dark
+.chancery-sign-cancel {
+  color:
+    rgba(255, 255, 255, 0.64) !important;
+}
+
+
+.theme-dark
+.chancery-sign-note {
+  color:
+    rgba(255, 255, 255, 0.38) !important;
+}
+
+
+/* =========================================================
+   КНОПКИ РАБОТЫ С ГОТОВОЙ ПОДПИСЬЮ
+========================================================= */
+
+.theme-dark
+.chancery-edit-placement {
+  background: #303638 !important;
+
+  border-color:
+    rgba(255, 255, 255, 0.1) !important;
+
+  color: #f4eee7 !important;
+}
+
+
+.theme-dark
+.chancery-edit-placement:hover {
+  background: #393f42 !important;
+}
+
+
+.theme-dark
+.chancery-delete-signature {
+  background:
+    rgba(145, 72, 77, 0.16) !important;
+
+  border-color:
+    rgba(218, 133, 139, 0.25) !important;
+
+  color: #efa5aa !important;
+}
+
+
+/* =========================================================
+   МОБИЛЬНАЯ ВЕРСИЯ
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .theme-dark
+  .chancery-case {
+    background: #292f31 !important;
+  }
+
+
+  .theme-dark
+  .chancery-registry {
+    background: #202527 !important;
+  }
+
+
+  .theme-dark
+  .chancery-case-copy h3 {
+    color: #fffaf4 !important;
+  }
+
+
+  .theme-dark
+  .chancery-case-copy small,
+  .theme-dark
+  .chancery-case-copy p {
+    color:
+      rgba(255, 255, 255, 0.56) !important;
+  }
+
+}
