@@ -7,7 +7,7 @@ import {
 } from "react";
 
 import WeatherMini from "./components/WeatherMini";
-import Chancery from "./components/Chancery";
+
 
 import {
   getCurrentScheduleItem,
@@ -253,36 +253,7 @@ export default function HomePage() {
       )}
 
 
-      {/* =========================
-          КАНЦЕЛЯРИЯ
-      ========================= */}
-
-      <section className="home-chancery-intro">
-
-        <div>
-
-          <small>
-            ОСОБО ВАЖНЫЕ БУМАГИ
-          </small>
-
-          <h2>
-            Канцелярия
-          </h2>
-
-        </div>
-
-
-        <div className="home-chancery-mark">
-          К
-        </div>
-
-      </section>
-
-
-      <Chancery />
-
-
-      {/* ПОДПИСЬ */}
+     }
 
       <p className="home-signature">
         Обсидик был здесь ❤️
