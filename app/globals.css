@@ -28615,3 +28615,966 @@ body:has(.cozy-home-page)
   }
 
 }
+/* =========================================================
+   ДОМОЙ · ПАЛАТКА У ОЗЕРА
+   Добавь этот блок В САМЫЙ КОНЕЦ app/globals.css
+========================================================= */
+
+.camp-home-page {
+  --camp-text: #f4ece3;
+  --camp-muted: rgba(244,236,227,.46);
+  --camp-warm: #d89b61;
+  --camp-pink: #b56f77;
+
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 23px 11px 120px;
+}
+
+/* HEADER */
+.camp-home-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 6px 5px 18px;
+}
+
+.camp-home-header small {
+  color: var(--camp-muted);
+  font-size: 9px;
+}
+
+.camp-home-header h1 {
+  margin: 8px 0 4px;
+  color: var(--camp-text);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 11vw, 66px);
+  font-weight: 400;
+  line-height: .95;
+}
+
+.camp-home-header p {
+  margin: 8px 0 0;
+  color: rgba(202,159,151,.72);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.camp-home-header > span {
+  color: rgba(215,171,116,.62);
+  font-size: 24px;
+}
+
+/* SCENE */
+.camp-home-scene {
+  position: relative;
+  width: 100%;
+  min-height: 610px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.065);
+  border-radius: 31px;
+  background:
+    linear-gradient(180deg, #111925 0%, #182536 39%, #182a29 58%, #151a18 100%);
+  box-shadow: 0 28px 70px rgba(0,0,0,.28);
+  isolation: isolate;
+}
+
+.camp-home-morning .camp-home-scene {
+  background:
+    linear-gradient(180deg, #526c7b 0%, #9b8a78 39%, #49605a 58%, #29352f 100%);
+}
+
+.camp-home-day .camp-home-scene {
+  background:
+    linear-gradient(180deg, #607f8d 0%, #90a8a4 39%, #496a63 58%, #2d4039 100%);
+}
+
+.camp-home-evening .camp-home-scene {
+  background:
+    linear-gradient(180deg, #25273a 0%, #614756 38%, #273d3a 58%, #1d2723 100%);
+}
+
+/* SKY */
+.camp-home-sky {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 43%;
+  overflow: hidden;
+}
+
+.camp-star,
+.camp-secret-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,240,205,.78);
+  box-shadow: 0 0 8px rgba(255,225,174,.55);
+  animation: campStarBlink 3.7s ease-in-out infinite;
+}
+
+.camp-star.s1 { left: 10%; top: 22%; }
+.camp-star.s2 { left: 28%; top: 13%; animation-delay: -1s; }
+.camp-star.s3 { left: 43%; top: 26%; animation-delay: -2.2s; }
+.camp-star.s4 { right: 30%; top: 11%; animation-delay: -.8s; }
+.camp-star.s5 { right: 13%; top: 28%; animation-delay: -2.8s; }
+.camp-star.s6 { right: 39%; top: 37%; animation-delay: -1.7s; }
+
+.camp-secret-star {
+  right: 18%;
+  top: 15%;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  color: rgba(255,235,187,.75);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+@keyframes campStarBlink {
+  50% { opacity: .34; transform: scale(.7); }
+}
+
+.camp-home-moon {
+  position: absolute;
+  right: 13%;
+  top: 16%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #e8d9bd;
+  box-shadow: 0 0 35px rgba(231,210,169,.24);
+  opacity: .82;
+}
+
+.camp-home-moon::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: -5px;
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  background: #172132;
+}
+
+.camp-home-morning .camp-home-moon,
+.camp-home-day .camp-home-moon {
+  opacity: .15;
+}
+
+/* FOREST */
+.camp-home-forest {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.camp-home-forest.back {
+  top: 23%;
+  height: 175px;
+  opacity: .62;
+  filter: blur(.4px);
+}
+
+.camp-home-forest.front {
+  top: 29%;
+  height: 190px;
+  opacity: .88;
+}
+
+.camp-home-forest i {
+  position: relative;
+  width: 0;
+  height: 0;
+  border-left: 28px solid transparent;
+  border-right: 28px solid transparent;
+  border-bottom: 110px solid #142824;
+}
+
+.camp-home-forest.front i {
+  border-left-width: 34px;
+  border-right-width: 34px;
+  border-bottom-width: 145px;
+  border-bottom-color: #10231f;
+}
+
+.camp-home-forest i::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 88px;
+  width: 6px;
+  height: 55px;
+  background: #14201c;
+}
+
+/* LAKE */
+.camp-home-lake {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 47%;
+  width: 100%;
+  height: 34%;
+  padding: 0;
+  border: 0;
+  background:
+    linear-gradient(180deg, rgba(37,61,64,.82), rgba(20,37,40,.96));
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.camp-water-line {
+  position: absolute;
+  height: 1px;
+  border-radius: 999px;
+  background: rgba(187,211,209,.18);
+  animation: campWaterMove 4.5s ease-in-out infinite;
+}
+
+.camp-water-line.w1 { left: 8%; top: 24%; width: 28%; }
+.camp-water-line.w2 { right: 10%; top: 37%; width: 35%; animation-delay: -1.6s; }
+.camp-water-line.w3 { left: 20%; top: 58%; width: 45%; animation-delay: -2.5s; }
+.camp-water-line.w4 { right: 18%; top: 72%; width: 22%; animation-delay: -.7s; }
+
+@keyframes campWaterMove {
+  50% { transform: translateX(11px) scaleX(.82); opacity: .45; }
+}
+
+.camp-moon-reflection {
+  position: absolute;
+  right: 18%;
+  top: 6%;
+  width: 48px;
+  height: 110px;
+  background: linear-gradient(180deg, rgba(232,217,189,.16), transparent);
+  filter: blur(8px);
+  transform: skewX(-9deg);
+}
+
+/* SHORE */
+.camp-home-shore {
+  position: absolute;
+  left: -7%;
+  right: -7%;
+  bottom: -2%;
+  height: 34%;
+  border-radius: 50% 50% 0 0 / 28% 28% 0 0;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(82,95,59,.34), transparent 25%),
+    linear-gradient(180deg, #27352d, #19221d 72%);
+  z-index: 6;
+}
+
+/* TENT */
+.camp-home-tent {
+  position: absolute;
+  right: 8%;
+  bottom: 18%;
+  z-index: 15;
+  width: 175px;
+  height: 150px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.camp-tent-body {
+  position: absolute;
+  left: 2px;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 86px solid transparent;
+  border-right: 86px solid transparent;
+  border-bottom: 140px solid #8e704d;
+  filter: drop-shadow(0 15px 19px rgba(0,0,0,.28));
+}
+
+.camp-tent-door {
+  position: absolute;
+  left: 64px;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  border-bottom: 83px solid #3b3026;
+  z-index: 3;
+}
+
+.camp-tent-light {
+  position: absolute;
+  left: 56px;
+  bottom: 6px;
+  width: 66px;
+  height: 80px;
+  background: radial-gradient(circle at 50% 80%, rgba(241,182,102,.42), transparent 68%);
+  z-index: 4;
+  animation: campTentGlow 3s ease-in-out infinite;
+}
+
+@keyframes campTentGlow {
+  50% { opacity: .55; }
+}
+
+/* BACKPACK */
+.camp-home-backpack {
+  position: absolute;
+  right: 34%;
+  bottom: 17%;
+  z-index: 17;
+  width: 44px;
+  height: 53px;
+  padding: 0;
+  border: 0;
+  border-radius: 15px 15px 9px 9px;
+  background: #4b4937;
+  box-shadow: inset 0 -8px 0 rgba(0,0,0,.13);
+  cursor: pointer;
+}
+
+.camp-home-backpack::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  top: -6px;
+  height: 17px;
+  border: 4px solid #3c3d31;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+}
+
+.camp-home-backpack span {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 9px;
+  height: 14px;
+  border-radius: 6px;
+  background: rgba(24,28,23,.25);
+}
+
+/* STONE */
+.camp-home-stone {
+  position: absolute;
+  left: 10%;
+  bottom: 13%;
+  z-index: 20;
+  width: 43px;
+  height: 29px;
+  padding: 0;
+  border: 0;
+  border-radius: 55% 45% 48% 52%;
+  background: linear-gradient(160deg, #6a6860, #3f413d);
+  box-shadow: 0 7px 9px rgba(0,0,0,.25);
+  cursor: pointer;
+  transform: rotate(-8deg);
+}
+
+/* FIRE */
+.camp-home-fire {
+  position: absolute;
+  left: 18%;
+  bottom: 16%;
+  z-index: 22;
+  width: 90px;
+  height: 95px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.camp-fire-flame {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  border-radius: 70% 30% 70% 30%;
+  transform: translateX(-50%) rotate(45deg);
+  transform-origin: bottom center;
+  animation: campFireDance .95s ease-in-out infinite alternate;
+}
+
+.flame-one {
+  width: 38px;
+  height: 38px;
+  background: #d87d43;
+  box-shadow: 0 0 34px rgba(231,127,61,.38);
+}
+
+.flame-two {
+  left: 40%;
+  width: 26px;
+  height: 29px;
+  background: #efad61;
+  animation-delay: -.35s;
+}
+
+.flame-three {
+  left: 60%;
+  width: 20px;
+  height: 24px;
+  background: #f0c779;
+  animation-delay: -.6s;
+}
+
+@keyframes campFireDance {
+  to { transform: translateX(-50%) rotate(39deg) scale(.9, 1.08); }
+}
+
+.camp-fire-log {
+  position: absolute;
+  left: 24px;
+  bottom: 14px;
+  width: 50px;
+  height: 8px;
+  border-radius: 999px;
+  background: #4d3327;
+}
+
+.log-one { transform: rotate(18deg); }
+.log-two { transform: rotate(-18deg); }
+
+/* MUGS */
+.camp-home-mugs {
+  position: absolute;
+  left: 39%;
+  bottom: 18%;
+  z-index: 25;
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.camp-mug {
+  position: relative;
+  width: 44px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px 8px 16px 16px;
+  cursor: pointer;
+}
+
+.camp-mug::before {
+  content: "";
+  position: absolute;
+  right: -13px;
+  top: 11px;
+  width: 15px;
+  height: 18px;
+  border: 4px solid currentColor;
+  border-left: 0;
+  border-radius: 0 60% 60% 0;
+}
+
+.camp-mug::after {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: -24px;
+  width: 10px;
+  height: 21px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.10);
+  filter: blur(4px);
+  animation: campSteam 2.7s ease-in-out infinite;
+}
+
+@keyframes campSteam {
+  50% { transform: translateY(-7px) translateX(2px); opacity: .24; }
+}
+
+.camp-mug-dark {
+  color: #2b2b2c;
+  background: #313134;
+}
+
+.camp-mug-warm {
+  color: #7c5d53;
+  background: #9b776c;
+}
+
+/* NOTE */
+.camp-home-note {
+  position: absolute;
+  left: 42%;
+  bottom: 7%;
+  z-index: 24;
+  width: 150px;
+  min-height: 85px;
+  padding: 17px 14px 12px;
+  border: 0;
+  transform: rotate(-3deg);
+  background: linear-gradient(145deg, #d9c19f, #c3a680);
+  color: #49372d;
+  box-shadow: 0 12px 22px rgba(0,0,0,.24);
+  text-align: left;
+  cursor: pointer;
+}
+
+.camp-home-note::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(83,58,44,.13);
+  pointer-events: none;
+}
+
+.camp-home-note small {
+  display: block;
+  margin-bottom: 6px;
+  opacity: .5;
+  font-size: 7px;
+  letter-spacing: .08em;
+}
+
+.camp-home-note b {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.camp-home-note span {
+  display: block;
+  margin-top: 9px;
+  opacity: .46;
+  font-size: 7px;
+}
+
+/* DRAKOSHA */
+.camp-home-dragon {
+  position: absolute;
+  right: -2%;
+  bottom: 4%;
+  z-index: 28;
+  width: min(35%, 210px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: transform .18s ease;
+}
+
+.camp-home-dragon:active {
+  transform: scale(.96) rotate(-2deg);
+}
+
+.camp-home-dragon img {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  filter: brightness(.66) saturate(.75) drop-shadow(0 12px 16px rgba(0,0,0,.32));
+  animation: campDragonBreath 3.8s ease-in-out infinite;
+}
+
+@keyframes campDragonBreath {
+  50% { transform: translateY(-2px) scale(1.012); }
+}
+
+.camp-home-dragon > span {
+  position: absolute;
+  right: 10%;
+  top: 2%;
+  padding: 6px 8px;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 10px;
+  background: rgba(12,16,14,.58);
+  color: rgba(255,242,232,.6);
+  backdrop-filter: blur(8px);
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+/* FIREFLY */
+.camp-home-firefly {
+  position: absolute;
+  left: 22%;
+  top: 41%;
+  z-index: 30;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f4d37e 0 12%, rgba(244,211,126,.25) 20%, transparent 65%);
+  cursor: pointer;
+  animation: campFirefly 8s ease-in-out infinite;
+}
+
+@keyframes campFirefly {
+  0%,100% { transform: translate(0,0); opacity: .2; }
+  25% { transform: translate(110px,-34px); opacity: .9; }
+  50% { transform: translate(210px,18px); opacity: .45; }
+  75% { transform: translate(70px,72px); opacity: .8; }
+}
+
+/* VISUAL RAIN */
+.camp-home-rain {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: .38;
+}
+
+.camp-home-rain i {
+  position: absolute;
+  top: -70px;
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(transparent, rgba(205,220,236,.52));
+  transform: rotate(8deg);
+  animation: campRainFall 1.2s linear infinite;
+}
+
+@keyframes campRainFall {
+  to { transform: translateY(760px) translateX(70px) rotate(8deg); }
+}
+
+/* AMBIENT CONTROLS */
+.camp-home-ambient {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.camp-home-ambient button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 59px;
+  padding: 9px 8px;
+  border: 1px solid rgba(255,255,255,.065);
+  border-radius: 16px;
+  background: rgba(255,255,255,.032);
+  color: rgba(255,244,235,.68);
+  text-align: left;
+  cursor: pointer;
+}
+
+.camp-home-ambient button.active {
+  border-color: rgba(194,121,101,.28);
+  background: rgba(133,84,67,.11);
+}
+
+.camp-home-ambient button > span {
+  font-size: 18px;
+}
+
+.camp-home-ambient b {
+  display: block;
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.camp-home-ambient small {
+  display: block;
+  margin-top: 2px;
+  color: rgba(255,244,235,.31);
+  font-size: 6px;
+}
+
+.camp-home-bottom {
+  margin: 17px 0 0;
+  color: rgba(255,239,229,.36);
+  font-family: Georgia, serif;
+  font-size: 10px;
+  text-align: center;
+}
+
+/* MAIN NOTE MODAL */
+.camp-note-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 6000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(7,9,8,.78);
+  backdrop-filter: blur(11px);
+}
+
+.camp-note-paper {
+  position: relative;
+  width: min(91vw, 390px);
+  padding: 38px 29px 31px;
+  transform: rotate(-1deg);
+  border-radius: 2px;
+  background: linear-gradient(145deg, #dec7aa, #c9ab88);
+  color: #49372e;
+  box-shadow: 0 30px 90px rgba(0,0,0,.48);
+}
+
+.camp-note-paper::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(79,56,45,.12);
+  pointer-events: none;
+}
+
+.camp-note-paper > small {
+  color: rgba(73,55,46,.45);
+  font-size: 7px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.camp-note-paper h2 {
+  margin: 13px 0 19px;
+  font-family: Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.camp-note-paper p {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.camp-note-paper > span {
+  display: block;
+  margin-top: 24px;
+  font-family: Georgia, serif;
+  font-size: 11px;
+  opacity: .58;
+}
+
+.camp-note-close {
+  position: absolute;
+  right: 11px;
+  top: 8px;
+  z-index: 5;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  color: rgba(73,55,46,.55);
+  font-size: 23px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   FULLSCREEN EASTER EGGS
+========================================================= */
+
+.camp-easter-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  padding: 25px;
+  overflow: hidden;
+  background: rgba(8,10,10,.91);
+  backdrop-filter: blur(18px);
+  animation: campEggOverlayIn .28s ease both;
+}
+
+@keyframes campEggOverlayIn {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to { opacity: 1; backdrop-filter: blur(18px); }
+}
+
+.camp-easter-content {
+  position: relative;
+  z-index: 5;
+  width: min(90vw, 440px);
+  text-align: center;
+  animation: campEggContentIn .7s cubic-bezier(.2,1.4,.3,1) both;
+}
+
+@keyframes campEggContentIn {
+  0% { opacity: 0; transform: scale(.55) translateY(40px); }
+  70% { transform: scale(1.04) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.camp-easter-icon {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 25px;
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 50%;
+  background: rgba(255,255,255,.045);
+  color: #e8b17d;
+  font-size: 43px;
+  box-shadow: 0 0 55px rgba(218,154,93,.12);
+  animation: campEggIconFloat 2.4s ease-in-out infinite;
+}
+
+@keyframes campEggIconFloat {
+  50% { transform: translateY(-7px) rotate(3deg); }
+}
+
+.camp-easter-content > small {
+  display: block;
+  margin-bottom: 13px;
+  color: rgba(220,160,113,.72);
+  font-size: 8px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.camp-easter-content h2 {
+  margin: 0 auto;
+  max-width: 390px;
+  color: rgba(255,245,236,.97);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(25px, 7vw, 37px);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.camp-easter-content p {
+  max-width: 330px;
+  margin: 18px auto 0;
+  color: rgba(255,239,229,.57);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.camp-easter-close {
+  margin-top: 33px;
+  padding: 10px 15px;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  color: rgba(255,244,235,.46);
+  font-size: 8px;
+  cursor: pointer;
+}
+
+.camp-easter-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.camp-easter-particles i {
+  --angle: calc(var(--i) * 20deg);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  color: rgba(233,177,123,.58);
+  font-size: 17px;
+  font-style: normal;
+  opacity: 0;
+  animation: campEggParticle 1.7s ease-out forwards;
+  animation-delay: calc(var(--i) * .025s);
+}
+
+@keyframes campEggParticle {
+  0% {
+    opacity: 0;
+    transform: translate(-50%,-50%) rotate(var(--angle)) translateY(0) scale(.4);
+  }
+  20% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate(-50%,-50%) rotate(var(--angle)) translateY(-270px) scale(1.2);
+  }
+}
+
+.camp-easter-fire {
+  background:
+    radial-gradient(circle at 50% 55%, rgba(177,85,38,.24), transparent 45%),
+    rgba(10,9,8,.94);
+}
+
+.camp-easter-water {
+  background:
+    radial-gradient(circle at 50% 55%, rgba(70,120,143,.24), transparent 48%),
+    rgba(7,12,14,.94);
+}
+
+.camp-easter-dragon .camp-easter-icon {
+  width: 112px;
+  height: 112px;
+  font-size: 54px;
+}
+
+.camp-easter-dragon .camp-easter-particles i {
+  color: rgba(195,105,116,.72);
+}
+
+.camp-easter-star,
+.camp-easter-firefly {
+  background:
+    radial-gradient(circle, rgba(102,92,54,.20), transparent 46%),
+    rgba(7,9,12,.95);
+}
+
+.camp-easter-stone .camp-easter-icon {
+  color: #aaa79d;
+}
+
+/* Hide global floating dragon only on this page */
+body:has(.camp-home-page) .drakosha-floating {
+  display: none !important;
+}
+
+@media (max-width: 480px) {
+  .camp-home-page {
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  .camp-home-scene {
+    min-height: 570px;
+  }
+
+  .camp-home-tent {
+    right: 1%;
+    transform: scale(.86);
+    transform-origin: right bottom;
+  }
+
+  .camp-home-backpack {
+    right: 30%;
+  }
+
+  .camp-home-note {
+    left: 34%;
+    width: 140px;
+  }
+
+  .camp-home-dragon {
+    width: 39%;
+  }
+
+  .camp-home-ambient {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .camp-easter-overlay {
+    padding: 20px;
+  }
+
+  .camp-easter-icon {
+    width: 84px;
+    height: 84px;
+    font-size: 37px;
+  }
+}
