@@ -7,6 +7,8 @@ import {
   useState,
 } from "react";
 
+import { unlockCapsule } from "../lib/unlockCapsule";
+
 /* =====================================================
    ГЛАВНЫЕ ЗАПИСКИ
 ===================================================== */
@@ -15,17 +17,17 @@ const MAIN_NOTES = [
   {
     title: "ну раз уж пришла",
     text:
-      "Располагайся. Палатка стоит, вода рядом, костёр вроде не погас, Дракоша никого не съел. В целом всё под контролем.",
+      "Располагайся. Палатка стоит, вода рядом, костёр вроде не погас, Дракоша никого не съел. В целом всё под контролем у обсидика.",
   },
   {
     title: "оставлю это тут",
     text:
-      "Никакого важного повода. Просто захотелось оставить тебе что-нибудь в этом месте. Можешь прочитать сейчас, потом или случайно через неделю.",
+      "Никакого важного повода, просто я обожаю тебя и мне не надоест это повторять",
   },
   {
     title: "если вокруг слишком много всего",
     text:
-      "Здесь ничего не надо решать. Можно включить воду, костёр или дождь, немного позалипать и спокойно бежать дальше по своим делам.",
+      "Можно включить воду, костёр или дождь, и немного позалипать",
   },
   {
     title: "маленькая остановка",
@@ -46,7 +48,7 @@ const EASTER_EGGS = {
     title:
       "Под каким вообще предлогом ты решила тыкать на камень?",
     text:
-      "Я специально положил обычный камень. Ты всё равно его проверила. Ладно, раз нашла — держи ♡",
+      "Я специально положил обычный камень. Ты всё равно его проверила.  ♡",
   },
 
   fire: {
@@ -56,7 +58,7 @@ const EASTER_EGGS = {
     title:
       "Я, конечно, не эксперт, но обычно в костёр пальцем не тыкают.",
     text:
-      "Но ты решила проверить четыре раза подряд. Уважаю настойчивость. Секрет твой.",
+      "Но ты решила проверить четыре раза подряд. Уважаю настойчивость. ",
   },
 
   water: {
@@ -66,7 +68,7 @@ const EASTER_EGGS = {
     title:
       "Ты сейчас реально решила потыкать озеро?",
     text:
-      "Поздравляю. Вода официально потревожена, рыбы возмущены, а ты что-то нашла.",
+      "Водавахуечтоеепотыкали",
   },
 
   mug: {
@@ -76,7 +78,7 @@ const EASTER_EGGS = {
     title:
       "Ты даже походную кружку решила проверить.",
     text:
-      "Ну раз понатыкала и нашла — один маленький тьмок теперь твой ♡",
+      "Ну раз понатыкала и нашла один жоский маленький тьмок теперь твой ♡",
   },
 
   dragon: {
@@ -86,7 +88,7 @@ const EASTER_EGGS = {
     title:
       "Дракоша официально проснулся и теперь смотрит на тебя.",
     text:
-      "Он недоволен. Но передал, что тьмок всё равно положен ♡",
+      "Он недоволен. Но передал, что ЖОСКИЙ тьмок всё равно положен ♡",
   },
 
   tent: {
@@ -96,7 +98,7 @@ const EASTER_EGGS = {
     title:
       "Ты ещё и палатку несколько раз проверила?",
     text:
-      "Ладно, заходи уже. Там тепло. И да — я знал, что ты начнёшь тыкать вообще во всё.",
+      "Ладно, заходи уже. Там тепло. И да, я знал, что ты начнёшь тыкать вообще во всё.",
   },
 
   backpack: {
@@ -104,9 +106,9 @@ const EASTER_EGGS = {
     icon: "▣",
     eyebrow: "ВОТ ЭТО ВОСПИТАНИЕ",
     title:
-      "Чужие рюкзаки вообще-то не открывают.",
+      "Чужие не трогают так то.",
     text:
-      "Но уже поздно. Ты залезла. Любопытство победило. Теперь секрет твой.",
+      "Но уже поздно. Ты залезла. Любопытство победило.",
   },
 
   star: {
@@ -114,9 +116,9 @@ const EASTER_EGGS = {
     icon: "✦",
     eyebrow: "ЧЕГООО",
     title:
-      "Из всех звёзд ты умудрилась ткнуть именно в нужную.",
+      "Из всех звёзд именно эта да.",
     text:
-      "Я был почти уверен, что эту никто не найдёт. Подозрительно хорошая наблюдательность.",
+      "Я был почти уверен что не словишь ее.",
   },
 
   firefly: {
@@ -126,7 +128,7 @@ const EASTER_EGGS = {
     title:
       "Ты ещё и по светлячкам тыкаешь?",
     text:
-      "Он вообще-то летел по своим делам. Но ладно. Раз поймала — находка твоя.",
+      "Он вообще-то летел по своим делам. Но ладно. Раз поймала твое.",
   },
 
   lantern: {
@@ -146,7 +148,7 @@ const EASTER_EGGS = {
     title:
       "Ты ещё и гитару решила потрогать?",
     text:
-      "Играть она всё равно не умеет. Я тоже. Но пасхалку ты каким-то образом нашла.",
+      "Играть она всё равно не умеет. Я тоже. Но пасхалку ты нашла.",
   },
 
   jar: {
@@ -154,10 +156,18 @@ const EASTER_EGGS = {
     icon: "✧",
     eyebrow: "НУ ВСЁ",
     title:
-      "Ты добралась даже до банки со светлячками.",
+      "Тебе даже банка понадобилась.",
     text:
-      "Я уже начинаю подозревать, что непроверенных предметов здесь не останется.",
+      "Я уже начинаю подозревать, что ты все найдешь.",
   },
+};
+
+const CAPSULE_BY_EGG_TYPE = {
+  stone: "camp-stone",
+  dragon: "camp-dragon",
+  star: "camp-star",
+  tent: "camp-tent",
+  firefly: "camp-firefly",
 };
 
 const DRAGON_REPLIES = [
@@ -167,7 +177,7 @@ const DRAGON_REPLIES = [
   "...",
   "я спал",
   "чего тыкаемся",
-  "я отдыхаю вообще-то",
+  "алё я отдыхаю вообще-то",
   "ничего не делал",
   "ну опять",
 ];
@@ -413,6 +423,9 @@ export default function HomeRoomPage() {
     rain: false,
   });
   const [volume, setVolume] = useState(0.45);
+  const [tentOpen, setTentOpen] = useState(false);
+  const [dragonSpot, setDragonSpot] = useState("bed");
+  const [lakeRipples, setLakeRipples] = useState([]);
 
   const ambientRef = useRef(new Map());
   const tapRef = useRef({
@@ -568,6 +581,12 @@ export default function HomeRoomPage() {
   =================================================== */
 
   function showEasterEgg(data) {
+    const capsuleId = CAPSULE_BY_EGG_TYPE[data?.type];
+
+    if (capsuleId) {
+      unlockCapsule(capsuleId);
+    }
+
     if (easterTimerRef.current) {
       window.clearTimeout(easterTimerRef.current);
     }
@@ -607,7 +626,55 @@ export default function HomeRoomPage() {
     return false;
   }
 
+  function tapWater(event) {
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    const x = ((event.clientX - rect.left) / rect.width) * 100;
+    const y = ((event.clientY - rect.top) / rect.height) * 100;
+
+    const id = `${Date.now()}-${Math.random()}`;
+
+    setLakeRipples((current) => [
+      ...current.slice(-5),
+      { id, x, y },
+    ]);
+
+    window.setTimeout(() => {
+      setLakeRipples((current) =>
+        current.filter((item) => item.id !== id)
+      );
+    }, 1600);
+
+    tapCounter(
+      "water",
+      4,
+      EASTER_EGGS.water
+    );
+  }
+
+  function tapTent() {
+    setTentOpen((current) => !current);
+
+    tapCounter(
+      "tent",
+      3,
+      EASTER_EGGS.tent
+    );
+  }
+
   function tapDragon() {
+    const nextTap = (tapRef.current.dragon || 0) + 1;
+
+    if (nextTap === 1) {
+      setDragonSpot("awake");
+    } else if (nextTap === 2) {
+      setDragonSpot("fire");
+    } else if (nextTap === 3) {
+      setDragonSpot("tent");
+    } else if (nextTap === 4) {
+      setDragonSpot("bed");
+    }
+
     const found = tapCounter(
       "dragon",
       5,
@@ -625,6 +692,7 @@ export default function HomeRoomPage() {
       );
     } else {
       setDragonText("ну всё...");
+      setDragonSpot("tent");
     }
 
     if (dragonTimerRef.current) {
@@ -718,7 +786,7 @@ export default function HomeRoomPage() {
           <h1>Домой</h1>
 
           <p>
-            можешь немного исчезнуть отсюда
+            вайб
           </p>
         </div>
 
@@ -788,13 +856,7 @@ export default function HomeRoomPage() {
         <button
           type="button"
           className="camp-home-lake camp-deluxe-lake"
-          onClick={() =>
-            tapCounter(
-              "water",
-              2,
-              EASTER_EGGS.water
-            )
-          }
+          onClick={tapWater}
           aria-label="Озеро"
         >
           <span className="camp-water-line w1" />
@@ -806,6 +868,17 @@ export default function HomeRoomPage() {
           <span className="camp-moon-reflection" />
           <span className="camp-deluxe-shimmer shimmer-one" />
           <span className="camp-deluxe-shimmer shimmer-two" />
+
+          {lakeRipples.map((ripple) => (
+            <span
+              key={ripple.id}
+              className="camp-lake-ripple"
+              style={{
+                left: `${ripple.x}%`,
+                top: `${ripple.y}%`,
+              }}
+            />
+          ))}
         </button>
 
         <div className="camp-home-shore camp-deluxe-shore" />
@@ -832,14 +905,10 @@ export default function HomeRoomPage() {
         {/* ПАЛАТКА */}
         <button
           type="button"
-          className="camp-home-tent camp-deluxe-tent"
-          onClick={() =>
-            tapCounter(
-              "tent",
-              3,
-              EASTER_EGGS.tent
-            )
-          }
+          className={`camp-home-tent camp-deluxe-tent ${
+            tentOpen ? "is-open" : ""
+          }`}
+          onClick={tapTent}
           aria-label="Палатка"
         >
           <span className="camp-tent-shadow" />
@@ -847,6 +916,13 @@ export default function HomeRoomPage() {
           <span className="camp-tent-side" />
           <span className="camp-tent-door" />
           <span className="camp-tent-light" />
+
+          <span className="camp-tent-inside" aria-hidden="true">
+            <i className="camp-tent-pillow" />
+            <i className="camp-tent-blanket" />
+            <i className="camp-tent-inside-note">ну раз открыла — заходи</i>
+          </span>
+
           <span className="camp-tent-rope rope-left" />
           <span className="camp-tent-rope rope-right" />
           <span className="camp-tent-bulbs">
@@ -967,7 +1043,7 @@ export default function HomeRoomPage() {
 
         <button
           type="button"
-          className="camp-home-dragon camp-deluxe-dragon"
+          className={`camp-home-dragon camp-deluxe-dragon camp-dragon-${dragonSpot}`}
           onClick={tapDragon}
           aria-label="Дракоша"
         >
@@ -1037,7 +1113,7 @@ export default function HomeRoomPage() {
         <div className="camp-deluxe-ambient-head">
           <div>
             <small>АТМОСФЕРА</small>
-            <b>включи сколько хочешь</b>
+            <b>включай сколько хочешь</b>
           </div>
 
           <span>
@@ -1124,7 +1200,7 @@ export default function HomeRoomPage() {
       </section>
 
       <p className="camp-home-bottom camp-deluxe-bottom">
-        тут ещё много чего спрятано · ищи внимательнее
+        тут ещё много чего спрятано · ищи котенок
       </p>
 
       {/* =================================================
