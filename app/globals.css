@@ -32312,3 +32312,690 @@ body:has(.camp-deluxe) .drakosha-floating {
     font-size: 27px;
   }
 }
+/* =========================================================
+   WORLD ANOMALIES · РЕДКИЕ СОБЫТИЯ ПОСЛЕ КАПСУЛ
+   ДОБАВИТЬ В САМЫЙ КОНЕЦ app/globals.css
+========================================================= */
+
+.world-anomaly-plane,
+.world-anomaly-fake,
+.world-anomaly-envelope,
+.world-anomaly-falling-star,
+.world-anomaly-dragon-whisper {
+  position: fixed;
+  z-index: 14500;
+  border: 0;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+/* =========================================================
+   БУМАЖНЫЙ САМОЛЁТИК
+========================================================= */
+
+.world-anomaly-plane {
+  left: -34px;
+  top: 28%;
+
+  width: 42px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  background: transparent;
+  color: rgba(224, 217, 201, .48);
+
+  font-size: 25px;
+  font-weight: 300;
+
+  filter:
+    drop-shadow(0 5px 7px rgba(0,0,0,.20));
+
+  transform: rotate(-12deg);
+
+  animation:
+    worldPlaneFly 13s
+    cubic-bezier(.25,.55,.35,1)
+    infinite;
+}
+
+@keyframes worldPlaneFly {
+  0% {
+    left: -42px;
+    top: 26%;
+    transform: rotate(-10deg);
+  }
+
+  26% {
+    top: 20%;
+    transform: rotate(8deg);
+  }
+
+  55% {
+    top: 35%;
+    transform: rotate(-4deg);
+  }
+
+  82% {
+    top: 25%;
+    transform: rotate(5deg);
+  }
+
+  100% {
+    left: calc(100vw + 50px);
+    top: 31%;
+    transform: rotate(-5deg);
+  }
+}
+
+/* =========================================================
+   ЛОЖНАЯ ПАСХАЛКА
+========================================================= */
+
+.world-anomaly-fake {
+  width: 18px;
+  height: 18px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,255,255,.012);
+
+  color:
+    rgba(255,255,255,.105);
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+
+  font-size: 7px;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255,255,255,.018);
+
+  transition:
+    opacity .25s ease,
+    transform .25s ease;
+}
+
+.world-anomaly-fake:hover,
+.world-anomaly-fake:active {
+  color: rgba(255,255,255,.24);
+  transform: scale(1.15);
+}
+
+/* =========================================================
+   КОНВЕРТ У ПАЛАТКИ
+========================================================= */
+
+.world-anomaly-envelope {
+  left: max(18px, calc(50% - 250px));
+  bottom: 92px;
+
+  width: 42px;
+  height: 29px;
+
+  border-radius: 3px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(201,174,139,.62),
+      rgba(142,116,92,.55)
+    );
+
+  box-shadow:
+    0 8px 17px rgba(0,0,0,.25);
+
+  transform: rotate(-7deg);
+
+  opacity: .74;
+
+  animation:
+    worldEnvelopeBreathe
+    6s ease-in-out infinite;
+}
+
+.world-anomaly-envelope > span {
+  position: absolute;
+  inset: 0;
+
+  clip-path:
+    polygon(0 0, 50% 55%, 100% 0, 100% 100%, 0 100%);
+
+  background:
+    rgba(255,247,229,.13);
+}
+
+.world-anomaly-envelope > i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%,-42%);
+
+  color: rgba(91,52,58,.48);
+  font-size: 9px;
+  font-style: normal;
+}
+
+@keyframes worldEnvelopeBreathe {
+  50% {
+    opacity: .9;
+    filter: brightness(1.07);
+  }
+}
+
+/* =========================================================
+   ПАДАЮЩАЯ ЗВЕЗДА
+========================================================= */
+
+.world-anomaly-falling-star {
+  left: 0;
+  top: 0;
+
+  width: 100vw;
+  height: 34vh;
+
+  overflow: hidden;
+  pointer-events: none;
+
+  background: transparent;
+}
+
+.world-anomaly-falling-star > span {
+  position: absolute;
+  left: 78%;
+  top: -30px;
+
+  width: 26px;
+  height: 26px;
+
+  display: grid;
+  place-items: center;
+
+  color: rgba(255,238,190,.92);
+  font-size: 19px;
+
+  text-shadow:
+    0 0 18px rgba(255,221,145,.75),
+    0 0 38px rgba(255,211,120,.32);
+
+  pointer-events: auto;
+
+  animation:
+    worldFallingStar
+    5.8s linear forwards;
+}
+
+.world-anomaly-falling-star > span::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 12px;
+
+  width: 110px;
+  height: 1px;
+
+  transform-origin: right center;
+  transform: rotate(-32deg);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,236,191,.5)
+    );
+
+  filter: blur(.4px);
+}
+
+@keyframes worldFallingStar {
+  0% {
+    transform:
+      translate(0,0)
+      rotate(-8deg);
+    opacity: 0;
+  }
+
+  8% { opacity: 1; }
+
+  84% { opacity: 1; }
+
+  100% {
+    transform:
+      translate(-68vw, 38vh)
+      rotate(-8deg);
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   ДРАКОША ШЕПЧЕТ
+========================================================= */
+
+.world-anomaly-dragon-whisper {
+  max-width: 190px;
+  padding: 9px 12px;
+
+  transform: translateX(-50%);
+
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 14px 14px 14px 4px;
+
+  background:
+    rgba(19,17,20,.93);
+
+  color:
+    rgba(255,241,230,.74);
+
+  box-shadow:
+    0 13px 30px rgba(0,0,0,.30);
+
+  backdrop-filter: blur(10px);
+
+  font-size: 8px;
+  line-height: 1.45;
+  text-align: left;
+
+  animation:
+    worldDragonWhisperIn
+    .4s cubic-bezier(.2,1.25,.3,1)
+    both;
+}
+
+@keyframes worldDragonWhisperIn {
+  from {
+    opacity: 0;
+    transform:
+      translateX(-50%)
+      translateY(12px)
+      scale(.88);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(1);
+  }
+}
+
+/* =========================================================
+   TOAST АНТИПАСХАЛКИ
+========================================================= */
+
+.world-anomaly-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  z-index: 23000;
+
+  transform: translateX(-50%);
+
+  max-width: min(88vw, 360px);
+  padding: 9px 13px;
+
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 999px;
+
+  background: rgba(12,11,13,.92);
+  color: rgba(255,245,237,.66);
+
+  box-shadow: 0 12px 35px rgba(0,0,0,.35);
+  backdrop-filter: blur(12px);
+
+  font-size: 8px;
+  text-align: center;
+
+  animation:
+    worldToastIn .28s ease both;
+}
+
+@keyframes worldToastIn {
+  from {
+    opacity: 0;
+    transform:
+      translateX(-50%)
+      translateY(9px);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+}
+
+/* =========================================================
+   FULLSCREEN СОБЫТИЕ
+========================================================= */
+
+.world-anomaly-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 26000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 22px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 44%,
+      rgba(127,85,104,.18),
+      transparent 43%
+    ),
+    rgba(7,7,9,.95);
+
+  backdrop-filter: blur(17px);
+
+  animation:
+    worldAnomalyOverlayIn .28s ease both;
+}
+
+@keyframes worldAnomalyOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.world-anomaly-card {
+  position: relative;
+  z-index: 3;
+
+  width: min(100%, 430px);
+  padding: 28px 24px 24px;
+
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 29px;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(180,109,124,.10),
+      transparent 34%
+    ),
+    linear-gradient(180deg, #1a1719, #111012);
+
+  box-shadow:
+    0 34px 90px rgba(0,0,0,.46),
+    inset 0 1px 0 rgba(255,255,255,.035);
+
+  text-align: center;
+
+  animation:
+    worldAnomalyCardIn
+    .62s cubic-bezier(.2,1.35,.25,1)
+    both;
+}
+
+@keyframes worldAnomalyCardIn {
+  from {
+    opacity: 0;
+    transform:
+      translateY(35px)
+      scale(.72);
+  }
+
+  72% {
+    transform:
+      translateY(-3px)
+      scale(1.025);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+.world-anomaly-icon {
+  display: grid;
+  place-items: center;
+
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 18px;
+
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 50%;
+
+  background: rgba(255,255,255,.025);
+  color: rgba(226,152,164,.84);
+
+  box-shadow:
+    0 0 58px rgba(185,94,112,.12);
+
+  font-size: 34px;
+
+  animation:
+    worldAnomalyIconFloat
+    2.6s ease-in-out infinite;
+}
+
+@keyframes worldAnomalyIconFloat {
+  50% {
+    transform:
+      translateY(-6px)
+      rotate(3deg);
+  }
+}
+
+.world-anomaly-card > small {
+  display: block;
+  margin-bottom: 10px;
+
+  color: rgba(213,131,145,.66);
+
+  font-size: 7px;
+  letter-spacing: .17em;
+}
+
+.world-anomaly-card h2 {
+  max-width: 350px;
+  margin: 0 auto;
+
+  color: rgba(255,244,235,.95);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: clamp(26px, 7vw, 37px);
+  font-weight: 400;
+  line-height: 1.12;
+}
+
+.world-anomaly-card p {
+  max-width: 330px;
+  margin: 16px auto 0;
+
+  color: rgba(255,239,230,.52);
+
+  font-size: 10px;
+  line-height: 1.62;
+}
+
+.world-anomaly-card > button {
+  margin-top: 23px;
+  padding: 10px 17px;
+
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.035);
+  color: rgba(255,242,234,.65);
+
+  font-size: 8px;
+  cursor: pointer;
+}
+
+.world-anomaly-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.world-anomaly-particles i {
+  --world-angle:
+    calc(var(--world-i) * 18deg);
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  color: rgba(217,142,155,.43);
+  font-size: 14px;
+  font-style: normal;
+
+  opacity: 0;
+
+  animation:
+    worldAnomalyParticle
+    1.8s ease-out forwards;
+
+  animation-delay:
+    calc(var(--world-i) * .022s);
+}
+
+@keyframes worldAnomalyParticle {
+  0% {
+    opacity: 0;
+    transform:
+      translate(-50%,-50%)
+      rotate(var(--world-angle))
+      translateY(0)
+      scale(.3);
+  }
+
+  18% { opacity: 1; }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(-50%,-50%)
+      rotate(var(--world-angle))
+      translateY(-280px)
+      scale(1.15);
+  }
+}
+
+/* =========================================================
+   ПОСЛЕ 10 КАПСУЛ САЙТ ЧУТЬ-ЧУТЬ «ПАЛИТСЯ»
+   НИЧЕГО НЕ ЛОМАЕМ TRANSFORM-АМИ.
+========================================================= */
+
+html.world-anomaly-stage-10 .brand-heart {
+  animation:
+    worldSuspiciousGlow
+    15s ease-in-out infinite;
+}
+
+html.world-anomaly-stage-10 .camp-mug-warm {
+  animation:
+    worldSuspiciousMug
+    17s ease-in-out infinite;
+}
+
+html.world-anomaly-stage-10 .camp-secret-star {
+  animation:
+    worldSuspiciousStar
+    12s ease-in-out infinite;
+}
+
+@keyframes worldSuspiciousGlow {
+  0%, 42%, 48%, 100% {
+    filter: brightness(1);
+  }
+
+  44% {
+    filter:
+      brightness(1.55)
+      drop-shadow(0 0 8px rgba(212,110,128,.35));
+  }
+
+  46% {
+    filter: brightness(.82);
+  }
+}
+
+@keyframes worldSuspiciousMug {
+  0%, 64%, 70%, 100% {
+    filter: brightness(1);
+  }
+
+  66% {
+    filter:
+      brightness(1.18)
+      drop-shadow(0 0 8px rgba(218,166,110,.18));
+  }
+
+  68% {
+    filter: brightness(.93);
+  }
+}
+
+@keyframes worldSuspiciousStar {
+  0%, 28%, 35%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+
+  30% {
+    opacity: .35;
+    filter: brightness(.8);
+  }
+
+  32% {
+    opacity: 1;
+    filter:
+      brightness(1.8)
+      drop-shadow(0 0 8px rgba(255,225,169,.36));
+  }
+}
+
+@media (max-width: 520px) {
+  .world-anomaly-envelope {
+    left: 18px;
+    bottom: 88px;
+
+    width: 36px;
+    height: 25px;
+  }
+
+  .world-anomaly-card {
+    padding: 25px 18px 21px;
+    border-radius: 25px;
+  }
+
+  .world-anomaly-icon {
+    width: 74px;
+    height: 74px;
+    font-size: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-anomaly-plane,
+  .world-anomaly-envelope,
+  .world-anomaly-falling-star > span,
+  .world-anomaly-icon,
+  .world-anomaly-particles i {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
