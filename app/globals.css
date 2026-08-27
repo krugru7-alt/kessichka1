@@ -31927,3 +31927,388 @@ body:has(.camp-deluxe) .drakosha-floating {
     width: 36%;
   }
 }
+/* =========================================================
+   ТРИ СКРЫТЫХ ПОЦЕЛУЙЧИКА
+========================================================= */
+
+.hidden-kiss-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 150000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 22px;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(165, 78, 91, .20),
+      transparent 38%
+    ),
+    rgba(10, 8, 10, .92);
+
+  backdrop-filter: blur(18px);
+
+  animation:
+    hiddenKissOverlayIn
+    .32s ease both;
+}
+
+.hidden-kiss-overlay.is-final {
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      rgba(194, 100, 112, .30),
+      transparent 43%
+    ),
+    rgba(10, 7, 9, .94);
+}
+
+@keyframes hiddenKissOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+.hidden-kiss-card {
+  position: relative;
+  z-index: 5;
+
+  width: min(91vw, 430px);
+
+  padding:
+    33px 25px
+    25px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, .08);
+
+  border-radius: 28px;
+
+  background:
+    linear-gradient(
+      155deg,
+      rgba(42, 31, 34, .96),
+      rgba(23, 20, 22, .97)
+    );
+
+  box-shadow:
+    0 35px 90px
+    rgba(0, 0, 0, .48),
+    inset 0 1px 0
+    rgba(255, 255, 255, .04);
+
+  text-align: center;
+
+  animation:
+    hiddenKissCardIn
+    .62s
+    cubic-bezier(.2, 1.35, .25, 1)
+    both;
+}
+
+@keyframes hiddenKissCardIn {
+  0% {
+    opacity: 0;
+    transform:
+      translateY(30px)
+      scale(.72)
+      rotate(-2deg);
+  }
+
+  70% {
+    transform:
+      translateY(-3px)
+      scale(1.025)
+      rotate(.5deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1)
+      rotate(0);
+  }
+}
+
+
+.hidden-kiss-marks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  min-height: 74px;
+
+  margin-bottom: 12px;
+}
+
+.hidden-kiss-marks span {
+  display: inline-grid;
+  place-items: center;
+
+  width: 67px;
+  height: 67px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(178, 91, 104, .09);
+
+  box-shadow:
+    0 0 45px
+    rgba(193, 98, 111, .13);
+
+  font-size: 32px;
+
+  animation:
+    hiddenKissMark
+    2s ease-in-out infinite;
+}
+
+.hidden-kiss-marks span:nth-child(2) {
+  animation-delay: -.35s;
+}
+
+.hidden-kiss-marks span:nth-child(3) {
+  animation-delay: -.7s;
+}
+
+@keyframes hiddenKissMark {
+  50% {
+    transform:
+      translateY(-5px)
+      rotate(4deg)
+      scale(1.04);
+  }
+}
+
+
+.hidden-kiss-card > small {
+  display: block;
+
+  margin-bottom: 10px;
+
+  color:
+    rgba(211, 135, 145, .68);
+
+  font-size: 8px;
+  letter-spacing: .16em;
+
+  text-transform: uppercase;
+}
+
+.hidden-kiss-card h2 {
+  margin: 0;
+
+  color:
+    rgba(255, 244, 238, .96);
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(27px, 7vw, 38px);
+
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.hidden-kiss-card p {
+  max-width: 340px;
+
+  margin:
+    17px auto 0;
+
+  color:
+    rgba(255, 237, 230, .58);
+
+  font-size: 11px;
+  line-height: 1.62;
+}
+
+
+.hidden-kiss-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  margin-top: 24px;
+}
+
+.hidden-kiss-progress b {
+  display: grid;
+  place-items: center;
+
+  min-width: 39px;
+  height: 26px;
+
+  padding: 0 8px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(181, 93, 106, .12);
+
+  color:
+    rgba(227, 153, 162, .78);
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.hidden-kiss-progress span {
+  color:
+    rgba(255, 241, 233, .34);
+
+  font-size: 8px;
+}
+
+
+.hidden-kiss-final-text {
+  display: block;
+
+  margin-top: 17px;
+
+  color:
+    rgba(233, 161, 170, .88);
+
+  font-family:
+    Georgia,
+    serif;
+
+  font-size: 15px;
+  font-weight: 400;
+}
+
+
+.hidden-kiss-close {
+  margin-top: 25px;
+
+  padding:
+    10px 15px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, .07);
+
+  border-radius: 999px;
+
+  background:
+    rgba(255, 255, 255, .035);
+
+  color:
+    rgba(255, 241, 233, .47);
+
+  font-size: 8px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   ЧАСТИЦЫ
+========================================================= */
+
+.hidden-kiss-burst {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+}
+
+.hidden-kiss-burst i {
+  --kiss-angle:
+    calc(
+      var(--kiss-i) *
+      29deg
+    );
+
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  color:
+    rgba(205, 112, 124, .55);
+
+  font-size: 18px;
+  font-style: normal;
+
+  opacity: 0;
+
+  animation:
+    hiddenKissParticle
+    1.8s ease-out forwards;
+
+  animation-delay:
+    calc(
+      var(--kiss-i) *
+      .025s
+    );
+}
+
+@keyframes hiddenKissParticle {
+  0% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--kiss-angle))
+      translateY(0)
+      scale(.4);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--kiss-angle))
+      translateY(-280px)
+      scale(1.15);
+  }
+}
+
+
+@media (max-width: 480px) {
+  .hidden-kiss-overlay {
+    padding: 14px;
+  }
+
+  .hidden-kiss-card {
+    padding:
+      29px 19px
+      22px;
+
+    border-radius: 24px;
+  }
+
+  .hidden-kiss-marks span {
+    width: 58px;
+    height: 58px;
+
+    font-size: 27px;
+  }
+}
