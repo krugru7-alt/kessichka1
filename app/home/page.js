@@ -2,87 +2,234 @@
 
 import {
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 
 
 /* =====================================================
-   ТВОИ ЗАПИСКИ
+   МАЛЕНЬКИЕ ФРАЗЫ
 
-   Пока меняешь их прямо здесь.
-   Потом перенесём управление ими в админку.
+   Они ничего не требуют.
 ===================================================== */
 
-const NOTES = [
+const quietPhrases = [
+  "тут тихо",
+  "можно просто посидеть",
+  "ничего важного здесь не происходит",
+  "заглянула? располагайся",
+  "никуда не торопимся",
+  "можно просто потыкать Дракошу",
+  "я оставил тут немного тишины",
+  "побудь сколько хочется",
+];
+
+
+/* =====================================================
+   СЛУЧАЙНЫЕ НАХОДКИ
+===================================================== */
+
+const littleFinds = [
   {
-    id: 1,
-
-    title:
-      "просто оставил тебе",
-
-    text:
-      "Если ты сюда заглянула — можешь ничего не делать. Просто посиди немного, потыкай что-нибудь и иди дальше по своим делам. Я просто хотел, чтобы у тебя было такое место.",
+    icon: "✦",
+    title: "звёздочка",
+    text: "просто лежала тут",
   },
 
   {
-    id: 2,
-
-    title:
-      "на случай шумного дня",
-
-    text:
-      "Если сегодня вокруг слишком много всего — хотя бы здесь ничего от тебя не требуется.",
+    icon: "☘",
+    title: "маленькая удача",
+    text: "забирай, пригодится",
   },
 
   {
-    id: 3,
+    icon: "⌁",
+    title: "бумажный самолётик",
+    text: "куда-то летел и решил остаться",
+  },
 
-    title:
-      "маленькая записка",
+  {
+    icon: "●",
+    title: "камешек",
+    text: "Дракоша говорит, что он ценный",
+  },
 
-    text:
-      "Никакого важного повода. Просто увидел это место и подумал, что здесь должна лежать записка для тебя.",
+  {
+    icon: "✿",
+    title: "что-то маленькое",
+    text: "пусть просто побудет здесь",
   },
 ];
 
+
+/* =====================================================
+   ФРАЗЫ ДРАКОШИ
+===================================================== */
+
+const dragonReplies = [
+  "м?",
+  "👀",
+  "...",
+  "я вообще-то отдыхал",
+  "чего тыкаемся",
+  "zZ",
+  "я тут",
+  "ничего не делал",
+];
 
 
 /* =====================================================
    МИНСК
 ===================================================== */
 
-function getMinskTime() {
+function getMinskInfo(date = new Date()) {
 
-  return new Intl.DateTimeFormat(
-    "ru-RU",
-    {
-      timeZone:
-        "Europe/Minsk",
+  const time =
+    new Intl.DateTimeFormat(
+      "ru-RU",
+      {
+        timeZone:
+          "Europe/Minsk",
 
-      hour:
-        "2-digit",
+        hour:
+          "2-digit",
 
-      minute:
-        "2-digit",
+        minute:
+          "2-digit",
 
-      hourCycle:
-        "h23",
-    }
-  ).format(
-    new Date()
+        hourCycle:
+          "h23",
+      }
+    ).format(date);
+
+
+  const hour =
+    Number(
+      new Intl.DateTimeFormat(
+        "en-US",
+        {
+          timeZone:
+            "Europe/Minsk",
+
+          hour:
+            "numeric",
+
+          hourCycle:
+            "h23",
+        }
+      ).format(date)
+    );
+
+
+  const dateKey =
+    new Intl.DateTimeFormat(
+      "en-CA",
+      {
+        timeZone:
+          "Europe/Minsk",
+
+        year:
+          "numeric",
+
+        month:
+          "2-digit",
+
+        day:
+          "2-digit",
+      }
+    ).format(date);
+
+
+  return {
+    time,
+    hour,
+    dateKey,
+  };
+
+}
+
+
+/* =====================================================
+   ПОГОДА
+===================================================== */
+
+function weatherLabel(code) {
+
+  if (code === 0) {
+    return "ясно";
+  }
+
+  if (
+    code >= 1 &&
+    code <= 3
+  ) {
+    return "облачно";
+  }
+
+  if (
+    code >= 45 &&
+    code <= 48
+  ) {
+    return "туман";
+  }
+
+  if (
+    code >= 51 &&
+    code <= 67
+  ) {
+    return "дождь";
+  }
+
+  if (
+    code >= 71 &&
+    code <= 77
+  ) {
+    return "снег";
+  }
+
+  if (
+    code >= 80 &&
+    code <= 82
+  ) {
+    return "ливень";
+  }
+
+  if (
+    code >= 85 &&
+    code <= 86
+  ) {
+    return "снегопад";
+  }
+
+  if (
+    code >= 95
+  ) {
+    return "гроза";
+  }
+
+  return "Минск";
+}
+
+
+function weatherIsRainy(code) {
+
+  return (
+    (
+      code >= 51 &&
+      code <= 67
+    ) ||
+    (
+      code >= 80 &&
+      code <= 82
+    ) ||
+    code >= 95
   );
 
 }
 
 
-
 /* =====================================================
-   СИНТЕТИЧЕСКИЙ ДОЖДЬ
-
-   Никаких mp3 не требуется.
-   Браузер сам создаёт мягкий шум дождя.
+   ЗВУК ДОЖДЯ
 ===================================================== */
 
 function createRainSound() {
@@ -102,7 +249,7 @@ function createRainSound() {
 
 
   const duration =
-    4;
+    5;
 
 
   const buffer =
@@ -126,33 +273,28 @@ function createRainSound() {
       );
 
 
+    let last =
+      0;
+
+
     for (
       let i = 0;
       i < data.length;
       i++
     ) {
 
-      const noise =
+      const white =
         Math.random() * 2 -
         1;
 
 
-      /*
-        Немного смягчаем белый шум,
-        чтобы это было больше похоже
-        на дождь за окном.
-      */
-
-      const fade =
-        0.55 +
-        Math.random() *
-          0.45;
+      last =
+        last * 0.92 +
+        white * 0.08;
 
 
       data[i] =
-        noise *
-        fade *
-        0.32;
+        last * 0.72;
 
     }
 
@@ -166,7 +308,6 @@ function createRainSound() {
   source.buffer =
     buffer;
 
-
   source.loop =
     true;
 
@@ -178,9 +319,8 @@ function createRainSound() {
   lowPass.type =
     "lowpass";
 
-
   lowPass.frequency.value =
-    3500;
+    4200;
 
 
   const highPass =
@@ -190,9 +330,8 @@ function createRainSound() {
   highPass.type =
     "highpass";
 
-
   highPass.frequency.value =
-    180;
+    130;
 
 
   const gain =
@@ -200,7 +339,7 @@ function createRainSound() {
 
 
   gain.gain.value =
-    0.16;
+    0.18;
 
 
   source.connect(
@@ -229,11 +368,9 @@ function createRainSound() {
   return {
     context,
     source,
-    gain,
   };
 
 }
-
 
 
 /* =====================================================
@@ -246,37 +383,69 @@ export default function HomeRoomPage() {
     now,
     setNow,
   ] = useState(
-    getMinskTime()
+    new Date()
   );
 
 
   const [
-    rainOn,
-    setRainOn,
+    weather,
+    setWeather,
+  ] = useState(
+    null
+  );
+
+
+  const [
+    mood,
+    setMood,
+  ] = useState(
+    "warm"
+  );
+
+
+  const [
+    rainSoundOn,
+    setRainSoundOn,
   ] = useState(
     false
   );
 
 
   const [
-    lampOn,
-    setLampOn,
+    dragonText,
+    setDragonText,
   ] = useState(
-    true
+    "zZ"
   );
 
 
   const [
-    noteOpen,
-    setNoteOpen,
+    dragonTaps,
+    setDragonTaps,
+  ] = useState(
+    0
+  );
+
+
+  const [
+    kissBurst,
+    setKissBurst,
   ] = useState(
     false
   );
 
 
   const [
-    dragonAwake,
-    setDragonAwake,
+    found,
+    setFound,
+  ] = useState(
+    false
+  );
+
+
+  const [
+    findOpen,
+    setFindOpen,
   ] = useState(
     false
   );
@@ -288,6 +457,18 @@ export default function HomeRoomPage() {
     );
 
 
+  const dragonTimerRef =
+    useRef(
+      null
+    );
+
+
+  const minsk =
+    getMinskInfo(
+      now
+    );
+
+
   /* ===================================================
      ВРЕМЯ
   =================================================== */
@@ -296,13 +477,10 @@ export default function HomeRoomPage() {
 
     const timer =
       window.setInterval(
-        () => {
-
+        () =>
           setNow(
-            getMinskTime()
-          );
-
-        },
+            new Date()
+          ),
         30000
       );
 
@@ -315,25 +493,233 @@ export default function HomeRoomPage() {
   }, []);
 
 
-
   /* ===================================================
-     ЗАПИСКА НА ЭТОТ ВИЗИТ
-
-     Не меняется каждые пять секунд.
+     СОХРАНЯЕМ СВЕТ
   =================================================== */
 
-  const note =
-    useMemo(
-      () =>
-        NOTES[
-          Math.floor(
-            Math.random() *
-              NOTES.length
-          )
-        ],
-      []
+  useEffect(() => {
+
+    try {
+
+      const saved =
+        window.localStorage
+          .getItem(
+            "our-home-mood"
+          );
+
+
+      if (
+        saved === "soft" ||
+        saved === "warm" ||
+        saved === "night"
+      ) {
+
+        setMood(
+          saved
+        );
+
+      }
+
+    } catch {}
+
+  }, []);
+
+
+  /* ===================================================
+     ПОГОДА МИНСКА
+  =================================================== */
+
+  useEffect(() => {
+
+    let active =
+      true;
+
+
+    async function loadWeather() {
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/weather",
+            {
+              cache:
+                "no-store",
+            }
+          );
+
+
+        if (!response.ok) {
+          return;
+        }
+
+
+        const data =
+          await response.json();
+
+
+        if (active) {
+          setWeather(
+            data
+          );
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "HOME WEATHER:",
+          error
+        );
+
+      }
+
+    }
+
+
+    loadWeather();
+
+
+    const timer =
+      window.setInterval(
+        loadWeather,
+        10 * 60 * 1000
+      );
+
+
+    return () => {
+
+      active =
+        false;
+
+      window.clearInterval(
+        timer
+      );
+
+    };
+
+  }, []);
+
+
+  /* ===================================================
+     ВЫБОР ФРАЗЫ И НАХОДКИ
+
+     Меняются сами со временем.
+  =================================================== */
+
+  const seed =
+    (
+      Number(
+        minsk.dateKey.replace(
+          /\D/g,
+          ""
+        )
+      ) +
+      minsk.hour
     );
 
+
+  const quietPhrase =
+    quietPhrases[
+      seed %
+      quietPhrases.length
+    ];
+
+
+  const littleFind =
+    littleFinds[
+      seed %
+      littleFinds.length
+    ];
+
+
+  /* ===================================================
+     РЕАЛЬНЫЙ ДОЖДЬ
+
+     Если сейчас в Минске дождь,
+     визуальные капли появляются сами.
+
+     ЗВУК сам не включается.
+  =================================================== */
+
+  const realRain =
+    weatherIsRainy(
+      Number(
+        weather?.weatherCode
+      )
+    );
+
+
+  const showRain =
+    realRain ||
+    rainSoundOn;
+
+
+  /* ===================================================
+     СВЕТ
+  =================================================== */
+
+  function changeMood() {
+
+    let next =
+      "warm";
+
+
+    if (
+      mood === "warm"
+    ) {
+      next =
+        "soft";
+    }
+
+    else if (
+      mood === "soft"
+    ) {
+      next =
+        "night";
+    }
+
+    else {
+      next =
+        "warm";
+    }
+
+
+    setMood(
+      next
+    );
+
+
+    try {
+
+      window.localStorage
+        .setItem(
+          "our-home-mood",
+          next
+        );
+
+    } catch {}
+
+  }
+
+
+  function moodText() {
+
+    if (
+      mood === "soft"
+    ) {
+      return "тихо";
+    }
+
+
+    if (
+      mood === "night"
+    ) {
+      return "ночь";
+    }
+
+
+    return "тепло";
+  }
 
 
   /* ===================================================
@@ -368,7 +754,7 @@ export default function HomeRoomPage() {
         null;
 
 
-      setRainOn(
+      setRainSoundOn(
         false
       );
 
@@ -385,13 +771,7 @@ export default function HomeRoomPage() {
 
 
       if (!rain) {
-
-        alert(
-          "Этот браузер не умеет воспроизводить атмосферу."
-        );
-
         return;
-
       }
 
 
@@ -410,10 +790,9 @@ export default function HomeRoomPage() {
         rain;
 
 
-      setRainOn(
+      setRainSoundOn(
         true
       );
-
 
     } catch (error) {
 
@@ -425,7 +804,6 @@ export default function HomeRoomPage() {
     }
 
   }
-
 
 
   useEffect(() => {
@@ -455,28 +833,173 @@ export default function HomeRoomPage() {
 
       }
 
+
+      if (
+        dragonTimerRef.current
+      ) {
+
+        window.clearTimeout(
+          dragonTimerRef.current
+        );
+
+      }
+
     };
 
   }, []);
 
 
+  /* ===================================================
+     ДРАКОША
+  =================================================== */
+
+  function tapDragon() {
+
+    const nextCount =
+      dragonTaps + 1;
+
+
+    setDragonTaps(
+      nextCount
+    );
+
+
+    if (
+      nextCount >= 5
+    ) {
+
+      setDragonTaps(
+        0
+      );
+
+
+      setDragonText(
+        "ладно. тьмок ♡"
+      );
+
+
+      setKissBurst(
+        true
+      );
+
+
+      window.setTimeout(
+        () =>
+          setKissBurst(
+            false
+          ),
+        1500
+      );
+
+    }
+
+    else {
+
+      const text =
+        dragonReplies[
+          Math.floor(
+            Math.random() *
+            dragonReplies.length
+          )
+        ];
+
+
+      setDragonText(
+        text
+      );
+
+    }
+
+
+    if (
+      dragonTimerRef.current
+    ) {
+
+      window.clearTimeout(
+        dragonTimerRef.current
+      );
+
+    }
+
+
+    dragonTimerRef.current =
+      window.setTimeout(
+        () => {
+
+          setDragonText(
+            "zZ"
+          );
+
+        },
+        2600
+      );
+
+  }
+
+
+  /* ===================================================
+     НАХОДКА
+  =================================================== */
+
+  function openFind() {
+
+    setFound(
+      true
+    );
+
+
+    setFindOpen(
+      true
+    );
+
+
+    window.setTimeout(
+      () =>
+        setFindOpen(
+          false
+        ),
+      3500
+    );
+
+  }
+
 
   return (
 
-    <div className="home-room-page">
+    <div
+      className={`
+        home-v5-page
+        home-v5-${mood}
+      `}
+    >
 
 
       {/* =================================================
-          INTRO
+          HEADER
       ================================================= */}
 
-      <section className="home-room-intro">
+      <section className="home-v5-header">
 
 
         <div>
 
           <small>
-            Минск · {now}
+            Минск · {minsk.time}
+
+            {
+              weather &&
+              (
+                <>
+                  {" · "}
+                  {
+                    Math.round(
+                      weather.temperature
+                    )
+                  }°
+                </>
+              )
+            }
+
           </small>
 
 
@@ -486,16 +1009,15 @@ export default function HomeRoomPage() {
 
 
           <p>
-            можешь просто
-            побыть здесь
+            {quietPhrase}
           </p>
 
         </div>
 
 
-        <span className="home-room-intro-mark">
-          ♡
-        </span>
+        <div className="home-v5-header-dot">
+          ·
+        </div>
 
 
       </section>
@@ -503,111 +1025,126 @@ export default function HomeRoomPage() {
 
 
       {/* =================================================
-          КОМНАТА
+          ЖИВАЯ СЦЕНА
       ================================================= */}
 
       <section
         className={`
-          home-room-scene
+          home-v5-scene
           ${
-            lampOn
-              ? "lamp-on"
-              : "lamp-off"
-          }
-          ${
-            rainOn
-              ? "rain-on"
+            showRain
+              ? "is-raining"
               : ""
           }
         `}
       >
 
 
-        {/* ОКНО */}
+        {/* НЕБОЛЬШОЕ СОСТОЯНИЕ */}
 
-        <div className="home-room-window">
+        <div className="home-v5-scene-status">
 
-          <div className="home-room-city">
-
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-
-          </div>
-
-
-          {
-            rainOn &&
-            (
-
-              <div className="home-room-rain">
-
-                {
-                  Array.from({
-                    length:
-                      28,
-                  }).map(
-                    (
-                      _,
-                      index
-                    ) => (
-
-                      <i
-                        key={
-                          index
-                        }
-                        style={{
-                          left:
-                            `${
-                              (
-                                index *
-                                37
-                              ) %
-                              100
-                            }%`,
-
-                          animationDelay:
-                            `${
-                              (
-                                index %
-                                9
-                              ) *
-                              -0.17
-                            }s`,
-                        }}
-                      />
-
+          <span>
+            {
+              weather
+                ? weatherLabel(
+                    Number(
+                      weather.weatherCode
                     )
                   )
-                }
-
-              </div>
-
-            )
-          }
+                : "наш мирок"
+            }
+          </span>
 
 
-          <div className="home-room-night-glow" />
-
-        </div>
+          <i />
 
 
-
-        {/* ПОЛКА */}
-
-        <div className="home-room-shelf">
-
-          <span className="home-room-book book-one" />
-          <span className="home-room-book book-two" />
-          <span className="home-room-book book-three" />
-
-          <span className="home-room-plant">
-            ☘
+          <span>
+            {moodText()}
           </span>
 
         </div>
+
+
+
+        {/* СВЕТОВЫЕ ТОЧКИ */}
+
+        <div className="home-v5-particles">
+
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+
+        </div>
+
+
+
+        {/* ДОЖДЬ */}
+
+        {
+          showRain &&
+          (
+
+            <div className="home-v5-rain">
+
+              {
+                Array.from({
+                  length:
+                    32,
+                }).map(
+                  (
+                    _,
+                    index
+                  ) => (
+
+                    <i
+                      key={
+                        index
+                      }
+                      style={{
+                        left:
+                          `${
+                            (
+                              index *
+                              37
+                            ) %
+                            100
+                          }%`,
+
+                        animationDelay:
+                          `${
+                            (
+                              index %
+                              11
+                            ) *
+                            -0.13
+                          }s`,
+
+                        animationDuration:
+                          `${
+                            1.1 +
+                            (
+                              index %
+                              5
+                            ) *
+                            0.15
+                          }s`,
+                      }}
+                    />
+
+                  )
+                )
+              }
+
+            </div>
+
+          )
+        }
 
 
 
@@ -615,86 +1152,30 @@ export default function HomeRoomPage() {
 
         <button
           type="button"
-          className="home-room-lamp"
-          onClick={() =>
-            setLampOn(
-              (current) =>
-                !current
-            )
+          className="home-v5-lamp"
+          onClick={
+            changeMood
           }
-          aria-label="Переключить свет"
+          aria-label="Изменить свет"
         >
+
+          <span className="home-v5-lamp-shade" />
+
+          <span className="home-v5-lamp-light" />
+
+          <span className="home-v5-lamp-neck" />
+
+          <span className="home-v5-lamp-base" />
+
+        </button>
+
+
+
+        {/* МЯГКИЙ ОСТРОВОК */}
+
+        <div className="home-v5-island">
 
           <span />
-
-          <i />
-
-        </button>
-
-
-
-        {/* ЗАПИСКА */}
-
-        <button
-          type="button"
-          className="home-room-paper"
-          onClick={() =>
-            setNoteOpen(
-              true
-            )
-          }
-        >
-
-          <small>
-            оставлено тебе
-          </small>
-
-          <b>
-            можешь почитать
-          </b>
-
-          <span>
-            ↗
-          </span>
-
-        </button>
-
-
-
-        {/* СТОЛ */}
-
-        <div className="home-room-table">
-
-
-          <button
-            type="button"
-            className="home-room-mug mug-obsid"
-            aria-label="Кружка Обсидика"
-          >
-
-            <span />
-
-            <small>
-              Обсидик
-            </small>
-
-          </button>
-
-
-          <button
-            type="button"
-            className="home-room-mug mug-kessi"
-            aria-label="Кружка Кэссички"
-          >
-
-            <span />
-
-            <small>
-              Кэссичка
-            </small>
-
-          </button>
-
 
         </div>
 
@@ -704,21 +1185,11 @@ export default function HomeRoomPage() {
 
         <button
           type="button"
-          className={`
-            home-room-dragon
-            ${
-              dragonAwake
-                ? "awake"
-                : ""
-            }
-          `}
-          onClick={() =>
-            setDragonAwake(
-              (current) =>
-                !current
-            )
+          className="home-v5-dragon"
+          onClick={
+            tapDragon
           }
-          aria-label="Дракоша"
+          aria-label="Потыкать Дракошу"
         >
 
           <img
@@ -727,106 +1198,156 @@ export default function HomeRoomPage() {
           />
 
 
-          <span>
+          <span className="home-v5-dragon-talk">
+            {dragonText}
+          </span>
 
-            {
-              dragonAwake
-                ? "👀"
-                : "zZ"
+        </button>
+
+
+
+        {/* ТЬМОК */}
+
+        {
+          kissBurst &&
+          (
+
+            <div className="home-v5-hearts">
+
+              <i>♡</i>
+              <i>♡</i>
+              <i>♡</i>
+              <i>♡</i>
+              <i>♡</i>
+              <i>♡</i>
+
+            </div>
+
+          )
+        }
+
+
+
+        {/* СЛУЧАЙНАЯ НАХОДКА */}
+
+        <button
+          type="button"
+          className={`
+            home-v5-find
+            ${
+              found
+                ? "is-found"
+                : ""
             }
-
-          </span>
-
-        </button>
-
-
-
-        <div className="home-room-floor-glow" />
-
-
-      </section>
-
-
-
-      {/* =================================================
-          АТМОСФЕРА
-      ================================================= */}
-
-      <section className="home-room-controls">
-
-
-        <button
-          type="button"
-          className={
-            lampOn
-              ? "active"
-              : ""
-          }
-          onClick={() =>
-            setLampOn(
-              (current) =>
-                !current
-            )
-          }
-        >
-
-          <span>
-            ◐
-          </span>
-
-          <div>
-
-            <b>
-              свет
-            </b>
-
-            <small>
-              {
-                lampOn
-                  ? "включён"
-                  : "выключен"
-              }
-            </small>
-
-          </div>
-
-        </button>
-
-
-
-        <button
-          type="button"
-          className={
-            rainOn
-              ? "active"
-              : ""
-          }
+          `}
           onClick={
-            toggleRain
+            openFind
           }
+          aria-label="Посмотреть находку"
         >
 
-          <span>
-            ☂
-          </span>
-
-          <div>
-
-            <b>
-              дождь
-            </b>
-
-            <small>
-              {
-                rainOn
-                  ? "шумит"
-                  : "включить"
-              }
-            </small>
-
-          </div>
+          {
+            littleFind.icon
+          }
 
         </button>
+
+
+
+        {/* ТЕКСТ НАХОДКИ */}
+
+        {
+          findOpen &&
+          (
+
+            <div className="home-v5-find-card">
+
+              <b>
+                {littleFind.title}
+              </b>
+
+
+              <span>
+                {littleFind.text}
+              </span>
+
+            </div>
+
+          )
+        }
+
+
+
+        {/* КНОПКИ */}
+
+        <div className="home-v5-controls">
+
+
+          <button
+            type="button"
+            onClick={
+              changeMood
+            }
+          >
+
+            <span>
+              ◐
+            </span>
+
+            <div>
+
+              <b>
+                свет
+              </b>
+
+              <small>
+                {moodText()}
+              </small>
+
+            </div>
+
+          </button>
+
+
+
+          <button
+            type="button"
+            className={
+              rainSoundOn
+                ? "active"
+                : ""
+            }
+            onClick={
+              toggleRain
+            }
+          >
+
+            <span>
+              ≋
+            </span>
+
+            <div>
+
+              <b>
+                дождь
+              </b>
+
+              <small>
+
+                {
+                  rainSoundOn
+                    ? "шумит"
+                    : "включить"
+                }
+
+              </small>
+
+            </div>
+
+          </button>
+
+
+        </div>
 
 
       </section>
@@ -834,91 +1355,24 @@ export default function HomeRoomPage() {
 
 
       {/* =================================================
-          НЕБОЛЬШАЯ ФРАЗА
+          НИЗ
       ================================================= */}
 
-      <div className="home-room-quiet-note">
+      <section className="home-v5-bottom">
+
 
         <span>
-          “
+          ♡
         </span>
+
 
         <p>
           здесь ничего
           не надо успевать
         </p>
 
-      </div>
 
-
-
-      {/* =================================================
-          MODAL · ЗАПИСКА
-      ================================================= */}
-
-      {
-        noteOpen &&
-        (
-
-          <div
-            className="home-note-overlay"
-            onClick={() =>
-              setNoteOpen(
-                false
-              )
-            }
-          >
-
-
-            <article
-              className="home-note-letter"
-              onClick={
-                (event) =>
-                  event.stopPropagation()
-              }
-            >
-
-
-              <button
-                type="button"
-                className="home-note-close"
-                onClick={() =>
-                  setNoteOpen(
-                    false
-                  )
-                }
-              >
-                ×
-              </button>
-
-
-              <small>
-                от обсидика
-              </small>
-
-
-              <h2>
-                {note.title}
-              </h2>
-
-
-              <p>
-                {note.text}
-              </p>
-
-
-              <span className="home-note-sign">
-                ♡
-              </span>
-
-
-            </article>
-
-
-          </div>
-
-        )
-      }
+      </section>
 
 
     </div>
