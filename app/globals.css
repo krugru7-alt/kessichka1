@@ -24645,3 +24645,1645 @@ body {
   opacity:
     .62;
 }
+/* =========================================================
+   ДОМОЙ V5
+========================================================= */
+
+.home-v5-page {
+  --home-bg:
+    #171616;
+
+  --home-panel:
+    #201d1c;
+
+  --home-text:
+    #f1e8df;
+
+  --home-muted:
+    rgba(
+      241,
+      232,
+      223,
+      .48
+    );
+
+  --home-accent:
+    #aa676e;
+
+  --home-warm:
+    #d29a65;
+
+
+  width:
+    100%;
+
+  max-width:
+    650px;
+
+  margin:
+    0 auto;
+
+  padding:
+    22px
+    13px
+    120px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.home-v5-header {
+  display:
+    flex;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    space-between;
+
+  padding:
+    8px 5px 20px;
+}
+
+
+.home-v5-header small {
+  color:
+    var(
+      --home-muted
+    );
+
+  font-size:
+    9px;
+
+  letter-spacing:
+    .04em;
+}
+
+
+.home-v5-header h1 {
+  margin:
+    9px 0 4px;
+
+  color:
+    var(
+      --home-text
+    );
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(
+      43px,
+      12vw,
+      67px
+    );
+
+  font-weight:
+    400;
+
+  line-height:
+    .95;
+}
+
+
+.home-v5-header p {
+  margin:
+    8px 0 0;
+
+  color:
+    rgba(
+      207,
+      151,
+      153,
+      .72
+    );
+
+  font-size:
+    11px;
+}
+
+
+.home-v5-header-dot {
+  color:
+    var(
+      --home-accent
+    );
+
+  font-family:
+    Georgia,
+    serif;
+
+  font-size:
+    42px;
+
+  line-height:
+    1;
+}
+
+
+/* =========================================================
+   SCENE
+========================================================= */
+
+.home-v5-scene {
+  position:
+    relative;
+
+  width:
+    100%;
+
+  min-height:
+    550px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      .065
+    );
+
+  border-radius:
+    31px;
+
+  background:
+    radial-gradient(
+      circle at 76% 43%,
+      rgba(
+        192,
+        116,
+        71,
+        .11
+      ),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 25% 20%,
+      rgba(
+        89,
+        91,
+        124,
+        .10
+      ),
+      transparent 35%
+    ),
+    linear-gradient(
+      180deg,
+      #171819,
+      #1c1a19 60%,
+      #221b18
+    );
+
+  box-shadow:
+    0 28px 60px
+    rgba(
+      0,
+      0,
+      0,
+      .24
+    );
+
+  transition:
+    background
+    .55s ease,
+    filter
+    .55s ease;
+}
+
+
+/* =========================================================
+   LIGHT MODES
+========================================================= */
+
+.home-v5-warm
+.home-v5-scene {
+  background:
+    radial-gradient(
+      circle at 76% 42%,
+      rgba(
+        219,
+        145,
+        81,
+        .18
+      ),
+      transparent 37%
+    ),
+    linear-gradient(
+      180deg,
+      #181919,
+      #201b18 62%,
+      #291c16
+    );
+}
+
+
+.home-v5-soft
+.home-v5-scene {
+  background:
+    radial-gradient(
+      circle at 32% 26%,
+      rgba(
+        91,
+        97,
+        123,
+        .13
+      ),
+      transparent 36%
+    ),
+    linear-gradient(
+      180deg,
+      #17191c,
+      #191a1b 60%,
+      #1d1b1b
+    );
+}
+
+
+.home-v5-night
+.home-v5-scene {
+  background:
+    radial-gradient(
+      circle at 70% 35%,
+      rgba(
+        87,
+        77,
+        117,
+        .11
+      ),
+      transparent 34%
+    ),
+    linear-gradient(
+      180deg,
+      #101116,
+      #141419 62%,
+      #181516
+    );
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.home-v5-scene-status {
+  position:
+    absolute;
+
+  left:
+    19px;
+
+  top:
+    18px;
+
+  z-index:
+    20;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  padding:
+    7px 11px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      .055
+    );
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(
+      13,
+      13,
+      14,
+      .25
+    );
+
+  backdrop-filter:
+    blur(8px);
+
+  color:
+    rgba(
+      255,
+      245,
+      236,
+      .48
+    );
+
+  font-size:
+    8px;
+}
+
+
+.home-v5-scene-status i {
+  width:
+    3px;
+
+  height:
+    3px;
+
+  border-radius:
+    50%;
+
+  background:
+    var(
+      --home-accent
+    );
+}
+
+
+/* =========================================================
+   PARTICLES
+========================================================= */
+
+.home-v5-particles {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  pointer-events:
+    none;
+}
+
+
+.home-v5-particles i {
+  position:
+    absolute;
+
+  width:
+    3px;
+
+  height:
+    3px;
+
+  border-radius:
+    50%;
+
+  background:
+    rgba(
+      238,
+      198,
+      150,
+      .42
+    );
+
+  box-shadow:
+    0 0 9px
+    rgba(
+      238,
+      198,
+      150,
+      .25
+    );
+
+  animation:
+    homeV5Float
+    6s
+    ease-in-out
+    infinite;
+}
+
+
+.home-v5-particles i:nth-child(1) {
+  left: 17%;
+  top: 25%;
+}
+
+
+.home-v5-particles i:nth-child(2) {
+  left: 39%;
+  top: 16%;
+
+  animation-delay:
+    -2s;
+}
+
+
+.home-v5-particles i:nth-child(3) {
+  right: 14%;
+  top: 29%;
+
+  animation-delay:
+    -4s;
+}
+
+
+.home-v5-particles i:nth-child(4) {
+  left: 28%;
+  top: 53%;
+
+  animation-delay:
+    -1s;
+}
+
+
+.home-v5-particles i:nth-child(5) {
+  right: 22%;
+  top: 56%;
+
+  animation-delay:
+    -3s;
+}
+
+
+.home-v5-particles i:nth-child(6) {
+  left: 9%;
+  top: 67%;
+
+  animation-delay:
+    -5s;
+}
+
+
+.home-v5-particles i:nth-child(7) {
+  right: 8%;
+  top: 72%;
+
+  animation-delay:
+    -1.5s;
+}
+
+
+@keyframes homeV5Float {
+
+  50% {
+    transform:
+      translateY(-11px);
+
+    opacity:
+      .32;
+  }
+
+}
+
+
+/* =========================================================
+   LAMP
+========================================================= */
+
+.home-v5-lamp {
+  position:
+    absolute;
+
+  right:
+    7%;
+
+  top:
+    14%;
+
+  width:
+    83px;
+
+  height:
+    190px;
+
+  z-index:
+    6;
+
+  border:
+    0;
+
+  background:
+    transparent;
+
+  cursor:
+    pointer;
+}
+
+
+.home-v5-lamp-shade {
+  position:
+    absolute;
+
+  right:
+    3px;
+
+  top:
+    13px;
+
+  width:
+    67px;
+
+  height:
+    45px;
+
+  border-radius:
+    35px
+    35px
+    12px
+    12px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #56443a,
+      #392d28
+    );
+
+  transform:
+    rotate(
+      -8deg
+    );
+
+  z-index:
+    4;
+}
+
+
+.home-v5-lamp-neck {
+  position:
+    absolute;
+
+  left:
+    29px;
+
+  top:
+    48px;
+
+  width:
+    6px;
+
+  height:
+    119px;
+
+  border-radius:
+    10px;
+
+  background:
+    #4c4039;
+
+  transform:
+    rotate(
+      7deg
+    );
+}
+
+
+.home-v5-lamp-base {
+  position:
+    absolute;
+
+  left:
+    8px;
+
+  bottom:
+    7px;
+
+  width:
+    57px;
+
+  height:
+    10px;
+
+  border-radius:
+    50%;
+
+  background:
+    #504239;
+}
+
+
+.home-v5-lamp-light {
+  position:
+    absolute;
+
+  right:
+    -60px;
+
+  top:
+    25px;
+
+  width:
+    190px;
+
+  height:
+    230px;
+
+  pointer-events:
+    none;
+
+  background:
+    radial-gradient(
+      ellipse at top,
+      rgba(
+        235,
+        168,
+        103,
+        .24
+      ),
+      transparent 65%
+    );
+
+  opacity:
+    1;
+
+  transition:
+    opacity
+    .4s ease;
+}
+
+
+.home-v5-soft
+.home-v5-lamp-light {
+  opacity:
+    .38;
+}
+
+
+.home-v5-night
+.home-v5-lamp-light {
+  opacity:
+    .08;
+}
+
+
+/* =========================================================
+   ISLAND
+========================================================= */
+
+.home-v5-island {
+  position:
+    absolute;
+
+  left:
+    50%;
+
+  bottom:
+    115px;
+
+  width:
+    76%;
+
+  height:
+    170px;
+
+  transform:
+    translateX(
+      -50%
+    );
+
+  border-radius:
+    50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      #493238 0%,
+      #37272c 45%,
+      #211b1d 76%
+    );
+
+  box-shadow:
+    0 22px 40px
+    rgba(
+      0,
+      0,
+      0,
+      .35
+    ),
+    inset
+    0 7px 20px
+    rgba(
+      255,
+      255,
+      255,
+      .025
+    );
+}
+
+
+.home-v5-island span {
+  position:
+    absolute;
+
+  left:
+    12%;
+
+  right:
+    12%;
+
+  top:
+    17%;
+
+  bottom:
+    14%;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      .035
+    );
+
+  border-radius:
+    50%;
+}
+
+
+/* =========================================================
+   DRAKOSHA
+========================================================= */
+
+.home-v5-dragon {
+  position:
+    absolute;
+
+  left:
+    50%;
+
+  bottom:
+    143px;
+
+  z-index:
+    10;
+
+  width:
+    min(
+      59%,
+      340px
+    );
+
+  border:
+    0;
+
+  background:
+    transparent;
+
+  transform:
+    translateX(
+      -50%
+    );
+
+  cursor:
+    pointer;
+
+  transition:
+    transform
+    .18s ease;
+}
+
+
+.home-v5-dragon:active {
+  transform:
+    translateX(
+      -50%
+    )
+    scale(
+      .97
+    );
+}
+
+
+.home-v5-dragon img {
+  display:
+    block;
+
+  width:
+    100%;
+
+  max-height:
+    250px;
+
+  object-fit:
+    contain;
+
+  filter:
+    brightness(
+      .64
+    )
+    saturate(
+      .76
+    )
+    drop-shadow(
+      0 15px 15px
+      rgba(
+        0,
+        0,
+        0,
+        .32
+      )
+    );
+
+  user-select:
+    none;
+}
+
+
+.home-v5-warm
+.home-v5-dragon img {
+  filter:
+    brightness(
+      .73
+    )
+    saturate(
+      .79
+    )
+    sepia(
+      .06
+    )
+    drop-shadow(
+      0 15px 15px
+      rgba(
+        0,
+        0,
+        0,
+        .32
+      )
+    );
+}
+
+
+.home-v5-night
+.home-v5-dragon img {
+  filter:
+    brightness(
+      .48
+    )
+    saturate(
+      .68
+    )
+    drop-shadow(
+      0 15px 15px
+      rgba(
+        0,
+        0,
+        0,
+        .36
+      )
+    );
+}
+
+
+.home-v5-dragon-talk {
+  position:
+    absolute;
+
+  right:
+    1%;
+
+  top:
+    1%;
+
+  min-width:
+    42px;
+
+  padding:
+    6px 9px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      .06
+    );
+
+  border-radius:
+    12px;
+
+  background:
+    rgba(
+      22,
+      19,
+      20,
+      .65
+    );
+
+  color:
+    rgba(
+      255,
+      241,
+      231,
+      .57
+    );
+
+  backdrop-filter:
+    blur(9px);
+
+  font-size:
+    8px;
+
+  white-space:
+    nowrap;
+}
+
+
+/* =========================================================
+   HEART EASTER EGG
+========================================================= */
+
+.home-v5-hearts {
+  position:
+    absolute;
+
+  left:
+    50%;
+
+  bottom:
+    300px;
+
+  z-index:
+    30;
+
+  width:
+    120px;
+
+  height:
+    100px;
+
+  transform:
+    translateX(
+      -50%
+    );
+
+  pointer-events:
+    none;
+}
+
+
+.home-v5-hearts i {
+  position:
+    absolute;
+
+  left:
+    50%;
+
+  bottom:
+    0;
+
+  color:
+    #bb737b;
+
+  font-style:
+    normal;
+
+  font-size:
+    18px;
+
+  animation:
+    homeV5Heart
+    1.35s
+    ease-out
+    forwards;
+}
+
+
+.home-v5-hearts i:nth-child(2) {
+  margin-left:
+    -36px;
+
+  animation-delay:
+    .08s;
+}
+
+
+.home-v5-hearts i:nth-child(3) {
+  margin-left:
+    32px;
+
+  animation-delay:
+    .15s;
+}
+
+
+.home-v5-hearts i:nth-child(4) {
+  margin-left:
+    -57px;
+
+  animation-delay:
+    .24s;
+}
+
+
+.home-v5-hearts i:nth-child(5) {
+  margin-left:
+    52px;
+
+  animation-delay:
+    .3s;
+}
+
+
+.home-v5-hearts i:nth-child(6) {
+  margin-left:
+    11px;
+
+  animation-delay:
+    .4s;
+}
+
+
+@keyframes homeV5Heart {
+
+  0% {
+    transform:
+      translateY(0)
+      scale(.6);
+
+    opacity:
+      0;
+  }
+
+
+  20% {
+    opacity:
+      1;
+  }
+
+
+  100% {
+    transform:
+      translateY(-90px)
+      scale(1.15)
+      rotate(8deg);
+
+    opacity:
+      0;
+  }
+
+}
+
+
+/* =========================================================
+   LITTLE FIND
+========================================================= */
+
+.home-v5-find {
+  position:
+    absolute;
+
+  left:
+    10%;
+
+  top:
+    32%;
+
+  z-index:
+    18;
+
+  width:
+    39px;
+
+  height:
+    39px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      .05
+    );
+
+  border-radius:
+    50%;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      .025
+    );
+
+  color:
+    rgba(
+      221,
+      174,
+      143,
+      .56
+    );
+
+  font-size:
+    17px;
+
+  cursor:
+    pointer;
+
+  animation:
+    homeV5Find
+    4.5s
+    ease-in-out
+    infinite;
+}
+
+
+.home-v5-find.is-found {
+  border-color:
+    rgba(
+      190,
+      116,
+      124,
+      .14
+    );
+
+  color:
+    #b8757c;
+}
+
+
+@keyframes homeV5Find {
+
+  50% {
+    transform:
+      translateY(-5px)
+      rotate(4deg);
+  }
+
+}
+
+
+.home-v5-find-card {
+  position:
+    absolute;
+
+  left:
+    14%;
+
+  top:
+    39%;
+
+  z-index:
+    25;
+
+  max-width:
+    180px;
+
+  padding:
+    10px 12px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      .07
+    );
+
+  border-radius:
+    14px;
+
+  background:
+    rgba(
+      18,
+      17,
+      18,
+      .76
+    );
+
+  backdrop-filter:
+    blur(11px);
+
+  animation:
+    homeV5CardIn
+    .22s ease;
+}
+
+
+.home-v5-find-card b {
+  display:
+    block;
+
+  color:
+    rgba(
+      255,
+      238,
+      228,
+      .78
+    );
+
+  font-size:
+    9px;
+
+  font-weight:
+    500;
+}
+
+
+.home-v5-find-card span {
+  display:
+    block;
+
+  margin-top:
+    3px;
+
+  color:
+    rgba(
+      255,
+      238,
+      228,
+      .4
+    );
+
+  font-size:
+    8px;
+
+  line-height:
+    1.4;
+}
+
+
+@keyframes homeV5CardIn {
+
+  from {
+    opacity:
+      0;
+
+    transform:
+      translateY(4px);
+  }
+
+}
+
+
+/* =========================================================
+   RAIN
+========================================================= */
+
+.home-v5-rain {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  z-index:
+    5;
+
+  overflow:
+    hidden;
+
+  pointer-events:
+    none;
+
+  opacity:
+    .36;
+}
+
+
+.home-v5-rain i {
+  position:
+    absolute;
+
+  top:
+    -80px;
+
+  width:
+    1px;
+
+  height:
+    54px;
+
+  background:
+    linear-gradient(
+      transparent,
+      rgba(
+        201,
+        215,
+        234,
+        .48
+      )
+    );
+
+  transform:
+    rotate(
+      8deg
+    );
+
+  animation:
+    homeV5Rain
+    1.3s
+    linear
+    infinite;
+}
+
+
+@keyframes homeV5Rain {
+
+  to {
+    transform:
+      translateY(
+        700px
+      )
+      translateX(
+        70px
+      )
+      rotate(
+        8deg
+      );
+  }
+
+}
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+.home-v5-controls {
+  position:
+    absolute;
+
+  left:
+    14px;
+
+  right:
+    14px;
+
+  bottom:
+    15px;
+
+  z-index:
+    40;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap:
+    9px;
+}
+
+
+.home-v5-controls button {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+  min-height:
+    61px;
+
+  padding:
+    11px 14px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      .07
+    );
+
+  border-radius:
+    17px;
+
+  background:
+    rgba(
+      17,
+      16,
+      17,
+      .46
+    );
+
+  color:
+    rgba(
+      255,
+      239,
+      229,
+      .72
+    );
+
+  backdrop-filter:
+    blur(13px);
+
+  text-align:
+    left;
+
+  cursor:
+    pointer;
+}
+
+
+.home-v5-controls button.active {
+  border-color:
+    rgba(
+      182,
+      105,
+      114,
+      .24
+    );
+
+  background:
+    rgba(
+      149,
+      73,
+      83,
+      .10
+    );
+}
+
+
+.home-v5-controls
+button > span {
+  font-size:
+    23px;
+}
+
+
+.home-v5-controls b {
+  display:
+    block;
+
+  font-size:
+    9px;
+
+  font-weight:
+    500;
+}
+
+
+.home-v5-controls small {
+  display:
+    block;
+
+  margin-top:
+    2px;
+
+  color:
+    rgba(
+      255,
+      239,
+      229,
+      .34
+    );
+
+  font-size:
+    7px;
+}
+
+
+/* =========================================================
+   BOTTOM
+========================================================= */
+
+.home-v5-bottom {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    8px;
+
+  padding:
+    20px 0 0;
+
+  color:
+    rgba(
+      255,
+      237,
+      228,
+      .37
+    );
+}
+
+
+.home-v5-bottom span {
+  color:
+    rgba(
+      179,
+      101,
+      111,
+      .52
+    );
+
+  font-size:
+    13px;
+}
+
+
+.home-v5-bottom p {
+  margin:
+    0;
+
+  font-family:
+    Georgia,
+    serif;
+
+  font-size:
+    10px;
+}
+
+
+/* =========================================================
+   LIGHT SITE THEME
+========================================================= */
+
+.theme-light
+.home-v5-page {
+  --home-text:
+    #4f393b;
+
+  --home-muted:
+    rgba(
+      69,
+      48,
+      51,
+      .48
+    );
+}
+
+
+.theme-light
+.home-v5-header p {
+  color:
+    #99676c;
+}
+
+
+/* =========================================================
+   НА /HOME НЕ ПОКАЗЫВАЕМ ВТОРОГО ПЛАВАЮЩЕГО ДРАКОШУ
+
+   Если браузер поддерживает :has(),
+   остаётся только Дракоша внутри сцены.
+========================================================= */
+
+body:has(.home-v5-page)
+.drakosha-floating {
+  display:
+    none !important;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (
+  max-width:
+    480px
+) {
+
+  .home-v5-page {
+    padding-left:
+      10px;
+
+    padding-right:
+      10px;
+  }
+
+
+  .home-v5-scene {
+    min-height:
+      520px;
+  }
+
+
+  .home-v5-dragon {
+    width:
+      68%;
+
+    bottom:
+      140px;
+  }
+
+
+  .home-v5-island {
+    width:
+      86%;
+
+    height:
+      155px;
+  }
+
+}
