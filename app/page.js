@@ -10,6 +10,7 @@ import {
 
 import WeatherMini from "./components/WeatherMini";
 import MiniMessages from "./components/MiniMessages";
+import PushReconnectButton from "./components/PushReconnectButton";
 
 import {
   getCurrentScheduleItem,
@@ -306,7 +307,11 @@ export default function HomePage() {
 
       <WeatherMini />
 
+{/* =================================================
+    PUSH-УВЕДОМЛЕНИЯ
+================================================= */}
 
+<PushReconnectButton />
 
       {/* =================================================
           СЛЕДУЮЩИЙ ПРИВЕТ
