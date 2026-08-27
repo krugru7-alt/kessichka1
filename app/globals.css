@@ -26994,3 +26994,1187 @@ body:has(.home-v5-page)
     width: 31%;
   }
 }
+/* =========================================================
+   ДОМОЙ · COZY VERSION
+========================================================= */
+
+.cozy-home-page {
+  width: 100%;
+  max-width: 650px;
+
+  margin: 0 auto;
+
+  padding: 23px 12px 120px;
+
+  --cozy-text: #f5ebe2;
+  --cozy-muted: rgba(245,235,226,.45);
+  --cozy-pink: #ae6f75;
+  --cozy-gold: #d6a06d;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.cozy-home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  padding: 6px 5px 18px;
+}
+
+.cozy-home-header small {
+  color: var(--cozy-muted);
+  font-size: 9px;
+}
+
+.cozy-home-header h1 {
+  margin: 8px 0 4px;
+
+  color: var(--cozy-text);
+
+  font-family: Georgia, serif;
+
+  font-size: clamp(42px, 11vw, 65px);
+  font-weight: 400;
+  line-height: .95;
+}
+
+.cozy-home-header p {
+  margin: 8px 0 0;
+
+  color: rgba(210,158,159,.72);
+
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.cozy-home-header > span {
+  color: rgba(186,112,121,.72);
+  font-size: 29px;
+}
+
+
+/* =========================================================
+   ROOM
+========================================================= */
+
+.cozy-home-scene {
+  position: relative;
+
+  width: 100%;
+  min-height: 570px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255,255,255,.065);
+  border-radius: 30px;
+
+  background:
+    radial-gradient(
+      circle at 75% 52%,
+      rgba(214,144,86,.14),
+      transparent 36%
+    ),
+    linear-gradient(
+      180deg,
+      #211e1c,
+      #1b1918 60%,
+      #251b17
+    );
+
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.25);
+
+  transition:
+    filter .45s ease,
+    background .45s ease;
+}
+
+.cozy-home-page.lamp-off
+.cozy-home-scene {
+  filter: brightness(.66);
+}
+
+
+/* =========================================================
+   FAIRY LIGHTS
+========================================================= */
+
+.cozy-home-fairy {
+  position: absolute;
+
+  left: 6%;
+  right: 6%;
+  top: 7%;
+
+  height: 45px;
+
+  border-top:
+    1px solid rgba(103,73,56,.7);
+
+  transform: rotate(-2deg);
+}
+
+.cozy-home-fairy i,
+.cozy-home-fairy button {
+  position: absolute;
+
+  top: -2px;
+
+  width: 8px;
+  height: 8px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #d8a36f;
+
+  box-shadow:
+    0 0 12px rgba(235,174,111,.55);
+
+  animation:
+    cozyFairy 3.8s ease-in-out infinite;
+}
+
+.cozy-home-fairy i:nth-child(1) {
+  left: 3%;
+}
+
+.cozy-home-fairy i:nth-child(2) {
+  left: 17%;
+  top: 5px;
+}
+
+.cozy-home-fairy i:nth-child(3) {
+  left: 31%;
+  top: 8px;
+}
+
+.cozy-home-fairy button {
+  left: 46%;
+  top: 10px;
+
+  cursor: pointer;
+}
+
+.cozy-home-fairy i:nth-of-type(4) {
+  left: 59%;
+  top: 9px;
+}
+
+.cozy-home-fairy i:nth-of-type(5) {
+  left: 72%;
+  top: 5px;
+}
+
+.cozy-home-fairy i:nth-of-type(6) {
+  left: 84%;
+}
+
+.cozy-home-fairy i:nth-of-type(7) {
+  right: 2%;
+  top: -2px;
+}
+
+@keyframes cozyFairy {
+  50% {
+    opacity: .5;
+    transform: scale(.86);
+  }
+}
+
+
+/* =========================================================
+   SHELF
+========================================================= */
+
+.cozy-home-shelf {
+  position: absolute;
+
+  left: 7%;
+  top: 19%;
+
+  width: 38%;
+  height: 105px;
+
+  border-bottom:
+    9px solid #593b2a;
+}
+
+.cozy-home-books {
+  position: absolute;
+
+  left: 10px;
+  bottom: 9px;
+
+  display: flex;
+  align-items: flex-end;
+
+  gap: 4px;
+}
+
+.cozy-home-books i {
+  display: block;
+
+  width: 13px;
+  height: 48px;
+
+  border-radius: 2px 2px 0 0;
+
+  background: #59403a;
+}
+
+.cozy-home-books i:nth-child(2) {
+  height: 38px;
+  background: #383538;
+}
+
+.cozy-home-books i:nth-child(3) {
+  height: 55px;
+  background: #68483c;
+}
+
+.cozy-home-plant {
+  position: absolute;
+
+  right: 5%;
+  bottom: 4px;
+
+  border: 0;
+  background: transparent;
+
+  color: #6c7b58;
+
+  font-size: 48px;
+
+  transform: rotate(9deg);
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   RECORD PLAYER
+========================================================= */
+
+.cozy-home-player {
+  position: absolute;
+
+  right: 8%;
+  top: 17%;
+
+  width: 116px;
+  height: 82px;
+
+  border:
+    1px solid rgba(255,255,255,.05);
+
+  border-radius: 7px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #61422f,
+      #3a291f
+    );
+
+  box-shadow:
+    0 12px 24px rgba(0,0,0,.25);
+
+  cursor: pointer;
+}
+
+.cozy-home-record {
+  position: absolute;
+
+  left: 12px;
+  top: 12px;
+
+  width: 58px;
+  height: 58px;
+
+  border-radius: 50%;
+
+  background:
+    repeating-radial-gradient(
+      circle,
+      #201e1d 0 4px,
+      #2d2927 5px 6px
+    );
+}
+
+.cozy-home-record i {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 12px;
+  height: 12px;
+
+  transform:
+    translate(-50%,-50%);
+
+  border-radius: 50%;
+
+  background: #9d6266;
+}
+
+.cozy-home-player.playing
+.cozy-home-record {
+  animation:
+    cozyRecordSpin 4s linear infinite;
+}
+
+@keyframes cozyRecordSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cozy-home-player-arm {
+  position: absolute;
+
+  right: 21px;
+  top: 20px;
+
+  width: 4px;
+  height: 43px;
+
+  border-radius: 5px;
+
+  background: #a98a70;
+
+  transform:
+    rotate(19deg);
+
+  transform-origin: top;
+}
+
+
+/* =========================================================
+   LAMP
+========================================================= */
+
+.cozy-home-lamp {
+  position: absolute;
+
+  right: 10%;
+  top: 38%;
+
+  width: 75px;
+  height: 150px;
+
+  border: 0;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.cozy-home-lamp-light {
+  position: absolute;
+
+  left: -70px;
+  top: 5px;
+
+  width: 190px;
+  height: 190px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(231,169,105,.22),
+      transparent 67%
+    );
+}
+
+.cozy-home-lamp-shade {
+  position: absolute;
+
+  left: 13px;
+  top: 12px;
+
+  width: 51px;
+  height: 38px;
+
+  border-radius:
+    27px 27px 9px 9px;
+
+  background:
+    linear-gradient(
+      #a77c5e,
+      #74523f
+    );
+}
+
+.cozy-home-lamp-neck {
+  position: absolute;
+
+  left: 36px;
+  top: 49px;
+
+  width: 4px;
+  height: 76px;
+
+  background: #655148;
+}
+
+.cozy-home-lamp-base {
+  position: absolute;
+
+  left: 16px;
+  bottom: 8px;
+
+  width: 45px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #695348;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.cozy-home-table {
+  position: absolute;
+
+  left: 4%;
+  bottom: 0;
+
+  width: 72%;
+  height: 38%;
+
+  border-radius:
+    52% 52% 0 0 /
+    20% 20% 0 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      #72492f,
+      #43291b
+    );
+
+  box-shadow:
+    0 -7px 30px rgba(0,0,0,.2);
+}
+
+
+/* =========================================================
+   MUGS
+========================================================= */
+
+.cozy-home-mug {
+  position: absolute;
+
+  bottom: 35%;
+
+  width: 65px;
+  height: 62px;
+
+  padding: 0;
+
+  border:
+    1px solid rgba(255,255,255,.07);
+
+  border-radius:
+    10px 10px 23px 23px;
+
+  cursor: pointer;
+}
+
+.cozy-home-mug::before {
+  content: "";
+
+  position: absolute;
+
+  right: -20px;
+  top: 17px;
+
+  width: 23px;
+  height: 27px;
+
+  border:
+    6px solid currentColor;
+
+  border-left: 0;
+
+  border-radius:
+    0 60% 60% 0;
+}
+
+.cozy-home-mug::after {
+  content: "";
+
+  position: absolute;
+
+  left: 25px;
+  top: -32px;
+
+  width: 15px;
+  height: 28px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255,255,255,.09);
+
+  filter: blur(4px);
+
+  animation:
+    cozySteam 2.8s ease-in-out infinite;
+}
+
+@keyframes cozySteam {
+  50% {
+    transform:
+      translateY(-9px)
+      translateX(3px);
+
+    opacity: .25;
+  }
+}
+
+.cozy-home-mug > span {
+  display: grid;
+  place-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  color: rgba(211,115,125,.67);
+
+  font-size: 18px;
+}
+
+.cozy-home-mug small {
+  position: absolute;
+
+  left: 50%;
+  top: 71px;
+
+  transform:
+    translateX(-50%);
+
+  color:
+    rgba(255,245,236,.48);
+
+  font-size: 7px;
+
+  white-space: nowrap;
+}
+
+.cozy-mug-obsid {
+  left: 14%;
+
+  color: #292729;
+
+  background:
+    linear-gradient(
+      #302e30,
+      #252426
+    );
+}
+
+.cozy-mug-kessi {
+  left: 45%;
+
+  color: #936b65;
+
+  background:
+    linear-gradient(
+      #a17b74,
+      #7d5d59
+    );
+}
+
+
+/* =========================================================
+   MAIN NOTE
+========================================================= */
+
+.cozy-home-note {
+  position: absolute;
+
+  left: 21%;
+  bottom: 7%;
+
+  width: 185px;
+  min-height: 105px;
+
+  padding:
+    22px 18px 14px;
+
+  border: 0;
+
+  transform:
+    rotate(-2deg);
+
+  background:
+    linear-gradient(
+      145deg,
+      #dcc4a8,
+      #c8aa8b
+    );
+
+  color: #4c392f;
+
+  text-align: left;
+
+  box-shadow:
+    0 15px 25px rgba(0,0,0,.27);
+
+  cursor: pointer;
+}
+
+.cozy-home-note::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 5px;
+
+  border:
+    1px solid rgba(91,65,50,.13);
+
+  pointer-events: none;
+}
+
+.cozy-home-note-pin {
+  position: absolute;
+
+  right: 11px;
+  top: 8px;
+
+  color: #96575e;
+
+  font-size: 15px;
+}
+
+.cozy-home-note small {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    rgba(75,54,45,.48);
+
+  font-size: 7px;
+
+  letter-spacing: .07em;
+}
+
+.cozy-home-note b {
+  display: block;
+
+  max-width: 125px;
+
+  font-family: Georgia, serif;
+
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.cozy-home-note em {
+  display: block;
+
+  margin-top: 10px;
+
+  color:
+    rgba(75,54,45,.48);
+
+  font-size: 7px;
+  font-style: normal;
+}
+
+
+/* =========================================================
+   DRAGON BED
+========================================================= */
+
+.cozy-home-dragon-bed {
+  position: absolute;
+
+  right: 1%;
+  bottom: 5%;
+
+  width: 42%;
+  height: 135px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      #51373d,
+      #34282c 62%,
+      transparent 68%
+    );
+
+  filter:
+    drop-shadow(
+      0 15px 15px rgba(0,0,0,.3)
+    );
+}
+
+
+/* =========================================================
+   DRAGON
+========================================================= */
+
+.cozy-home-dragon {
+  position: absolute;
+
+  right: -1%;
+  bottom: 9%;
+
+  z-index: 10;
+
+  width: 43%;
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  transition:
+    transform .2s ease;
+}
+
+.cozy-home-dragon:active {
+  transform:
+    scale(.96)
+    rotate(-2deg);
+}
+
+.cozy-home-dragon img {
+  display: block;
+
+  width: 100%;
+  max-height: 200px;
+
+  object-fit: contain;
+
+  filter:
+    brightness(.62)
+    saturate(.72)
+    drop-shadow(
+      0 12px 15px rgba(0,0,0,.32)
+    );
+
+  animation:
+    cozyDragonBreath 3.8s ease-in-out infinite;
+}
+
+@keyframes cozyDragonBreath {
+  50% {
+    transform:
+      translateY(-2px)
+      scale(1.012);
+  }
+}
+
+.cozy-home-dragon > span {
+  position: absolute;
+
+  right: 8%;
+  top: 4%;
+
+  padding: 6px 8px;
+
+  border:
+    1px solid rgba(255,255,255,.06);
+
+  border-radius: 10px;
+
+  background:
+    rgba(22,19,19,.58);
+
+  color:
+    rgba(255,242,233,.53);
+
+  backdrop-filter:
+    blur(7px);
+
+  font-size: 8px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   HEART BURST
+========================================================= */
+
+.cozy-home-hearts {
+  position: absolute;
+
+  right: 10%;
+  bottom: 31%;
+
+  z-index: 50;
+
+  width: 100px;
+  height: 100px;
+
+  pointer-events: none;
+}
+
+.cozy-home-hearts i {
+  position: absolute;
+
+  left: 50%;
+  bottom: 0;
+
+  color: #bd737b;
+
+  font-size: 17px;
+  font-style: normal;
+
+  animation:
+    cozyHeartFly 1.3s ease-out forwards;
+}
+
+.cozy-home-hearts i:nth-child(2) {
+  margin-left: -30px;
+  animation-delay: .08s;
+}
+
+.cozy-home-hearts i:nth-child(3) {
+  margin-left: 28px;
+  animation-delay: .16s;
+}
+
+.cozy-home-hearts i:nth-child(4) {
+  margin-left: -49px;
+  animation-delay: .24s;
+}
+
+.cozy-home-hearts i:nth-child(5) {
+  margin-left: 44px;
+  animation-delay: .3s;
+}
+
+@keyframes cozyHeartFly {
+
+  0% {
+    opacity: 0;
+    transform:
+      translateY(0)
+      scale(.6);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translateY(-80px)
+      rotate(8deg)
+      scale(1.15);
+  }
+
+}
+
+
+/* =========================================================
+   AMBIENT
+========================================================= */
+
+.cozy-home-ambient {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 8px;
+
+  margin-top: 11px;
+}
+
+.cozy-home-ambient button {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  min-width: 0;
+  min-height: 61px;
+
+  padding: 10px;
+
+  border:
+    1px solid rgba(255,255,255,.065);
+
+  border-radius: 16px;
+
+  background:
+    rgba(255,255,255,.032);
+
+  color:
+    rgba(255,244,235,.68);
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.cozy-home-ambient button.active {
+  border-color:
+    rgba(190,110,119,.28);
+
+  background:
+    rgba(157,79,88,.1);
+}
+
+.cozy-home-ambient
+button > span {
+  font-size: 19px;
+}
+
+.cozy-home-ambient b {
+  display: block;
+
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.cozy-home-ambient small {
+  display: block;
+
+  margin-top: 2px;
+
+  color:
+    rgba(255,244,235,.32);
+
+  font-size: 6px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.cozy-home-bottom {
+  margin:
+    18px 0 0;
+
+  color:
+    rgba(255,239,229,.38);
+
+  font-family: Georgia, serif;
+
+  font-size: 10px;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   NOTE MODAL
+========================================================= */
+
+.cozy-note-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 6000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 20px;
+
+  background:
+    rgba(10,8,8,.76);
+
+  backdrop-filter:
+    blur(11px);
+}
+
+.cozy-note-paper {
+  position: relative;
+
+  width:
+    min(
+      91vw,
+      390px
+    );
+
+  padding:
+    38px 29px 31px;
+
+  transform:
+    rotate(-1deg);
+
+  border-radius: 2px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #dec7aa,
+      #ceb292
+    );
+
+  color: #49372e;
+
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.48);
+}
+
+.cozy-note-paper::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 8px;
+
+  border:
+    1px solid rgba(79,56,45,.12);
+
+  pointer-events: none;
+}
+
+.cozy-note-label {
+  display: block;
+
+  color:
+    rgba(73,55,46,.45);
+
+  font-size: 7px;
+
+  letter-spacing: .15em;
+
+  text-transform: uppercase;
+}
+
+.cozy-note-paper h2 {
+  margin:
+    13px 0 19px;
+
+  font-family: Georgia, serif;
+
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.cozy-note-paper p {
+  margin: 0;
+
+  font-family: Georgia, serif;
+
+  font-size: 14px;
+  line-height: 1.75;
+
+  white-space: pre-wrap;
+}
+
+.cozy-note-sign {
+  display: block;
+
+  margin-top: 24px;
+
+  font-family: Georgia, serif;
+
+  font-size: 11px;
+
+  opacity: .58;
+}
+
+.cozy-note-heart {
+  position: absolute;
+
+  right: 29px;
+  bottom: 25px;
+
+  color: #98565d;
+
+  font-size: 20px;
+  font-style: normal;
+}
+
+.cozy-note-close {
+  position: absolute;
+
+  right: 11px;
+  top: 8px;
+
+  z-index: 5;
+
+  width: 30px;
+  height: 30px;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    rgba(73,55,46,.55);
+
+  font-size: 23px;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   УБИРАЕМ ГЛОБАЛЬНОГО ДРАКОШУ ТОЛЬКО В ЭТОМ РАЗДЕЛЕ
+========================================================= */
+
+body:has(.cozy-home-page)
+.drakosha-floating {
+  display: none !important;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+  .cozy-home-page {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .cozy-home-scene {
+    min-height: 535px;
+  }
+
+  .cozy-home-player {
+    transform: scale(.85);
+    transform-origin: right top;
+  }
+
+  .cozy-home-note {
+    left: 13%;
+    width: 165px;
+  }
+
+  .cozy-home-dragon {
+    width: 48%;
+  }
+
+  .cozy-home-mug {
+    transform: scale(.84);
+    transform-origin: bottom center;
+  }
+
+}
