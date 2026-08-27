@@ -14,6 +14,7 @@ import {
 
 import BottomNav from "./BottomNav";
 import DrakoshaBuddy from "./DrakoshaBuddy";
+import CapsuleSystem from "./CapsuleSystem";
 
 
 
@@ -1320,7 +1321,7 @@ export default function SiteShell({
 
 
             <small>
-              наш маленький уголок в интернете
+              маленький уголок
             </small>
 
           </span>
@@ -1419,6 +1420,9 @@ export default function SiteShell({
       <main className="site-content">
         {children}
       </main>
+
+
+      <CapsuleSystem />
 
 
       <DrakoshaBuddy />
