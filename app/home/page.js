@@ -9,39 +9,90 @@ import {
 
 
 /* =====================================================
-   ТВОИ ЗАПИСКИ
+   ОСНОВНЫЕ ЗАПИСКИ
+
+   Эти тексты можешь менять на свои.
 ===================================================== */
 
-const NOTES = [
+const MAIN_NOTES = [
   {
-    id: 1,
-
-    title:
-      "просто оставил тебе",
-
+    title: "оставлю это здесь",
     text:
-      "Если ты сюда заглянула — можешь ничего не делать. Просто посиди немного, потыкай что-нибудь и иди дальше по своим делам. Я просто хотел, чтобы у тебя было такое место.",
+      "Никакого важного повода. Просто захотелось, чтобы здесь лежало что-нибудь от меня.",
   },
 
   {
-    id: 2,
-
-    title:
-      "на случай шумного дня",
-
+    title: "на случай шумного дня",
     text:
-      "Если сегодня вокруг слишком много всего — хотя бы здесь ничего от тебя не требуется.",
+      "Если сегодня вокруг слишком много всего — здесь можно просто немного посидеть. Больше ничего.",
   },
 
   {
-    id: 3,
-
-    title:
-      "маленькая записка",
-
+    title: "маленькая записка",
     text:
-      "Никакого важного повода. Просто увидел это место и подумал, что здесь должна лежать записка для тебя.",
+      "Ты можешь найти её сегодня, через неделю или вообще случайно. Она никуда не торопится.",
   },
+];
+
+
+/* =====================================================
+   СКРЫТЫЕ ЗАПИСКИ
+===================================================== */
+
+const SECRET_NOTES = {
+
+  dragon: {
+    title: "дракоша сдался",
+    text:
+      "Ладно. Раз уж ты настолько настойчиво его разбудила — держи тьмок ♡",
+  },
+
+  mug: {
+    title: "на дне кружки",
+    text:
+      "Тут был спрятан один маленький тьмок. Теперь он твой.",
+  },
+
+  plant: {
+    title: "служебная записка",
+    text:
+      "Это растение официально назначено ответственным за то, чтобы ты иногда отдыхала.",
+  },
+
+  record: {
+    title: "нашла",
+    text:
+      "Если ты это открыла — у тебя подозрительно хорошая наблюдательность.",
+  },
+
+  lamp: {
+    title: "ну сколько можно",
+    text:
+      "Я так и знал, что ты будешь сидеть и щёлкать эту лампу.",
+  },
+
+  fairy: {
+    title: "эта лампочка странная",
+    text:
+      "Почему именно эта? Не знаю. Но теперь здесь спрятана записка.",
+  },
+
+};
+
+
+/* =====================================================
+   РЕПЛИКИ ДРАКОШИ
+===================================================== */
+
+const DRAGON_REPLIES = [
+  "zZ",
+  "м?",
+  "👀",
+  "...",
+  "я спал",
+  "чего тыкаемся",
+  "я ничего не делал",
+  "дай полежать",
 ];
 
 
@@ -49,142 +100,464 @@ const NOTES = [
    МИНСК
 ===================================================== */
 
-function getMinskTime() {
-  return new Intl.DateTimeFormat(
-    "ru-RU",
-    {
-      timeZone:
-        "Europe/Minsk",
+function getMinskInfo(date = new Date()) {
 
-      hour:
-        "2-digit",
+  const time =
+    new Intl.DateTimeFormat(
+      "ru-RU",
+      {
+        timeZone: "Europe/Minsk",
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23",
+      }
+    ).format(date);
 
-      minute:
-        "2-digit",
 
-      hourCycle:
-        "h23",
-    }
-  ).format(
-    new Date()
-  );
+  const hour =
+    Number(
+      new Intl.DateTimeFormat(
+        "en-US",
+        {
+          timeZone: "Europe/Minsk",
+          hour: "numeric",
+          hourCycle: "h23",
+        }
+      ).format(date)
+    );
+
+
+  return {
+    time,
+    hour,
+  };
+
+}
+
+
+function getPhase(hour) {
+
+  if (
+    hour >= 6 &&
+    hour < 12
+  ) {
+    return "morning";
+  }
+
+  if (
+    hour >= 12 &&
+    hour < 18
+  ) {
+    return "day";
+  }
+
+  if (
+    hour >= 18 &&
+    hour < 23
+  ) {
+    return "evening";
+  }
+
+  return "night";
+
 }
 
 
 /* =====================================================
-   СИНТЕТИЧЕСКИЙ ДОЖДЬ
+   AUDIO
 ===================================================== */
 
-function createRainSound() {
-  const AudioContext =
-    window.AudioContext ||
-    window.webkitAudioContext;
-
-  if (!AudioContext) {
-    return null;
-  }
-
-  const context =
-    new AudioContext();
-
-  const duration =
-    4;
+function createNoiseBuffer(
+  context,
+  seconds,
+  generator
+) {
 
   const buffer =
     context.createBuffer(
       2,
-      context.sampleRate *
-        duration,
+      context.sampleRate * seconds,
       context.sampleRate
     );
+
 
   for (
     let channel = 0;
     channel < 2;
     channel++
   ) {
+
     const data =
       buffer.getChannelData(
         channel
       );
+
+
+    let last =
+      0;
+
 
     for (
       let i = 0;
       i < data.length;
       i++
     ) {
-      const noise =
-        Math.random() * 2 -
-        1;
 
-      const fade =
-        0.55 +
-        Math.random() *
-          0.45;
+      const result =
+        generator({
+          i,
+          last,
+          sampleRate:
+            context.sampleRate,
+        });
+
 
       data[i] =
-        noise *
-        fade *
-        0.32;
+        result.value;
+
+
+      last =
+        result.last;
+
     }
+
   }
 
-  const source =
-    context.createBufferSource();
 
-  source.buffer =
-    buffer;
+  return buffer;
 
-  source.loop =
-    true;
+}
 
-  const lowPass =
-    context.createBiquadFilter();
 
-  lowPass.type =
-    "lowpass";
+/* =====================================================
+   СОЗДАНИЕ АТМОСФЕРЫ
+===================================================== */
 
-  lowPass.frequency.value =
-    3500;
+function createAmbient(type) {
 
-  const highPass =
-    context.createBiquadFilter();
+  const AudioContext =
+    window.AudioContext ||
+    window.webkitAudioContext;
 
-  highPass.type =
-    "highpass";
 
-  highPass.frequency.value =
-    180;
+  if (!AudioContext) {
+    return null;
+  }
 
-  const gain =
+
+  const context =
+    new AudioContext();
+
+
+  const master =
     context.createGain();
 
-  gain.gain.value =
-    0.16;
 
-  source.connect(
-    lowPass
-  );
+  master.gain.value =
+    0.15;
 
-  lowPass.connect(
-    highPass
-  );
 
-  highPass.connect(
-    gain
-  );
-
-  gain.connect(
+  master.connect(
     context.destination
   );
 
-  source.start();
+
+  const sources =
+    [];
+
+
+  /* ===================================================
+     ДОЖДЬ
+  =================================================== */
+
+  if (type === "rain") {
+
+    const buffer =
+      createNoiseBuffer(
+        context,
+        6,
+        ({
+          last,
+        }) => {
+
+          const white =
+            Math.random() * 2 - 1;
+
+
+          const next =
+            last * 0.87 +
+            white * 0.13;
+
+
+          return {
+            value:
+              next * 0.8,
+
+            last:
+              next,
+          };
+
+        }
+      );
+
+
+    const source =
+      context.createBufferSource();
+
+
+    source.buffer =
+      buffer;
+
+    source.loop =
+      true;
+
+
+    const low =
+      context.createBiquadFilter();
+
+
+    low.type =
+      "lowpass";
+
+    low.frequency.value =
+      4200;
+
+
+    const high =
+      context.createBiquadFilter();
+
+
+    high.type =
+      "highpass";
+
+    high.frequency.value =
+      160;
+
+
+    source.connect(
+      low
+    );
+
+    low.connect(
+      high
+    );
+
+    high.connect(
+      master
+    );
+
+
+    source.start();
+
+
+    sources.push(
+      source
+    );
+
+  }
+
+
+  /* ===================================================
+     КАМИН
+  =================================================== */
+
+  if (type === "fire") {
+
+    const buffer =
+      createNoiseBuffer(
+        context,
+        7,
+        ({
+          last,
+        }) => {
+
+          const noise =
+            Math.random() * 2 - 1;
+
+
+          let crack =
+            noise * 0.1;
+
+
+          if (
+            Math.random() >
+            0.992
+          ) {
+
+            crack +=
+              (
+                Math.random() *
+                2 -
+                1
+              ) *
+              1.6;
+
+          }
+
+
+          const next =
+            last * 0.68 +
+            crack * 0.32;
+
+
+          return {
+            value:
+              next,
+
+            last:
+              next,
+          };
+
+        }
+      );
+
+
+    const source =
+      context.createBufferSource();
+
+
+    source.buffer =
+      buffer;
+
+    source.loop =
+      true;
+
+
+    const filter =
+      context.createBiquadFilter();
+
+
+    filter.type =
+      "lowpass";
+
+    filter.frequency.value =
+      1800;
+
+
+    const gain =
+      context.createGain();
+
+
+    gain.gain.value =
+      0.9;
+
+
+    source.connect(
+      filter
+    );
+
+    filter.connect(
+      gain
+    );
+
+    gain.connect(
+      master
+    );
+
+
+    source.start();
+
+
+    sources.push(
+      source
+    );
+
+  }
+
+
+  /* ===================================================
+     ТИХАЯ НОЧЬ
+  =================================================== */
+
+  if (type === "night") {
+
+    const buffer =
+      createNoiseBuffer(
+        context,
+        8,
+        ({
+          last,
+        }) => {
+
+          const white =
+            Math.random() * 2 - 1;
+
+
+          const next =
+            last * 0.965 +
+            white * 0.035;
+
+
+          return {
+            value:
+              next * 0.5,
+
+            last:
+              next,
+          };
+
+        }
+      );
+
+
+    const source =
+      context.createBufferSource();
+
+
+    source.buffer =
+      buffer;
+
+    source.loop =
+      true;
+
+
+    const filter =
+      context.createBiquadFilter();
+
+
+    filter.type =
+      "lowpass";
+
+    filter.frequency.value =
+      850;
+
+
+    const gain =
+      context.createGain();
+
+
+    gain.gain.value =
+      0.6;
+
+
+    source.connect(
+      filter
+    );
+
+    filter.connect(
+      gain
+    );
+
+    gain.connect(
+      master
+    );
+
+
+    source.start();
+
+
+    sources.push(
+      source
+    );
+
+  }
+
 
   return {
     context,
-    source,
-    gain,
+    sources,
   };
+
 }
 
 
@@ -193,19 +566,14 @@ function createRainSound() {
 ===================================================== */
 
 export default function HomeRoomPage() {
+
   const [
     now,
     setNow,
   ] = useState(
-    getMinskTime()
+    new Date()
   );
 
-  const [
-    rainOn,
-    setRainOn,
-  ] = useState(
-    false
-  );
 
   const [
     lampOn,
@@ -214,477 +582,991 @@ export default function HomeRoomPage() {
     true
   );
 
+
   const [
-    noteOpen,
-    setNoteOpen,
+    activeSound,
+    setActiveSound,
+  ] = useState(
+    null
+  );
+
+
+  const [
+    openedNote,
+    setOpenedNote,
+  ] = useState(
+    null
+  );
+
+
+  const [
+    dragonText,
+    setDragonText,
+  ] = useState(
+    "zZ"
+  );
+
+
+  const [
+    dragonTaps,
+    setDragonTaps,
+  ] = useState(
+    0
+  );
+
+
+  const [
+    mugTaps,
+    setMugTaps,
+  ] = useState(
+    0
+  );
+
+
+  const [
+    lampTaps,
+    setLampTaps,
+  ] = useState(
+    0
+  );
+
+
+  const [
+    heartBurst,
+    setHeartBurst,
   ] = useState(
     false
   );
 
-  const [
-    dragonAwake,
-    setDragonAwake,
-  ] = useState(
-    false
-  );
 
-  const rainRef =
+  const ambientRef =
     useRef(
       null
     );
+
+
+  const dragonTimerRef =
+    useRef(
+      null
+    );
+
+
+  const minsk =
+    getMinskInfo(
+      now
+    );
+
+
+  const phase =
+    getPhase(
+      minsk.hour
+    );
+
 
   /* ===================================================
      ВРЕМЯ
   =================================================== */
 
   useEffect(() => {
+
     const timer =
       window.setInterval(
-        () => {
+        () =>
           setNow(
-            getMinskTime()
-          );
-        },
+            new Date()
+          ),
         30000
       );
+
 
     return () =>
       window.clearInterval(
         timer
       );
+
   }, []);
 
+
   /* ===================================================
-     ЗАПИСКА НА ЭТОТ ВИЗИТ
+     ОСНОВНАЯ ЗАПИСКА
+
+     Одна на текущий визит.
   =================================================== */
 
-  const note =
+  const mainNote =
     useMemo(
       () =>
-        NOTES[
+        MAIN_NOTES[
           Math.floor(
             Math.random() *
-              NOTES.length
+            MAIN_NOTES.length
           )
         ],
       []
     );
 
+
   /* ===================================================
-     ДОЖДЬ
+     ОСТАНОВКА ЗВУКА
   =================================================== */
 
-  async function toggleRain() {
+  async function stopAmbient() {
+
     if (
-      rainRef.current
+      !ambientRef.current
     ) {
-      try {
-        rainRef.current
-          .source
-          .stop();
-      } catch {}
-
-      try {
-        await rainRef.current
-          .context
-          .close();
-      } catch {}
-
-      rainRef.current =
-        null;
-
-      setRainOn(
-        false
-      );
-
       return;
     }
 
-    try {
-      const rain =
-        createRainSound();
 
-      if (!rain) {
-        alert(
-          "Этот браузер не умеет воспроизводить атмосферу."
+    for (
+      const source of
+      ambientRef.current.sources
+    ) {
+
+      try {
+        source.stop();
+      } catch {}
+
+    }
+
+
+    try {
+
+      await ambientRef.current
+        .context
+        .close();
+
+    } catch {}
+
+
+    ambientRef.current =
+      null;
+
+
+    setActiveSound(
+      null
+    );
+
+  }
+
+
+  /* ===================================================
+     ВКЛЮЧЕНИЕ АТМОСФЕРЫ
+  =================================================== */
+
+  async function toggleAmbient(type) {
+
+    if (
+      activeSound === type
+    ) {
+
+      await stopAmbient();
+
+      return;
+
+    }
+
+
+    await stopAmbient();
+
+
+    try {
+
+      const ambient =
+        createAmbient(
+          type
         );
+
+
+      if (!ambient) {
         return;
       }
 
+
       if (
-        rain.context.state ===
+        ambient.context.state ===
         "suspended"
       ) {
-        await rain.context
+
+        await ambient.context
           .resume();
+
       }
 
-      rainRef.current =
-        rain;
 
-      setRainOn(
-        true
+      ambientRef.current =
+        ambient;
+
+
+      setActiveSound(
+        type
       );
+
     } catch (error) {
+
       console.error(
-        "RAIN:",
+        "AMBIENT:",
         error
       );
+
     }
+
   }
 
+
+  /* ===================================================
+     CLEANUP
+  =================================================== */
+
   useEffect(() => {
+
     return () => {
+
       if (
-        rainRef.current
+        ambientRef.current
       ) {
-        try {
-          rainRef.current
-            .source
-            .stop();
-        } catch {}
+
+        for (
+          const source of
+          ambientRef.current.sources
+        ) {
+
+          try {
+            source.stop();
+          } catch {}
+
+        }
+
 
         try {
-          rainRef.current
+
+          ambientRef.current
             .context
             .close();
+
         } catch {}
+
       }
+
+
+      if (
+        dragonTimerRef.current
+      ) {
+
+        window.clearTimeout(
+          dragonTimerRef.current
+        );
+
+      }
+
     };
+
   }, []);
 
-  return (
-    <div className="home-room-page">
 
-      <section className="home-room-intro">
+  /* ===================================================
+     ОТКРЫТЬ ЗАПИСКУ
+  =================================================== */
+
+  function openNote(note) {
+
+    setOpenedNote(
+      note
+    );
+
+  }
+
+
+  /* ===================================================
+     ДРАКОША
+  =================================================== */
+
+  function tapDragon() {
+
+    const count =
+      dragonTaps + 1;
+
+
+    setDragonTaps(
+      count
+    );
+
+
+    if (
+      count >= 5
+    ) {
+
+      setDragonTaps(
+        0
+      );
+
+
+      setDragonText(
+        "ладно..."
+      );
+
+
+      setHeartBurst(
+        true
+      );
+
+
+      openNote(
+        SECRET_NOTES.dragon
+      );
+
+
+      window.setTimeout(
+        () =>
+          setHeartBurst(
+            false
+          ),
+        1500
+      );
+
+    }
+
+    else {
+
+      setDragonText(
+        DRAGON_REPLIES[
+          Math.floor(
+            Math.random() *
+            DRAGON_REPLIES.length
+          )
+        ]
+      );
+
+    }
+
+
+    if (
+      dragonTimerRef.current
+    ) {
+
+      window.clearTimeout(
+        dragonTimerRef.current
+      );
+
+    }
+
+
+    dragonTimerRef.current =
+      window.setTimeout(
+        () =>
+          setDragonText(
+            "zZ"
+          ),
+        2400
+      );
+
+  }
+
+
+  /* ===================================================
+     КРУЖКА
+  =================================================== */
+
+  function tapKessiMug() {
+
+    const count =
+      mugTaps + 1;
+
+
+    if (
+      count >= 3
+    ) {
+
+      setMugTaps(
+        0
+      );
+
+
+      openNote(
+        SECRET_NOTES.mug
+      );
+
+      return;
+
+    }
+
+
+    setMugTaps(
+      count
+    );
+
+  }
+
+
+  /* ===================================================
+     ЛАМПА
+  =================================================== */
+
+  function tapLamp() {
+
+    setLampOn(
+      (current) =>
+        !current
+    );
+
+
+    const count =
+      lampTaps + 1;
+
+
+    if (
+      count >= 7
+    ) {
+
+      setLampTaps(
+        0
+      );
+
+
+      openNote(
+        SECRET_NOTES.lamp
+      );
+
+      return;
+
+    }
+
+
+    setLampTaps(
+      count
+    );
+
+  }
+
+
+  return (
+
+    <div
+      className={`
+        cozy-home-page
+        cozy-home-${phase}
+        ${
+          lampOn
+            ? "lamp-on"
+            : "lamp-off"
+        }
+      `}
+    >
+
+
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
+      <section className="cozy-home-header">
+
+
         <div>
+
           <small>
-            Минск · {now}
+            Минск · {minsk.time}
           </small>
+
 
           <h1>
             Домой
           </h1>
 
+
           <p>
             можешь просто
-            побыть здесь
+            немного побыть здесь
           </p>
+
         </div>
 
-        <span className="home-room-intro-mark">
+
+        <span>
           ♡
         </span>
+
+
       </section>
 
-      <section
-        className={`
-          home-room-scene
-          ${
-            lampOn
-              ? "lamp-on"
-              : "lamp-off"
-          }
-          ${
-            rainOn
-              ? "rain-on"
-              : ""
-          }
-        `}
-      >
 
-        {/* ОКНО */}
-        <div className="home-room-window">
-          <div className="home-room-city">
-            <i />
-            <i />
+
+      {/* =================================================
+          СЦЕНА
+      ================================================= */}
+
+      <section className="cozy-home-scene">
+
+
+        {/* ===============================================
+            ГИРЛЯНДА
+        =============================================== */}
+
+        <div className="cozy-home-fairy">
+
+          <i />
+          <i />
+          <i />
+
+
+          <button
+            type="button"
+            onClick={() =>
+              openNote(
+                SECRET_NOTES.fairy
+              )
+            }
+            aria-label="Лампочка"
+          />
+
+
+          <i />
+          <i />
+          <i />
+          <i />
+
+        </div>
+
+
+
+        {/* ===============================================
+            ПОЛКА
+        =============================================== */}
+
+        <div className="cozy-home-shelf">
+
+
+          <div className="cozy-home-books">
             <i />
             <i />
             <i />
           </div>
 
-          {
-            rainOn &&
-            (
-              <div className="home-room-rain">
-                {
-                  Array.from({
-                    length:
-                      28,
-                  }).map(
-                    (
-                      _,
-                      index
-                    ) => (
-                      <i
-                        key={
-                          index
-                        }
-                        style={{
-                          left:
-                            `${
-                              (
-                                index *
-                                37
-                              ) %
-                              100
-                            }%`,
-                          animationDelay:
-                            `${
-                              (
-                                index %
-                                9
-                              ) *
-                              -0.17
-                            }s`,
-                        }}
-                      />
-                    )
-                  )
-                }
-              </div>
-            )
-          }
 
-          <div className="home-room-night-glow" />
-        </div>
-
-        {/* ПОЛКА */}
-        <div className="home-room-shelf">
-          <span className="home-room-book book-one" />
-          <span className="home-room-book book-two" />
-          <span className="home-room-book book-three" />
-
-          <span className="home-room-plant">
+          <button
+            type="button"
+            className="cozy-home-plant"
+            onClick={() =>
+              openNote(
+                SECRET_NOTES.plant
+              )
+            }
+            aria-label="Растение"
+          >
             ☘
-          </span>
-        </div>
-
-        {/* ЛАМПА */}
-        <button
-          type="button"
-          className="home-room-lamp"
-          onClick={() =>
-            setLampOn(
-              (current) =>
-                !current
-            )
-          }
-          aria-label="Переключить свет"
-        >
-          <span />
-          <i />
-        </button>
-
-        {/* ЗАПИСКА */}
-        <button
-          type="button"
-          className="home-room-paper"
-          onClick={() =>
-            setNoteOpen(
-              true
-            )
-          }
-        >
-          <small>
-            оставлено тебе
-          </small>
-
-          <b>
-            можешь почитать
-          </b>
-
-          <span>
-            ↗
-          </span>
-        </button>
-
-        {/* СТОЛ */}
-        <div className="home-room-table">
-          <button
-            type="button"
-            className="home-room-mug mug-obsid"
-            aria-label="Чашка Обсидика"
-          >
-            <span />
-            <small>
-              Обсидик
-            </small>
           </button>
 
-          <button
-            type="button"
-            className="home-room-mug mug-kessi"
-            aria-label="Чашка Кэссички"
-          >
-            <span />
-            <small>
-              Кэссичка
-            </small>
-          </button>
+
         </div>
 
-        {/* ДРАКОША */}
+
+
+        {/* ===============================================
+            ПРОИГРЫВАТЕЛЬ
+        =============================================== */}
+
         <button
           type="button"
           className={`
-            home-room-dragon
+            cozy-home-player
             ${
-              dragonAwake
-                ? "awake"
+              activeSound
+                ? "playing"
                 : ""
             }
           `}
           onClick={() =>
-            setDragonAwake(
-              (current) =>
-                !current
+            openNote(
+              SECRET_NOTES.record
             )
+          }
+          aria-label="Проигрыватель"
+        >
+
+          <span className="cozy-home-record">
+
+            <i />
+
+          </span>
+
+
+          <span className="cozy-home-player-arm" />
+
+
+        </button>
+
+
+
+        {/* ===============================================
+            ЛАМПА
+        =============================================== */}
+
+        <button
+          type="button"
+          className="cozy-home-lamp"
+          onClick={
+            tapLamp
+          }
+          aria-label="Лампа"
+        >
+
+          <span className="cozy-home-lamp-light" />
+
+          <span className="cozy-home-lamp-shade" />
+
+          <span className="cozy-home-lamp-neck" />
+
+          <span className="cozy-home-lamp-base" />
+
+        </button>
+
+
+
+        {/* ===============================================
+            СТОЛ
+        =============================================== */}
+
+        <div className="cozy-home-table">
+
+
+          {/* ЧАШКА ОБСИДИКА */}
+
+          <button
+            type="button"
+            className="cozy-home-mug cozy-mug-obsid"
+            aria-label="Чашка Обсидика"
+          >
+
+            <span>
+              ♡
+            </span>
+
+            <small>
+              Обсидик
+            </small>
+
+          </button>
+
+
+
+          {/* ЧАШКА КЭССИЧКИ */}
+
+          <button
+            type="button"
+            className="cozy-home-mug cozy-mug-kessi"
+            onClick={
+              tapKessiMug
+            }
+            aria-label="Чашка Кэссички"
+          >
+
+            <span>
+              ♡
+            </span>
+
+            <small>
+              Кэссичка
+            </small>
+
+          </button>
+
+
+
+          {/* =============================================
+              ГЛАВНАЯ ЗАПИСКА
+          ============================================= */}
+
+          <button
+            type="button"
+            className="cozy-home-note"
+            onClick={() =>
+              openNote(
+                mainNote
+              )
+            }
+          >
+
+            <span className="cozy-home-note-pin">
+              ♡
+            </span>
+
+
+            <small>
+              оставлено тебе
+            </small>
+
+
+            <b>
+              прочитаешь,
+              когда захочешь
+            </b>
+
+
+            <em>
+              открыть →
+            </em>
+
+
+          </button>
+
+
+        </div>
+
+
+
+        {/* ===============================================
+            ДРАКОШИНА ЛЕЖАНКА
+        =============================================== */}
+
+        <div className="cozy-home-dragon-bed" />
+
+
+
+        {/* ===============================================
+            ДРАКОША
+        =============================================== */}
+
+        <button
+          type="button"
+          className="cozy-home-dragon"
+          onClick={
+            tapDragon
           }
           aria-label="Дракоша"
         >
+
           <img
             src="/drakosha.png"
             alt="Дракоша"
           />
 
+
           <span>
-            {
-              dragonAwake
-                ? "👀"
-                : "zZ"
-            }
+            {dragonText}
           </span>
+
+
         </button>
 
-        <div className="home-room-floor-glow" />
+
+
+        {/* ===============================================
+            СЕРДЕЧКИ
+        =============================================== */}
+
+        {
+          heartBurst &&
+          (
+
+            <div className="cozy-home-hearts">
+
+              <i>♡</i>
+              <i>♡</i>
+              <i>♡</i>
+              <i>♡</i>
+              <i>♡</i>
+
+            </div>
+
+          )
+        }
+
+
       </section>
 
-      <section className="home-room-controls">
+
+
+      {/* =================================================
+          АТМОСФЕРА
+      ================================================= */}
+
+      <section className="cozy-home-ambient">
+
+
         <button
           type="button"
           className={
-            lampOn
+            activeSound === "rain"
               ? "active"
               : ""
           }
           onClick={() =>
-            setLampOn(
-              (current) =>
-                !current
+            toggleAmbient(
+              "rain"
             )
           }
         >
+
           <span>
-            ◐
+            ≋
           </span>
 
           <div>
-            <b>
-              свет
-            </b>
-
+            <b>дождь</b>
             <small>
               {
-                lampOn
-                  ? "включён"
-                  : "выключен"
-              }
-            </small>
-          </div>
-        </button>
-
-        <button
-          type="button"
-          className={
-            rainOn
-              ? "active"
-              : ""
-          }
-          onClick={
-            toggleRain
-          }
-        >
-          <span>
-            ☂
-          </span>
-
-          <div>
-            <b>
-              дождь
-            </b>
-
-            <small>
-              {
-                rainOn
+                activeSound === "rain"
                   ? "шумит"
                   : "включить"
               }
             </small>
           </div>
+
         </button>
+
+
+
+        <button
+          type="button"
+          className={
+            activeSound === "fire"
+              ? "active"
+              : ""
+          }
+          onClick={() =>
+            toggleAmbient(
+              "fire"
+            )
+          }
+        >
+
+          <span>
+            ◇
+          </span>
+
+          <div>
+            <b>камин</b>
+            <small>
+              {
+                activeSound === "fire"
+                  ? "трещит"
+                  : "включить"
+              }
+            </small>
+          </div>
+
+        </button>
+
+
+
+        <button
+          type="button"
+          className={
+            activeSound === "night"
+              ? "active"
+              : ""
+          }
+          onClick={() =>
+            toggleAmbient(
+              "night"
+            )
+          }
+        >
+
+          <span>
+            ☾
+          </span>
+
+          <div>
+            <b>ночь</b>
+            <small>
+              {
+                activeSound === "night"
+                  ? "тихо"
+                  : "включить"
+              }
+            </small>
+          </div>
+
+        </button>
+
+
       </section>
 
-      <div className="home-room-quiet-note">
-        <span>
-          “
-        </span>
 
-        <p>
-          здесь ничего
-          не надо успевать
-        </p>
-      </div>
+
+      <p className="cozy-home-bottom">
+        здесь ничего не надо успевать
+      </p>
+
+
+
+      {/* =================================================
+          ЗАПИСКА
+      ================================================= */}
 
       {
-        noteOpen &&
+        openedNote &&
         (
+
           <div
-            className="home-note-overlay"
+            className="cozy-note-overlay"
             onClick={() =>
-              setNoteOpen(
-                false
+              setOpenedNote(
+                null
               )
             }
           >
+
+
             <article
-              className="home-note-letter"
+              className="cozy-note-paper"
               onClick={
                 (event) =>
                   event.stopPropagation()
               }
             >
+
+
               <button
                 type="button"
-                className="home-note-close"
+                className="cozy-note-close"
                 onClick={() =>
-                  setNoteOpen(
-                    false
+                  setOpenedNote(
+                    null
                   )
                 }
               >
                 ×
               </button>
 
-              <small>
-                от обсидика
-              </small>
+
+              <span className="cozy-note-label">
+                для кэссички
+              </span>
+
 
               <h2>
-                {note.title}
+                {openedNote.title}
               </h2>
 
+
               <p>
-                {note.text}
+                {openedNote.text}
               </p>
 
-              <span className="home-note-sign">
-                ♡
+
+              <span className="cozy-note-sign">
+                — обсидик
               </span>
+
+
+              <i className="cozy-note-heart">
+                ♡
+              </i>
+
+
             </article>
+
+
           </div>
+
         )
       }
+
+
     </div>
+
   );
+
 }
