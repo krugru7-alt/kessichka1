@@ -253,7 +253,7 @@ export default function DrakoshaBuddy() {
 
 
               <strong>
-                ТЬМОК
+                ЖОСКА ТЬМОК
               </strong>
 
             </div>
