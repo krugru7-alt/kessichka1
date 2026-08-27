@@ -15,6 +15,7 @@ import {
 import BottomNav from "./BottomNav";
 import DrakoshaBuddy from "./DrakoshaBuddy";
 import CapsuleSystem from "./CapsuleSystem";
+import HiddenKisses from "./HiddenKisses";
 
 
 
@@ -1321,7 +1322,7 @@ export default function SiteShell({
 
 
             <small>
-              маленький уголок
+              наш маленький уголок в интернете
             </small>
 
           </span>
@@ -1423,6 +1424,8 @@ export default function SiteShell({
 
 
       <CapsuleSystem />
+
+      <HiddenKisses />
 
 
       <DrakoshaBuddy />
