@@ -9,10 +9,17 @@ const items = [
     icon: "⌂",
     label: "Главная",
   },
+
   {
     href: "/chancery",
     icon: "⚖",
     label: "Всё серьёзно",
+  },
+
+  {
+    href: "/home",
+    icon: "⌂",
+    label: "Домой",
   },
 ];
 
