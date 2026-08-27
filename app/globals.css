@@ -30995,3 +30995,935 @@ body:has(.camp-deluxe) .drakosha-floating {
     transform: scale(.72);
   }
 }
+/* =========================================================
+   НАШ МИРОК · КАПСУЛЫ
+========================================================= */
+
+.capsule-dock {
+  position: fixed;
+  right: 15px;
+  bottom: 86px;
+  z-index: 2400;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  min-width: 54px;
+  height: 38px;
+  padding: 0 11px;
+
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 999px;
+
+  background: rgba(20,19,20,.72);
+  color: rgba(255,242,232,.78);
+
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 28px rgba(0,0,0,.20);
+
+  cursor: pointer;
+}
+
+.capsule-dock > span {
+  color: #c97c87;
+  font-size: 15px;
+}
+
+.capsule-dock > b {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .03em;
+}
+
+.theme-light .capsule-dock {
+  border-color: rgba(80,55,59,.09);
+  background: rgba(255,255,255,.78);
+  color: #5e4447;
+}
+
+/* =========================================================
+   DRAWER
+========================================================= */
+
+.capsule-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  padding: 18px;
+
+  background: rgba(8,8,10,.62);
+  backdrop-filter: blur(10px);
+
+  animation: capsuleOverlayIn .22s ease both;
+}
+
+@keyframes capsuleOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.capsule-drawer {
+  width: min(100%, 680px);
+  max-height: min(86vh, 820px);
+  overflow: auto;
+
+  padding: 22px 18px 20px;
+
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 28px 28px 20px 20px;
+
+  background:
+    radial-gradient(circle at 80% 0%, rgba(162,85,100,.10), transparent 32%),
+    linear-gradient(180deg, #1d1a1b, #141315);
+
+  box-shadow: 0 -28px 80px rgba(0,0,0,.40);
+
+  animation: capsuleDrawerIn .34s cubic-bezier(.22,1,.36,1) both;
+}
+
+@keyframes capsuleDrawerIn {
+  from {
+    opacity: 0;
+    transform: translateY(60px) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.capsule-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.capsule-drawer-head small {
+  color: rgba(206,126,137,.68);
+  font-size: 7px;
+  letter-spacing: .16em;
+}
+
+.capsule-drawer-head h2 {
+  margin: 6px 0 7px;
+
+  color: rgba(255,243,233,.94);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.capsule-drawer-head p {
+  max-width: 480px;
+  margin: 0;
+
+  color: rgba(255,240,231,.43);
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.capsule-drawer-head > button {
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 50%;
+
+  background: rgba(255,255,255,.035);
+  color: rgba(255,255,255,.58);
+
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.capsule-progress-line {
+  width: 100%;
+  height: 4px;
+
+  margin: 18px 0;
+
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+}
+
+.capsule-progress-line > span {
+  display: block;
+  height: 100%;
+
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8f555f, #d38a93);
+
+  transition: width .5s ease;
+}
+
+.capsule-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.capsule-card {
+  position: relative;
+
+  min-height: 176px;
+  padding: 13px 11px 12px;
+
+  border: 1px solid rgba(255,255,255,.055);
+  border-radius: 18px;
+
+  background: rgba(255,255,255,.027);
+  color: inherit;
+
+  text-align: left;
+}
+
+.capsule-card.is-unlocked {
+  cursor: pointer;
+  border-color: rgba(183,105,116,.16);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(179,91,105,.10), transparent 35%),
+    rgba(255,255,255,.035);
+}
+
+.capsule-card.is-locked {
+  opacity: .64;
+  cursor: default;
+}
+
+.capsule-card-number {
+  position: absolute;
+  right: 10px;
+  top: 9px;
+
+  color: rgba(255,255,255,.18);
+  font-size: 7px;
+  letter-spacing: .08em;
+}
+
+.capsule-card-shell {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 58px;
+  height: 74px;
+  margin: 3px auto 10px;
+
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 29px;
+
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.015));
+
+  box-shadow:
+    inset 0 0 24px rgba(255,255,255,.025),
+    0 10px 18px rgba(0,0,0,.17);
+}
+
+.capsule-card-shell::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 50%;
+  height: 1px;
+  background: rgba(255,255,255,.08);
+}
+
+.capsule-card-shell > i {
+  position: absolute;
+  inset: 8px;
+
+  border-radius: 22px;
+
+  background:
+    radial-gradient(circle at 50% 48%, rgba(202,113,126,.16), transparent 48%);
+}
+
+.capsule-card-shell > b {
+  position: relative;
+  z-index: 2;
+
+  color: rgba(236,159,169,.75);
+  font-size: 23px;
+  font-weight: 400;
+}
+
+.capsule-card.is-locked .capsule-card-shell > b {
+  color: rgba(255,255,255,.21);
+}
+
+.capsule-card > strong {
+  display: block;
+  color: rgba(255,243,233,.78);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.capsule-card > small {
+  display: block;
+  margin-top: 5px;
+
+  color: rgba(255,240,231,.34);
+  font-size: 7px;
+  line-height: 1.45;
+}
+
+.capsule-drawer-bottom {
+  margin: 16px 0 0;
+  color: rgba(255,240,231,.27);
+  font-family: Georgia, serif;
+  font-size: 9px;
+  text-align: center;
+}
+
+/* =========================================================
+   FULLSCREEN OPENING
+========================================================= */
+
+.capsule-reveal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+
+  display: grid;
+  place-items: center;
+
+  padding: 22px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(circle at 50% 45%, rgba(118,72,92,.22), transparent 42%),
+    rgba(8,8,11,.94);
+
+  backdrop-filter: blur(16px);
+
+  animation: capsuleRevealBg .28s ease both;
+}
+
+@keyframes capsuleRevealBg {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.capsule-reveal-card {
+  position: relative;
+  z-index: 3;
+
+  width: min(92vw, 430px);
+
+  text-align: center;
+
+  animation: capsuleRevealCard .65s cubic-bezier(.18,1.25,.25,1) both;
+}
+
+@keyframes capsuleRevealCard {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(.82);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.capsule-opening {
+  position: relative;
+
+  width: 122px;
+  height: 166px;
+  margin: 0 auto 25px;
+}
+
+.capsule-half {
+  position: absolute;
+  left: 18px;
+
+  width: 86px;
+  height: 76px;
+
+  border: 1px solid rgba(255,255,255,.13);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.025));
+
+  box-shadow:
+    inset 0 0 30px rgba(255,255,255,.03),
+    0 16px 35px rgba(0,0,0,.22);
+}
+
+.capsule-half-top {
+  top: 7px;
+  border-radius: 44px 44px 12px 12px;
+  transform-origin: bottom center;
+}
+
+.capsule-half-bottom {
+  bottom: 7px;
+  border-radius: 12px 12px 44px 44px;
+  transform-origin: top center;
+}
+
+.capsule-opening.is-new .capsule-half-top {
+  animation: capsuleTopOpen .9s .28s cubic-bezier(.2,1,.3,1) forwards;
+}
+
+.capsule-opening.is-new .capsule-half-bottom {
+  animation: capsuleBottomOpen .9s .28s cubic-bezier(.2,1,.3,1) forwards;
+}
+
+.capsule-opening.is-open .capsule-half-top {
+  transform: translateY(-23px) rotate(-8deg);
+}
+
+.capsule-opening.is-open .capsule-half-bottom {
+  transform: translateY(23px) rotate(6deg);
+}
+
+@keyframes capsuleTopOpen {
+  to {
+    transform: translateY(-23px) rotate(-8deg);
+  }
+}
+
+@keyframes capsuleBottomOpen {
+  to {
+    transform: translateY(23px) rotate(6deg);
+  }
+}
+
+.capsule-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+
+  display: grid;
+  place-items: center;
+
+  width: 66px;
+  height: 66px;
+
+  transform: translate(-50%,-50%) scale(.5);
+
+  border: 1px solid rgba(232,153,165,.22);
+  border-radius: 50%;
+
+  background: rgba(181,94,108,.10);
+  color: #df929e;
+
+  font-size: 29px;
+  font-style: normal;
+
+  box-shadow:
+    0 0 48px rgba(203,102,119,.20),
+    inset 0 0 28px rgba(255,255,255,.03);
+}
+
+.capsule-opening.is-new .capsule-core {
+  animation: capsuleCoreIn .75s .45s cubic-bezier(.2,1.4,.3,1) forwards;
+}
+
+.capsule-opening.is-open .capsule-core {
+  transform: translate(-50%,-50%) scale(1);
+}
+
+@keyframes capsuleCoreIn {
+  to {
+    transform: translate(-50%,-50%) scale(1);
+  }
+}
+
+.capsule-reveal-card > small {
+  display: block;
+  margin-bottom: 11px;
+
+  color: rgba(211,130,143,.70);
+  font-size: 8px;
+  letter-spacing: .17em;
+}
+
+.capsule-reveal-card h2 {
+  max-width: 390px;
+  margin: 0 auto;
+
+  color: rgba(255,244,235,.96);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(27px, 7vw, 38px);
+  font-weight: 400;
+  line-height: 1.12;
+}
+
+.capsule-reveal-card p {
+  max-width: 340px;
+  margin: 16px auto 0;
+
+  color: rgba(255,239,230,.54);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.capsule-reveal-card > button {
+  margin-top: 28px;
+  min-width: 190px;
+  min-height: 43px;
+
+  padding: 0 18px;
+
+  border: 1px solid rgba(212,124,139,.20);
+  border-radius: 999px;
+
+  background: rgba(172,84,99,.10);
+  color: rgba(255,231,228,.72);
+
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.capsule-reveal-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.capsule-reveal-particles i {
+  --capsule-angle: calc(var(--capsule-i) * 16.36deg);
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+
+  color: rgba(220,135,148,.55);
+  font-size: 14px;
+  font-style: normal;
+
+  opacity: 0;
+
+  animation: capsuleParticleFly 1.7s ease-out forwards;
+  animation-delay: calc(var(--capsule-i) * .025s);
+}
+
+@keyframes capsuleParticleFly {
+  0% {
+    opacity: 0;
+    transform:
+      translate(-50%,-50%)
+      rotate(var(--capsule-angle))
+      translateY(0)
+      scale(.4);
+  }
+
+  18% { opacity: 1; }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(-50%,-50%)
+      rotate(var(--capsule-angle))
+      translateY(-280px)
+      scale(1.2);
+  }
+}
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+.theme-light .capsule-drawer {
+  border-color: rgba(94,65,70,.08);
+  background:
+    radial-gradient(circle at 80% 0%, rgba(191,112,124,.09), transparent 30%),
+    linear-gradient(180deg, #fffaf6, #f6eeea);
+}
+
+.theme-light .capsule-drawer-head h2,
+.theme-light .capsule-card > strong {
+  color: #563e42;
+}
+
+.theme-light .capsule-drawer-head p,
+.theme-light .capsule-card > small,
+.theme-light .capsule-drawer-bottom {
+  color: rgba(75,52,56,.48);
+}
+
+.theme-light .capsule-card {
+  border-color: rgba(91,61,65,.07);
+  background: rgba(255,255,255,.58);
+}
+
+.theme-light .capsule-card.is-unlocked {
+  border-color: rgba(166,91,103,.13);
+  background: rgba(255,255,255,.78);
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 560px) {
+  .capsule-dock {
+    right: 9px;
+    bottom: 78px;
+    min-width: 49px;
+    height: 35px;
+  }
+
+  .capsule-drawer-overlay {
+    padding: 8px;
+  }
+
+  .capsule-drawer {
+    padding: 18px 12px 17px;
+    border-radius: 24px 24px 17px 17px;
+  }
+
+  .capsule-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .capsule-card {
+    min-height: 166px;
+    padding: 11px 9px;
+  }
+
+  .capsule-card-shell {
+    width: 54px;
+    height: 69px;
+  }
+}
+/* =========================================================
+   HOME CAMP V2 · ЖИВОЕ ОЗЕРО / ПАЛАТКА / ДРАКОША
+   ДОБАВИТЬ ПОСЛЕ СТАРОГО DELUXE CSS
+========================================================= */
+
+/* =========================================================
+   ОЗЕРО РЕАГИРУЕТ НА НАЖАТИЕ
+========================================================= */
+
+.camp-deluxe-lake {
+  overflow: hidden;
+}
+
+.camp-lake-ripple {
+  position: absolute;
+  z-index: 14;
+
+  width: 10px;
+  height: 5px;
+
+  transform: translate(-50%, -50%);
+
+  border: 1px solid rgba(192,221,228,.54);
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  animation: campLakeRipple 1.55s ease-out forwards;
+}
+
+.camp-lake-ripple::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+
+  border: 1px solid rgba(192,221,228,.30);
+  border-radius: inherit;
+
+  animation: campLakeRippleInner 1.35s .13s ease-out forwards;
+}
+
+@keyframes campLakeRipple {
+  0% {
+    width: 8px;
+    height: 4px;
+    opacity: .9;
+  }
+
+  100% {
+    width: 180px;
+    height: 48px;
+    opacity: 0;
+  }
+}
+
+@keyframes campLakeRippleInner {
+  0% {
+    transform: scale(.2);
+    opacity: .7;
+  }
+
+  100% {
+    transform: scale(.72);
+    opacity: 0;
+  }
+}
+
+/* =========================================================
+   ПАЛАТКА ОТКРЫВАЕТСЯ
+========================================================= */
+
+.camp-deluxe .camp-deluxe-tent {
+  transition:
+    filter .35s ease,
+    transform .55s cubic-bezier(.2,.8,.25,1);
+}
+
+.camp-deluxe .camp-deluxe-tent:active {
+  filter: brightness(1.05);
+}
+
+.camp-deluxe .camp-tent-door {
+  z-index: 13;
+  transform-origin: 50% 100%;
+
+  transition:
+    transform .75s cubic-bezier(.2,.9,.25,1),
+    opacity .55s ease;
+}
+
+.camp-tent-inside {
+  position: absolute;
+  left: 74px;
+  bottom: 4px;
+  z-index: 11;
+
+  width: 102px;
+  height: 120px;
+
+  overflow: hidden;
+
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+
+  background:
+    radial-gradient(circle at 50% 78%, rgba(255,202,128,.55), transparent 45%),
+    linear-gradient(180deg, #4c3528, #251f1c);
+
+  opacity: .15;
+
+  transition:
+    opacity .55s ease,
+    filter .55s ease;
+}
+
+.camp-deluxe-tent.is-open .camp-tent-inside {
+  opacity: 1;
+  filter: brightness(1.08);
+}
+
+.camp-deluxe-tent.is-open .camp-tent-door {
+  transform:
+    translateX(-33px)
+    rotate(-13deg)
+    scaleX(.34);
+
+  opacity: .48;
+}
+
+.camp-tent-pillow {
+  position: absolute;
+  left: 27px;
+  bottom: 17px;
+
+  width: 39px;
+  height: 19px;
+
+  border-radius: 48% 52% 45% 55%;
+
+  background: #72515a;
+  box-shadow: inset 0 3px 8px rgba(255,255,255,.04);
+
+  transform: rotate(-6deg);
+}
+
+.camp-tent-blanket {
+  position: absolute;
+  left: 17px;
+  right: 13px;
+  bottom: -5px;
+
+  height: 31px;
+
+  border-radius: 50% 50% 0 0;
+
+  background:
+    linear-gradient(145deg, #533a40, #34292d);
+}
+
+.camp-tent-inside-note {
+  position: absolute;
+  left: 50%;
+  top: 52px;
+
+  width: 70px;
+
+  transform:
+    translateX(-50%)
+    rotate(-3deg);
+
+  padding: 6px 5px;
+
+  background: #d2b38d;
+  color: rgba(71,51,40,.82);
+
+  box-shadow: 0 7px 12px rgba(0,0,0,.20);
+
+  font-family: Georgia, serif;
+  font-size: 5px;
+  font-style: normal;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.camp-deluxe-tent.is-open .camp-tent-light {
+  opacity: 1;
+  filter: brightness(1.25);
+}
+
+/* =========================================================
+   ДРАКОША ПЕРЕБИРАЕТСЯ ПО ЛАГЕРЮ
+========================================================= */
+
+.camp-deluxe .camp-deluxe-dragon {
+  transition:
+    left .95s cubic-bezier(.2,.8,.25,1),
+    right .95s cubic-bezier(.2,.8,.25,1),
+    bottom .95s cubic-bezier(.2,.8,.25,1),
+    width .75s ease,
+    transform .75s ease;
+}
+
+.camp-deluxe .camp-deluxe-dragon img {
+  transition:
+    filter .35s ease,
+    transform .55s ease;
+}
+
+.camp-deluxe .camp-deluxe-dragon.camp-dragon-bed {
+  right: 17%;
+  left: auto;
+  bottom: 1%;
+}
+
+.camp-deluxe .camp-deluxe-dragon.camp-dragon-awake {
+  right: 17%;
+  left: auto;
+  bottom: 2.5%;
+
+  transform:
+    translateY(-7px)
+    rotate(-2deg);
+}
+
+.camp-deluxe .camp-deluxe-dragon.camp-dragon-awake img {
+  filter:
+    brightness(.78)
+    saturate(.82)
+    drop-shadow(0 14px 17px rgba(0,0,0,.34));
+}
+
+.camp-deluxe .camp-deluxe-dragon.camp-dragon-fire {
+  left: 31%;
+  right: auto;
+  bottom: 13%;
+
+  width: min(27%, 185px);
+
+  transform: rotate(4deg);
+}
+
+.camp-deluxe .camp-deluxe-dragon.camp-dragon-tent {
+  left: auto;
+  right: 7%;
+  bottom: 19%;
+
+  width: min(27%, 188px);
+
+  transform: rotate(-4deg);
+}
+
+.camp-deluxe .camp-deluxe-dragon.camp-dragon-fire > span,
+.camp-deluxe .camp-deluxe-dragon.camp-dragon-tent > span {
+  top: -13%;
+}
+
+/* маленький эффект "проснулся" */
+.camp-deluxe .camp-deluxe-dragon.camp-dragon-awake img {
+  animation: campDragonWake .8s ease-in-out 1;
+}
+
+@keyframes campDragonWake {
+  0% { transform: translateY(0) rotate(0); }
+  35% { transform: translateY(-8px) rotate(-3deg); }
+  70% { transform: translateY(-4px) rotate(2deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+
+/* =========================================================
+   НЕМНОГО БОЛЬШЕ ЖИЗНИ В ЛАГЕРЕ
+========================================================= */
+
+.camp-deluxe .camp-deluxe-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(circle at 13% 66%, rgba(240,189,93,.035), transparent 13%),
+    radial-gradient(circle at 72% 31%, rgba(126,166,158,.025), transparent 17%);
+
+  animation: campSceneBreath 7s ease-in-out infinite;
+}
+
+@keyframes campSceneBreath {
+  50% { opacity: .55; }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 560px) {
+  .camp-tent-inside {
+    left: 74px;
+  }
+
+  .camp-deluxe .camp-deluxe-dragon.camp-dragon-fire {
+    left: 24%;
+    bottom: 13%;
+    width: 32%;
+  }
+
+  .camp-deluxe .camp-deluxe-dragon.camp-dragon-tent {
+    right: 1%;
+    bottom: 19%;
+    width: 34%;
+  }
+}
+
+@media (max-width: 420px) {
+  .camp-deluxe .camp-deluxe-dragon.camp-dragon-fire {
+    left: 20%;
+    width: 35%;
+  }
+
+  .camp-deluxe .camp-deluxe-dragon.camp-dragon-tent {
+    right: -2%;
+    width: 36%;
+  }
+}
