@@ -13,19 +13,24 @@ import {
 
 const MAIN_NOTES = [
   {
-    title: "оставлю это здесь",
+    title: "ну раз уж пришла",
     text:
-      "Никакого важного повода. Просто захотелось оставить тебе что-то в этом месте. Можешь прочитать сейчас, потом или вообще случайно через неделю.",
+      "Располагайся. Палатка стоит, вода рядом, костёр вроде не погас, Дракоша никого не съел. В целом всё под контролем.",
+  },
+  {
+    title: "оставлю это тут",
+    text:
+      "Никакого важного повода. Просто захотелось оставить тебе что-нибудь в этом месте. Можешь прочитать сейчас, потом или случайно через неделю.",
   },
   {
     title: "если вокруг слишком много всего",
     text:
-      "Тут можно ничего не решать и никуда не спешить. Посиди минутку, послушай воду или костёр — и беги дальше по своим делам.",
+      "Здесь ничего не надо решать. Можно включить воду, костёр или дождь, немного позалипать и спокойно бежать дальше по своим делам.",
   },
   {
-    title: "ну раз уж пришла",
+    title: "маленькая остановка",
     text:
-      "Располагайся. Палатка стоит, вода рядом, Дракоша вроде никого не съел. В целом всё под контролем.",
+      "Я знаю, что у тебя не так много свободного времени. Поэтому тут нет никаких дел. Просто место, куда можно заглянуть на минутку.",
   },
 ];
 
@@ -51,7 +56,7 @@ const EASTER_EGGS = {
     title:
       "Я, конечно, не эксперт, но обычно в костёр пальцем не тыкают.",
     text:
-      "Но ты решила проверить. Секрет твой. Только Дракоше не говори.",
+      "Но ты решила проверить четыре раза подряд. Уважаю настойчивость. Секрет твой.",
   },
 
   water: {
@@ -61,7 +66,7 @@ const EASTER_EGGS = {
     title:
       "Ты сейчас реально решила потыкать озеро?",
     text:
-      "Поздравляю. Вода официально потревожена, а ты что-то нашла.",
+      "Поздравляю. Вода официально потревожена, рыбы возмущены, а ты что-то нашла.",
   },
 
   mug: {
@@ -91,17 +96,17 @@ const EASTER_EGGS = {
     title:
       "Ты ещё и палатку несколько раз проверила?",
     text:
-      "Ладно, заходи уже. Всё равно поняла, что она не просто декорация.",
+      "Ладно, заходи уже. Там тепло. И да — я знал, что ты начнёшь тыкать вообще во всё.",
   },
 
   backpack: {
     type: "backpack",
-    icon: "⌁",
+    icon: "▣",
     eyebrow: "ВОТ ЭТО ВОСПИТАНИЕ",
     title:
       "Чужие рюкзаки вообще-то не открывают.",
     text:
-      "Но уже поздно. Ты залезла. Теперь секрет твой.",
+      "Но уже поздно. Ты залезла. Любопытство победило. Теперь секрет твой.",
   },
 
   star: {
@@ -111,17 +116,47 @@ const EASTER_EGGS = {
     title:
       "Из всех звёзд ты умудрилась ткнуть именно в нужную.",
     text:
-      "Я был почти уверен, что эту никто не найдёт. Подозрительно.",
+      "Я был почти уверен, что эту никто не найдёт. Подозрительно хорошая наблюдательность.",
   },
 
   firefly: {
     type: "firefly",
-    icon: "·",
+    icon: "✧",
     eyebrow: "ПОЙМАЛА",
     title:
       "Ты ещё и по светлячкам тыкаешь?",
     text:
-      "Он вообще-то летел по своим делам. Но ладно — нашла так нашла.",
+      "Он вообще-то летел по своим делам. Но ладно. Раз поймала — находка твоя.",
+  },
+
+  lantern: {
+    type: "lantern",
+    icon: "◈",
+    eyebrow: "ЩЁЛК-ЩЁЛК-ЩЁЛК",
+    title:
+      "А фонарь-то чем тебе не угодил?",
+    text:
+      "Четыре раза проверить свет было совершенно необходимо, понимаю. Лови секрет.",
+  },
+
+  guitar: {
+    type: "guitar",
+    icon: "♪",
+    eyebrow: "РУКИ ПРОЧЬ ОТ ИНСТРУМЕНТА",
+    title:
+      "Ты ещё и гитару решила потрогать?",
+    text:
+      "Играть она всё равно не умеет. Я тоже. Но пасхалку ты каким-то образом нашла.",
+  },
+
+  jar: {
+    type: "jar",
+    icon: "✧",
+    eyebrow: "НУ ВСЁ",
+    title:
+      "Ты добралась даже до банки со светлячками.",
+    text:
+      "Я уже начинаю подозревать, что непроверенных предметов здесь не останется.",
   },
 };
 
@@ -134,10 +169,11 @@ const DRAGON_REPLIES = [
   "чего тыкаемся",
   "я отдыхаю вообще-то",
   "ничего не делал",
+  "ну опять",
 ];
 
 /* =====================================================
-   МИНСК
+   МИНСК + ПОГОДА
 ===================================================== */
 
 function getMinskInfo(date = new Date()) {
@@ -156,7 +192,14 @@ function getMinskInfo(date = new Date()) {
     }).format(date)
   );
 
-  return { time, hour };
+  const dateKey = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Minsk",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
+
+  return { time, hour, dateKey };
 }
 
 function getPhase(hour) {
@@ -164,6 +207,26 @@ function getPhase(hour) {
   if (hour >= 11 && hour < 18) return "day";
   if (hour >= 18 && hour < 23) return "evening";
   return "night";
+}
+
+function weatherLabel(code) {
+  if (code === 0) return "ясно";
+  if (code >= 1 && code <= 3) return "облачно";
+  if (code >= 45 && code <= 48) return "туман";
+  if (code >= 51 && code <= 67) return "дождь";
+  if (code >= 71 && code <= 77) return "снег";
+  if (code >= 80 && code <= 82) return "ливень";
+  if (code >= 85 && code <= 86) return "снегопад";
+  if (code >= 95) return "гроза";
+  return "Минск";
+}
+
+function weatherIsRainy(code) {
+  return (
+    (code >= 51 && code <= 67) ||
+    (code >= 80 && code <= 82) ||
+    code >= 95
+  );
 }
 
 /* =====================================================
@@ -182,7 +245,12 @@ function createNoiseBuffer(context, seconds, generator) {
     let last = 0;
 
     for (let i = 0; i < data.length; i++) {
-      const result = generator({ i, last, sampleRate: context.sampleRate });
+      const result = generator({
+        i,
+        last,
+        sampleRate: context.sampleRate,
+      });
+
       data[i] = result.value;
       last = result.last;
     }
@@ -191,7 +259,7 @@ function createNoiseBuffer(context, seconds, generator) {
   return buffer;
 }
 
-function createAmbient(type) {
+function createAmbient(type, volume = 0.45) {
   const AudioContext =
     window.AudioContext || window.webkitAudioContext;
 
@@ -199,16 +267,21 @@ function createAmbient(type) {
 
   const context = new AudioContext();
   const master = context.createGain();
-  master.gain.value = 0.14;
+
+  master.gain.value = 0.035 + volume * 0.18;
   master.connect(context.destination);
 
   const sources = [];
 
   if (type === "water") {
-    const buffer = createNoiseBuffer(context, 7, ({ last }) => {
+    const buffer = createNoiseBuffer(context, 8, ({ last }) => {
       const white = Math.random() * 2 - 1;
-      const next = last * 0.94 + white * 0.06;
-      return { value: next * 0.72, last: next };
+      const next = last * 0.95 + white * 0.05;
+
+      return {
+        value: next * 0.72,
+        last: next,
+      };
     });
 
     const source = context.createBufferSource();
@@ -217,11 +290,11 @@ function createAmbient(type) {
 
     const low = context.createBiquadFilter();
     low.type = "lowpass";
-    low.frequency.value = 1700;
+    low.frequency.value = 1750;
 
     const high = context.createBiquadFilter();
     high.type = "highpass";
-    high.frequency.value = 180;
+    high.frequency.value = 170;
 
     source.connect(low);
     low.connect(high);
@@ -231,16 +304,20 @@ function createAmbient(type) {
   }
 
   if (type === "fire") {
-    const buffer = createNoiseBuffer(context, 7, ({ last }) => {
+    const buffer = createNoiseBuffer(context, 8, ({ last }) => {
       const noise = Math.random() * 2 - 1;
       let crack = noise * 0.08;
 
       if (Math.random() > 0.992) {
-        crack += (Math.random() * 2 - 1) * 1.8;
+        crack += (Math.random() * 2 - 1) * 1.9;
       }
 
       const next = last * 0.67 + crack * 0.33;
-      return { value: next, last: next };
+
+      return {
+        value: next,
+        last: next,
+      };
     });
 
     const source = context.createBufferSource();
@@ -249,7 +326,7 @@ function createAmbient(type) {
 
     const filter = context.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.value = 1900;
+    filter.frequency.value = 1950;
 
     source.connect(filter);
     filter.connect(master);
@@ -258,10 +335,14 @@ function createAmbient(type) {
   }
 
   if (type === "night") {
-    const buffer = createNoiseBuffer(context, 8, ({ last }) => {
+    const buffer = createNoiseBuffer(context, 9, ({ last }) => {
       const white = Math.random() * 2 - 1;
-      const next = last * 0.97 + white * 0.03;
-      return { value: next * 0.45, last: next };
+      const next = last * 0.972 + white * 0.028;
+
+      return {
+        value: next * 0.42,
+        last: next,
+      };
     });
 
     const source = context.createBufferSource();
@@ -270,23 +351,23 @@ function createAmbient(type) {
 
     const filter = context.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.value = 760;
-
-    const gain = context.createGain();
-    gain.gain.value = 0.65;
+    filter.frequency.value = 700;
 
     source.connect(filter);
-    filter.connect(gain);
-    gain.connect(master);
+    filter.connect(master);
     source.start();
     sources.push(source);
   }
 
   if (type === "rain") {
-    const buffer = createNoiseBuffer(context, 6, ({ last }) => {
+    const buffer = createNoiseBuffer(context, 7, ({ last }) => {
       const white = Math.random() * 2 - 1;
       const next = last * 0.86 + white * 0.14;
-      return { value: next * 0.78, last: next };
+
+      return {
+        value: next * 0.78,
+        last: next,
+      };
     });
 
     const source = context.createBufferSource();
@@ -295,11 +376,11 @@ function createAmbient(type) {
 
     const low = context.createBiquadFilter();
     low.type = "lowpass";
-    low.frequency.value = 4200;
+    low.frequency.value = 4300;
 
     const high = context.createBiquadFilter();
     high.type = "highpass";
-    high.frequency.value = 150;
+    high.frequency.value = 145;
 
     source.connect(low);
     low.connect(high);
@@ -308,7 +389,11 @@ function createAmbient(type) {
     sources.push(source);
   }
 
-  return { context, sources };
+  return {
+    context,
+    master,
+    sources,
+  };
 }
 
 /* =====================================================
@@ -317,73 +402,170 @@ function createAmbient(type) {
 
 export default function HomeRoomPage() {
   const [now, setNow] = useState(new Date());
-  const [activeSound, setActiveSound] = useState(null);
+  const [weather, setWeather] = useState(null);
   const [openedNote, setOpenedNote] = useState(null);
   const [easterEgg, setEasterEgg] = useState(null);
   const [dragonText, setDragonText] = useState("zZ");
+  const [activeSounds, setActiveSounds] = useState({
+    water: false,
+    fire: false,
+    night: false,
+    rain: false,
+  });
+  const [volume, setVolume] = useState(0.45);
 
-  const [dragonTaps, setDragonTaps] = useState(0);
-  const [mugTaps, setMugTaps] = useState(0);
-  const [fireTaps, setFireTaps] = useState(0);
-  const [waterTaps, setWaterTaps] = useState(0);
-  const [tentTaps, setTentTaps] = useState(0);
-
-  const ambientRef = useRef(null);
+  const ambientRef = useRef(new Map());
+  const tapRef = useRef({
+    dragon: 0,
+    mug: 0,
+    fire: 0,
+    water: 0,
+    tent: 0,
+    lantern: 0,
+    guitar: 0,
+  });
   const dragonTimerRef = useRef(null);
   const easterTimerRef = useRef(null);
 
   const minsk = getMinskInfo(now);
   const phase = getPhase(minsk.hour);
 
-  const mainNote = useMemo(
-    () => MAIN_NOTES[Math.floor(Math.random() * MAIN_NOTES.length)],
-    []
+  const mainNote = useMemo(() => {
+    const seed =
+      Number(minsk.dateKey.replace(/\D/g, "")) +
+      minsk.hour;
+
+    return MAIN_NOTES[seed % MAIN_NOTES.length];
+  }, [minsk.dateKey, minsk.hour]);
+
+  const realRain = weatherIsRainy(
+    Number(weather?.weatherCode)
   );
 
+  const showRain =
+    activeSounds.rain ||
+    realRain;
+
+  /* ===================================================
+     ЧАСЫ
+  =================================================== */
+
   useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 30000);
+    const timer = window.setInterval(
+      () => setNow(new Date()),
+      30000
+    );
+
     return () => window.clearInterval(timer);
   }, []);
 
-  async function stopAmbient() {
-    if (!ambientRef.current) return;
+  /* ===================================================
+     ПОГОДА
+  =================================================== */
 
-    for (const source of ambientRef.current.sources) {
+  useEffect(() => {
+    let active = true;
+
+    async function loadWeather() {
+      try {
+        const response = await fetch("/api/weather", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        if (active) {
+          setWeather(data);
+        }
+      } catch (error) {
+        console.warn("HOME WEATHER:", error);
+      }
+    }
+
+    loadWeather();
+
+    const timer = window.setInterval(
+      loadWeather,
+      10 * 60 * 1000
+    );
+
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
+  }, []);
+
+  /* ===================================================
+     ГРОМКОСТЬ
+  =================================================== */
+
+  useEffect(() => {
+    for (const ambient of ambientRef.current.values()) {
+      try {
+        ambient.master.gain.value =
+          0.035 + volume * 0.18;
+      } catch {}
+    }
+  }, [volume]);
+
+  /* ===================================================
+     ЗВУКИ — МОЖНО МИКСОВАТЬ
+  =================================================== */
+
+  async function stopAmbient(type) {
+    const ambient = ambientRef.current.get(type);
+
+    if (!ambient) return;
+
+    for (const source of ambient.sources) {
       try {
         source.stop();
       } catch {}
     }
 
     try {
-      await ambientRef.current.context.close();
+      await ambient.context.close();
     } catch {}
 
-    ambientRef.current = null;
-    setActiveSound(null);
+    ambientRef.current.delete(type);
+
+    setActiveSounds((current) => ({
+      ...current,
+      [type]: false,
+    }));
   }
 
   async function toggleAmbient(type) {
-    if (activeSound === type) {
-      await stopAmbient();
+    if (ambientRef.current.has(type)) {
+      await stopAmbient(type);
       return;
     }
 
-    await stopAmbient();
-
     try {
-      const ambient = createAmbient(type);
+      const ambient = createAmbient(type, volume);
+
       if (!ambient) return;
 
       if (ambient.context.state === "suspended") {
         await ambient.context.resume();
       }
 
-      ambientRef.current = ambient;
-      setActiveSound(type);
+      ambientRef.current.set(type, ambient);
+
+      setActiveSounds((current) => ({
+        ...current,
+        [type]: true,
+      }));
     } catch (error) {
       console.error("AMBIENT:", error);
     }
   }
+
+  /* ===================================================
+     FULLSCREEN ПАСХАЛКИ
+  =================================================== */
 
   function showEasterEgg(data) {
     if (easterTimerRef.current) {
@@ -394,7 +576,7 @@ export default function HomeRoomPage() {
 
     easterTimerRef.current = window.setTimeout(() => {
       setEasterEgg(null);
-    }, 5200);
+    }, 6000);
   }
 
   function closeEasterEgg() {
@@ -406,137 +588,198 @@ export default function HomeRoomPage() {
     setEasterEgg(null);
   }
 
-  function tapDragon() {
-    const count = dragonTaps + 1;
+  /* ===================================================
+     КЛИКИ ПО ПРЕДМЕТАМ
+  =================================================== */
 
-    if (count >= 5) {
-      setDragonTaps(0);
-      setDragonText("ну всё...");
-      showEasterEgg(EASTER_EGGS.dragon);
-    } else {
-      setDragonTaps(count);
+  function tapCounter(key, target, egg) {
+    const next =
+      (tapRef.current[key] || 0) + 1;
+
+    tapRef.current[key] = next;
+
+    if (next >= target) {
+      tapRef.current[key] = 0;
+      showEasterEgg(egg);
+      return true;
+    }
+
+    return false;
+  }
+
+  function tapDragon() {
+    const found = tapCounter(
+      "dragon",
+      5,
+      EASTER_EGGS.dragon
+    );
+
+    if (!found) {
       setDragonText(
         DRAGON_REPLIES[
-          Math.floor(Math.random() * DRAGON_REPLIES.length)
+          Math.floor(
+            Math.random() *
+              DRAGON_REPLIES.length
+          )
         ]
       );
+    } else {
+      setDragonText("ну всё...");
     }
 
     if (dragonTimerRef.current) {
-      window.clearTimeout(dragonTimerRef.current);
+      window.clearTimeout(
+        dragonTimerRef.current
+      );
     }
 
-    dragonTimerRef.current = window.setTimeout(() => {
-      setDragonText("zZ");
-    }, 2400);
+    dragonTimerRef.current =
+      window.setTimeout(() => {
+        setDragonText("zZ");
+      }, 2500);
   }
 
-  function tapMug() {
-    const count = mugTaps + 1;
-    if (count >= 3) {
-      setMugTaps(0);
-      showEasterEgg(EASTER_EGGS.mug);
-      return;
-    }
-    setMugTaps(count);
-  }
-
-  function tapFire() {
-    const count = fireTaps + 1;
-    if (count >= 4) {
-      setFireTaps(0);
-      showEasterEgg(EASTER_EGGS.fire);
-      return;
-    }
-    setFireTaps(count);
-  }
-
-  function tapWater() {
-    const count = waterTaps + 1;
-    if (count >= 2) {
-      setWaterTaps(0);
-      showEasterEgg(EASTER_EGGS.water);
-      return;
-    }
-    setWaterTaps(count);
-  }
-
-  function tapTent() {
-    const count = tentTaps + 1;
-    if (count >= 3) {
-      setTentTaps(0);
-      showEasterEgg(EASTER_EGGS.tent);
-      return;
-    }
-    setTentTaps(count);
-  }
+  /* ===================================================
+     CLEANUP
+  =================================================== */
 
   useEffect(() => {
     return () => {
-      if (ambientRef.current) {
-        for (const source of ambientRef.current.sources) {
+      for (const ambient of ambientRef.current.values()) {
+        for (const source of ambient.sources) {
           try {
             source.stop();
           } catch {}
         }
 
         try {
-          ambientRef.current.context.close();
+          ambient.context.close();
         } catch {}
       }
 
+      ambientRef.current.clear();
+
       if (dragonTimerRef.current) {
-        window.clearTimeout(dragonTimerRef.current);
+        window.clearTimeout(
+          dragonTimerRef.current
+        );
       }
 
       if (easterTimerRef.current) {
-        window.clearTimeout(easterTimerRef.current);
+        window.clearTimeout(
+          easterTimerRef.current
+        );
       }
     };
   }, []);
 
+  function particleFor(type) {
+    if (type === "fire") return "✦";
+    if (type === "water") return "·";
+    if (type === "dragon") return "♡";
+    if (type === "firefly" || type === "jar") return "✧";
+    if (type === "guitar") return "♪";
+    return "✦";
+  }
+
   return (
-    <div className={`camp-home-page camp-home-${phase}`}>
-      <section className="camp-home-header">
+    <div
+      className={`
+        camp-home-page
+        camp-deluxe
+        camp-home-${phase}
+        ${activeSounds.fire ? "camp-sound-fire" : ""}
+        ${activeSounds.water ? "camp-sound-water" : ""}
+        ${activeSounds.night ? "camp-sound-night" : ""}
+        ${showRain ? "camp-raining" : ""}
+      `}
+    >
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
+      <section className="camp-home-header camp-deluxe-header">
         <div>
-          <small>Минск · {minsk.time}</small>
+          <small>
+            Минск · {minsk.time}
+
+            {weather && (
+              <>
+                {" · "}
+                {Math.round(weather.temperature)}°
+                {" · "}
+                {weatherLabel(
+                  Number(weather.weatherCode)
+                )}
+              </>
+            )}
+          </small>
+
           <h1>Домой</h1>
-          <p>можешь немного исчезнуть отсюда</p>
+
+          <p>
+            можешь немного исчезнуть отсюда
+          </p>
         </div>
-        <span>✦</span>
+
+        <span>♡</span>
       </section>
 
-      <section className="camp-home-scene">
+      {/* =================================================
+          ЛАГЕРЬ
+      ================================================= */}
+
+      <section className="camp-home-scene camp-deluxe-scene">
+        {/* ВЕТКИ НА ПЕРЕДНЕМ ПЛАНЕ */}
+        <div className="camp-deluxe-branch branch-left" aria-hidden="true">
+          <i /><i /><i /><i /><i />
+        </div>
+
+        <div className="camp-deluxe-branch branch-right" aria-hidden="true">
+          <i /><i /><i /><i />
+        </div>
+
         {/* НЕБО */}
-        <div className="camp-home-sky">
-          <i className="camp-star s1" />
-          <i className="camp-star s2" />
-          <i className="camp-star s3" />
-          <i className="camp-star s4" />
-          <i className="camp-star s5" />
-          <i className="camp-star s6" />
+        <div className="camp-home-sky camp-deluxe-sky">
+          {Array.from({ length: 22 }).map((_, index) => (
+            <i
+              key={`star-${index}`}
+              className={`camp-deluxe-star star-${index + 1}`}
+            />
+          ))}
 
           <button
             type="button"
-            className="camp-secret-star"
-            onClick={() => showEasterEgg(EASTER_EGGS.star)}
+            className="camp-secret-star camp-deluxe-secret-star"
+            onClick={() =>
+              showEasterEgg(EASTER_EGGS.star)
+            }
             aria-label="Звезда"
           >
             ✦
           </button>
 
-          <span className="camp-home-moon" />
+          <span className="camp-home-moon camp-deluxe-moon" />
+        </div>
+
+        {/* ГОРЫ */}
+        <div className="camp-deluxe-mountains far" aria-hidden="true">
+          <i /><i /><i />
+        </div>
+
+        <div className="camp-deluxe-mountains near" aria-hidden="true">
+          <i /><i /><i /><i />
         </div>
 
         {/* ЛЕС */}
         <div className="camp-home-forest back">
-          {Array.from({ length: 10 }).map((_, index) => (
+          {Array.from({ length: 13 }).map((_, index) => (
             <i key={`back-${index}`} />
           ))}
         </div>
 
         <div className="camp-home-forest front">
-          {Array.from({ length: 8 }).map((_, index) => (
+          {Array.from({ length: 10 }).map((_, index) => (
             <i key={`front-${index}`} />
           ))}
         </div>
@@ -544,87 +787,174 @@ export default function HomeRoomPage() {
         {/* ОЗЕРО */}
         <button
           type="button"
-          className="camp-home-lake"
-          onClick={tapWater}
+          className="camp-home-lake camp-deluxe-lake"
+          onClick={() =>
+            tapCounter(
+              "water",
+              2,
+              EASTER_EGGS.water
+            )
+          }
           aria-label="Озеро"
         >
           <span className="camp-water-line w1" />
           <span className="camp-water-line w2" />
           <span className="camp-water-line w3" />
           <span className="camp-water-line w4" />
+          <span className="camp-water-line w5" />
+          <span className="camp-water-line w6" />
           <span className="camp-moon-reflection" />
+          <span className="camp-deluxe-shimmer shimmer-one" />
+          <span className="camp-deluxe-shimmer shimmer-two" />
         </button>
 
-        <div className="camp-home-shore" />
+        <div className="camp-home-shore camp-deluxe-shore" />
+
+        {/* ФОНАРЬ */}
+        <button
+          type="button"
+          className="camp-deluxe-lantern"
+          onClick={() =>
+            tapCounter(
+              "lantern",
+              4,
+              EASTER_EGGS.lantern
+            )
+          }
+          aria-label="Фонарь"
+        >
+          <span className="lantern-top" />
+          <span className="lantern-glass" />
+          <span className="lantern-flame" />
+          <span className="lantern-base" />
+        </button>
 
         {/* ПАЛАТКА */}
         <button
           type="button"
-          className="camp-home-tent"
-          onClick={tapTent}
+          className="camp-home-tent camp-deluxe-tent"
+          onClick={() =>
+            tapCounter(
+              "tent",
+              3,
+              EASTER_EGGS.tent
+            )
+          }
           aria-label="Палатка"
         >
+          <span className="camp-tent-shadow" />
           <span className="camp-tent-body" />
+          <span className="camp-tent-side" />
           <span className="camp-tent-door" />
           <span className="camp-tent-light" />
+          <span className="camp-tent-rope rope-left" />
+          <span className="camp-tent-rope rope-right" />
+          <span className="camp-tent-bulbs">
+            <i /><i /><i /><i /><i /><i />
+          </span>
+        </button>
+
+        {/* ГИТАРА */}
+        <button
+          type="button"
+          className="camp-deluxe-guitar"
+          onClick={() =>
+            tapCounter(
+              "guitar",
+              2,
+              EASTER_EGGS.guitar
+            )
+          }
+          aria-label="Гитара"
+        >
+          <span className="guitar-body" />
+          <span className="guitar-hole" />
+          <span className="guitar-neck" />
+          <span className="guitar-head" />
         </button>
 
         {/* РЮКЗАК */}
         <button
           type="button"
-          className="camp-home-backpack"
-          onClick={() => showEasterEgg(EASTER_EGGS.backpack)}
+          className="camp-home-backpack camp-deluxe-backpack"
+          onClick={() =>
+            showEasterEgg(
+              EASTER_EGGS.backpack
+            )
+          }
           aria-label="Рюкзак"
         >
           <span />
+          <i />
         </button>
 
         {/* КАМЕНЬ */}
         <button
           type="button"
-          className="camp-home-stone"
-          onClick={() => showEasterEgg(EASTER_EGGS.stone)}
+          className="camp-home-stone camp-deluxe-stone"
+          onClick={() =>
+            showEasterEgg(EASTER_EGGS.stone)
+          }
           aria-label="Камень"
         />
 
         {/* КОСТЁР */}
         <button
           type="button"
-          className="camp-home-fire"
-          onClick={tapFire}
+          className="camp-home-fire camp-deluxe-fire"
+          onClick={() =>
+            tapCounter(
+              "fire",
+              4,
+              EASTER_EGGS.fire
+            )
+          }
           aria-label="Костёр"
         >
+          <span className="camp-fire-glow" />
+          <span className="camp-fire-ring">
+            <i /><i /><i /><i /><i /><i /><i /><i />
+          </span>
           <span className="camp-fire-flame flame-one" />
           <span className="camp-fire-flame flame-two" />
           <span className="camp-fire-flame flame-three" />
           <span className="camp-fire-log log-one" />
           <span className="camp-fire-log log-two" />
+          <span className="camp-fire-sparks">
+            <i /><i /><i /><i /><i />
+          </span>
         </button>
 
         {/* ДВЕ ПОХОДНЫЕ КРУЖКИ */}
-        <div className="camp-home-mugs">
+        <div className="camp-home-mugs camp-deluxe-mugs">
           <button
             type="button"
             className="camp-mug camp-mug-dark"
             aria-label="Походная кружка"
           >
-            <span />
+            <span className="camp-mug-mark">⌁</span>
           </button>
 
           <button
             type="button"
             className="camp-mug camp-mug-warm"
-            onClick={tapMug}
+            onClick={() =>
+              tapCounter(
+                "mug",
+                3,
+                EASTER_EGGS.mug
+              )
+            }
             aria-label="Походная кружка"
           >
-            <span />
+            <span className="camp-mug-mark">♡</span>
           </button>
         </div>
 
         {/* ВИДИМАЯ ЗАПИСКА */}
         <button
           type="button"
-          className="camp-home-note"
+          className="camp-home-note camp-deluxe-note"
           onClick={() => setOpenedNote(mainNote)}
         >
           <small>для тебя</small>
@@ -633,100 +963,181 @@ export default function HomeRoomPage() {
         </button>
 
         {/* ДРАКОША */}
+        <div className="camp-deluxe-dragon-blanket" aria-hidden="true" />
+
         <button
           type="button"
-          className="camp-home-dragon"
+          className="camp-home-dragon camp-deluxe-dragon"
           onClick={tapDragon}
           aria-label="Дракоша"
         >
-          <img src="/drakosha.png" alt="Дракоша" />
+          <img
+            src="/drakosha.png"
+            alt="Дракоша"
+          />
           <span>{dragonText}</span>
         </button>
 
-        {/* СВЕТЛЯЧОК */}
+        {/* БАНКА СО СВЕТЛЯЧКАМИ */}
         <button
           type="button"
-          className="camp-home-firefly"
-          onClick={() => showEasterEgg(EASTER_EGGS.firefly)}
+          className="camp-deluxe-jar"
+          onClick={() =>
+            showEasterEgg(EASTER_EGGS.jar)
+          }
+          aria-label="Банка со светлячками"
+        >
+          <span className="jar-lid" />
+          <span className="jar-body">
+            <i /><i /><i /><i /><i />
+          </span>
+        </button>
+
+        {/* ЛЕТАЮЩИЙ СВЕТЛЯЧОК */}
+        <button
+          type="button"
+          className="camp-home-firefly camp-deluxe-firefly"
+          onClick={() =>
+            showEasterEgg(
+              EASTER_EGGS.firefly
+            )
+          }
           aria-label="Светлячок"
         />
 
-        {activeSound === "rain" && (
+        {/* ДОЖДЬ */}
+        {showRain && (
           <div className="camp-home-rain" aria-hidden="true">
-            {Array.from({ length: 30 }).map((_, index) => (
+            {Array.from({ length: 38 }).map((_, index) => (
               <i
                 key={index}
                 style={{
                   left: `${(index * 37) % 100}%`,
-                  animationDelay: `${(index % 9) * -0.16}s`,
+                  animationDelay: `${
+                    (index % 11) * -0.13
+                  }s`,
+                  animationDuration: `${
+                    1.05 +
+                    (index % 5) * 0.16
+                  }s`,
                 }}
               />
             ))}
           </div>
         )}
+
+        <div className="camp-deluxe-vignette" aria-hidden="true" />
       </section>
 
-      {/* ЗВУКИ */}
-      <section className="camp-home-ambient">
-        <button
-          type="button"
-          className={activeSound === "water" ? "active" : ""}
-          onClick={() => toggleAmbient("water")}
-        >
-          <span>≋</span>
-          <div>
-            <b>вода</b>
-            <small>{activeSound === "water" ? "шумит" : "включить"}</small>
-          </div>
-        </button>
+      {/* =================================================
+          АТМОСФЕРА
+      ================================================= */}
 
-        <button
-          type="button"
-          className={activeSound === "fire" ? "active" : ""}
-          onClick={() => toggleAmbient("fire")}
-        >
-          <span>✦</span>
+      <section className="camp-deluxe-ambient-wrap">
+        <div className="camp-deluxe-ambient-head">
           <div>
-            <b>костёр</b>
-            <small>{activeSound === "fire" ? "трещит" : "включить"}</small>
+            <small>АТМОСФЕРА</small>
+            <b>включи сколько хочешь</b>
           </div>
-        </button>
 
-        <button
-          type="button"
-          className={activeSound === "night" ? "active" : ""}
-          onClick={() => toggleAmbient("night")}
-        >
-          <span>☾</span>
-          <div>
-            <b>ночь</b>
-            <small>{activeSound === "night" ? "тихо" : "включить"}</small>
-          </div>
-        </button>
+          <span>
+            звук сам не включится
+          </span>
+        </div>
 
-        <button
-          type="button"
-          className={activeSound === "rain" ? "active" : ""}
-          onClick={() => toggleAmbient("rain")}
-        >
-          <span>☂</span>
-          <div>
-            <b>дождь</b>
-            <small>{activeSound === "rain" ? "идёт" : "включить"}</small>
-          </div>
-        </button>
+        <div className="camp-home-ambient camp-deluxe-ambient">
+          <button
+            type="button"
+            className={activeSounds.water ? "active" : ""}
+            onClick={() => toggleAmbient("water")}
+          >
+            <span>≋</span>
+            <div>
+              <b>вода</b>
+              <small>
+                {activeSounds.water ? "шумит" : "включить"}
+              </small>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            className={activeSounds.fire ? "active" : ""}
+            onClick={() => toggleAmbient("fire")}
+          >
+            <span>✦</span>
+            <div>
+              <b>костёр</b>
+              <small>
+                {activeSounds.fire ? "трещит" : "включить"}
+              </small>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            className={activeSounds.night ? "active" : ""}
+            onClick={() => toggleAmbient("night")}
+          >
+            <span>☾</span>
+            <div>
+              <b>ночь</b>
+              <small>
+                {activeSounds.night ? "тихо" : "включить"}
+              </small>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            className={activeSounds.rain ? "active" : ""}
+            onClick={() => toggleAmbient("rain")}
+          >
+            <span>☂</span>
+            <div>
+              <b>дождь</b>
+              <small>
+                {activeSounds.rain ? "идёт" : "включить"}
+              </small>
+            </div>
+          </button>
+        </div>
+
+        <label className="camp-deluxe-volume">
+          <span>тише</span>
+
+          <input
+            type="range"
+            min="0.08"
+            max="1"
+            step="0.01"
+            value={volume}
+            onChange={(event) =>
+              setVolume(
+                Number(event.target.value)
+              )
+            }
+          />
+
+          <span>громче</span>
+        </label>
       </section>
 
-      <p className="camp-home-bottom">никуда не спешим</p>
+      <p className="camp-home-bottom camp-deluxe-bottom">
+        тут ещё много чего спрятано · ищи внимательнее
+      </p>
 
-      {/* ОБЫЧНАЯ ЗАПИСКА */}
+      {/* =================================================
+          ОБЫЧНАЯ ЗАПИСКА
+      ================================================= */}
+
       {openedNote && (
         <div
           className="camp-note-overlay"
           onClick={() => setOpenedNote(null)}
         >
           <article
-            className="camp-note-paper"
+            className="camp-note-paper camp-deluxe-note-paper"
             onClick={(event) => event.stopPropagation()}
           >
             <button
@@ -745,25 +1156,25 @@ export default function HomeRoomPage() {
         </div>
       )}
 
-      {/* FULLSCREEN ПАСХАЛКА */}
+      {/* =================================================
+          FULLSCREEN ПАСХАЛКА
+      ================================================= */}
+
       {easterEgg && (
         <div
           className={`camp-easter-overlay camp-easter-${easterEgg.type}`}
           onClick={closeEasterEgg}
         >
-          <div className="camp-easter-particles" aria-hidden="true">
-            {Array.from({ length: 18 }).map((_, index) => (
+          <div
+            className="camp-easter-particles"
+            aria-hidden="true"
+          >
+            {Array.from({ length: 22 }).map((_, index) => (
               <i
                 key={index}
                 style={{ "--i": index }}
               >
-                {easterEgg.type === "fire"
-                  ? "✦"
-                  : easterEgg.type === "water"
-                  ? "·"
-                  : easterEgg.type === "dragon"
-                  ? "♡"
-                  : "✦"}
+                {particleFor(easterEgg.type)}
               </i>
             ))}
           </div>
@@ -772,7 +1183,10 @@ export default function HomeRoomPage() {
             className="camp-easter-content"
             onClick={(event) => event.stopPropagation()}
           >
-            <span className="camp-easter-icon">{easterEgg.icon}</span>
+            <span className="camp-easter-icon">
+              {easterEgg.icon}
+            </span>
+
             <small>{easterEgg.eyebrow}</small>
             <h2>{easterEgg.title}</h2>
             <p>{easterEgg.text}</p>
