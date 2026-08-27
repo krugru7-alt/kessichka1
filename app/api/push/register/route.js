@@ -1,15 +1,8 @@
 import { neon } from "@neondatabase/serverless";
+import { getSession } from "../../../lib/auth";
 
-import {
-  getSession,
-} from "../../../lib/auth";
-
-
-export const dynamic =
-  "force-dynamic";
-
-export const runtime =
-  "nodejs";
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 
 function getSql() {
@@ -17,26 +10,17 @@ function getSql() {
   const databaseUrl =
     process.env.DATABASE_URL;
 
-
   if (!databaseUrl) {
-
     throw new Error(
       "DATABASE_URL не найден"
     );
-
   }
 
-
-  return neon(
-    databaseUrl
-  );
-
+  return neon(databaseUrl);
 }
 
 
-async function ensureTable(
-  sql
-) {
+async function ensureTable(sql) {
 
   await sql`
     CREATE TABLE IF NOT EXISTS world_push_subscriptions (
@@ -59,9 +43,8 @@ async function ensureTable(
 }
 
 
-export async function POST(
-  request
-) {
+
+export async function POST(request) {
 
   try {
 
@@ -158,10 +141,18 @@ export async function POST(
       ON CONFLICT (endpoint)
 
       DO UPDATE SET
-        user_name = EXCLUDED.user_name,
-        p256dh = EXCLUDED.p256dh,
-        auth = EXCLUDED.auth,
-        updated_at = NOW()
+
+        user_name =
+          EXCLUDED.user_name,
+
+        p256dh =
+          EXCLUDED.p256dh,
+
+        auth =
+          EXCLUDED.auth,
+
+        updated_at =
+          NOW()
     `;
 
 
@@ -182,6 +173,7 @@ export async function POST(
     return Response.json(
       {
         ok: false,
+
         error:
           error?.message ||
           "Не удалось зарегистрировать устройство",
