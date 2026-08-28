@@ -14,9 +14,6 @@ import {
 
 import BottomNav from "./BottomNav";
 import DrakoshaBuddy from "./DrakoshaBuddy";
-import CapsuleSystem from "./CapsuleSystem";
-import HiddenKisses from "./HiddenKisses";
-import WorldAnomalies from "./WorldAnomalies";
 
 
 
@@ -1271,7 +1268,11 @@ export default function SiteShell({
     <div
       className={`
         site-shell
+        world-shell-v4
         weather-theme-v3
+        viewer-${viewer?.user || "unknown"}
+        role-${viewer?.role || "user"}
+        ${pathname === "/admin" ? "world-admin-screen" : "world-user-screen"}
         theme-${theme}
         ${weatherClass}
         ${timeClass}
@@ -1323,7 +1324,7 @@ export default function SiteShell({
 
 
             <small>
-              наш маленький уголок
+              маленький уголок 
             </small>
 
           </span>
@@ -1424,17 +1425,9 @@ export default function SiteShell({
       </main>
 
 
-      <CapsuleSystem />
+      {pathname !== "/admin" && <DrakoshaBuddy />}
 
-      <HiddenKisses />
-
-      <WorldAnomalies />
-
-
-      <DrakoshaBuddy />
-
-
-      <BottomNav />
+      {pathname !== "/admin" && <BottomNav />}
 
 
     </div>
