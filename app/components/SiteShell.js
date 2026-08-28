@@ -14,6 +14,9 @@ import {
 
 import BottomNav from "./BottomNav";
 import DrakoshaBuddy from "./DrakoshaBuddy";
+import CapsuleSystem from "./CapsuleSystem";
+import HiddenKisses from "./HiddenKisses";
+import WorldAnomalies from "./WorldAnomalies";
 
 
 
@@ -1324,7 +1327,7 @@ export default function SiteShell({
 
 
             <small>
-              маленький уголок 
+              наш маленький уголок в интернете
             </small>
 
           </span>
@@ -1424,6 +1427,12 @@ export default function SiteShell({
         {children}
       </main>
 
+
+      {pathname !== "/admin" && <CapsuleSystem />}
+
+      {pathname !== "/admin" && <HiddenKisses />}
+
+      {pathname !== "/admin" && <WorldAnomalies />}
 
       {pathname !== "/admin" && <DrakoshaBuddy />}
 
