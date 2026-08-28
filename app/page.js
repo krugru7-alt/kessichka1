@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import WeatherMini from "./components/WeatherMini";
 import MiniMessages from "./components/MiniMessages";
+import PushConnectButton from "./components/PushConnectButton";
 
 const messages = [
   "Просто напоминаю: ты очень важная буська. ❤️",
@@ -140,11 +141,15 @@ export default function HomePage() {
         </div>
 
         <aside className="world-v4-side-column">
-          <div className="world-v4-weather-wrap">
-            <WeatherMini />
-          </div>
+         <div className="world-v4-weather-wrap">
+  <WeatherMini />
+</div>
 
-          <section className="world-v4-note-card">
+<div className="world-v4-push-wrap">
+  <PushConnectButton />
+</div>
+
+<section className="world-v4-note-card">
             <small>Маленькое сообщение для тебя</small>
             <p>{message}</p>
             <span>♡</span>
