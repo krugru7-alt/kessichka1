@@ -15,7 +15,7 @@ import {
 import BottomNav from "./BottomNav";
 import DrakoshaBuddy from "./DrakoshaBuddy";
 import CapsuleSystem from "./CapsuleSystem";
-import HiddenKisses from "./HiddenKisses";
+import SecretHuntSystem from "./SecretHuntSystem";
 import WorldAnomalies from "./WorldAnomalies";
 
 
@@ -1430,7 +1430,7 @@ export default function SiteShell({
 
       {pathname !== "/admin" && <CapsuleSystem />}
 
-      {pathname !== "/admin" && <HiddenKisses />}
+      {pathname !== "/admin" && <SecretHuntSystem />}
 
       {pathname !== "/admin" && <WorldAnomalies />}
 
