@@ -33929,3 +33929,717 @@ html.world-anomaly-stage-10 .camp-secret-star {
 .push-connect-button.is-enabled {
   opacity: 0.7;
 }
+/* =========================================================
+   SECRET HUNT
+   15 КАПСУЛ + 3 БУСЬКИ
+========================================================= */
+
+.secret-hunt-hotspot {
+  position: fixed;
+
+  z-index: 1850;
+
+  width: 26px;
+  height: 26px;
+
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+
+  touch-action: manipulation;
+
+  -webkit-tap-highlight-color:
+    transparent;
+
+  user-select: none;
+}
+
+
+/*
+  Зона нажатия 26px,
+  сама видимая деталь всего 1–3px.
+*/
+
+.secret-hunt-hotspot > span {
+  display: block;
+
+  width: 2px;
+  height: 2px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(70, 58, 60, 0.09);
+
+  opacity: 0.55;
+
+  pointer-events: none;
+}
+
+.secret-hunt-hotspot:active > span {
+  opacity: 0.72;
+}
+
+.secret-already-found {
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   ГЛАВНАЯ
+========================================================= */
+
+/* capsule 01 */
+
+.secret-pos-c01 {
+  right: 3px;
+  top: 19%;
+}
+
+.secret-pos-c01 > span {
+  width: 2px;
+  height: 1px;
+
+  border-radius: 1px;
+}
+
+
+/* capsule 02 */
+
+.secret-pos-c02 {
+  left: 5px;
+  top: 34%;
+}
+
+.secret-pos-c02 > span {
+  opacity: 0.38;
+}
+
+
+/* capsule 03 */
+
+.secret-pos-c03 {
+  right: 14px;
+  top: 47%;
+}
+
+.secret-pos-c03 > span {
+  width: 1px;
+  height: 3px;
+
+  border-radius: 0;
+
+  transform: rotate(17deg);
+}
+
+
+/* capsule 04 */
+
+.secret-pos-c04 {
+  left: 2px;
+  bottom: 31%;
+}
+
+.secret-pos-c04 > span {
+  opacity: 0.3;
+}
+
+
+/* capsule 05 */
+
+.secret-pos-c05 {
+  right: 4px;
+  bottom: 24%;
+}
+
+.secret-pos-c05 > span {
+  width: 3px;
+  height: 1px;
+
+  border-radius: 0;
+
+  transform: rotate(-15deg);
+}
+
+
+/* =========================================================
+   КАНЦЕЛЯРИЯ
+========================================================= */
+
+/* capsule 06 */
+
+.secret-pos-c06 {
+  left: 1px;
+  top: 23%;
+}
+
+.secret-pos-c06 > span {
+  width: 1px;
+  height: 3px;
+
+  border-radius: 0;
+}
+
+
+/* capsule 07 */
+
+.secret-pos-c07 {
+  right: 4px;
+  top: 37%;
+}
+
+.secret-pos-c07 > span {
+  opacity: 0.31;
+}
+
+
+/* capsule 08 */
+
+.secret-pos-c08 {
+  left: 10px;
+  top: 51%;
+}
+
+.secret-pos-c08 > span {
+  width: 3px;
+  height: 1px;
+
+  border-radius: 0;
+
+  transform: rotate(9deg);
+}
+
+
+/* capsule 09 */
+
+.secret-pos-c09 {
+  right: 2px;
+  bottom: 32%;
+}
+
+.secret-pos-c09 > span {
+  opacity: 0.38;
+}
+
+
+/* capsule 10 */
+
+.secret-pos-c10 {
+  left: 3px;
+  bottom: 20%;
+}
+
+.secret-pos-c10 > span {
+  width: 2px;
+  height: 2px;
+
+  opacity: 0.31;
+}
+
+
+/* =========================================================
+   ГЛОБАЛЬНЫЕ КАПСУЛЫ
+========================================================= */
+
+/* capsule 11 */
+
+.secret-pos-c11 {
+  left: 42%;
+  top: 2px;
+}
+
+.secret-pos-c11 > span {
+  width: 2px;
+  height: 1px;
+
+  border-radius: 0;
+}
+
+
+/* capsule 12 */
+
+.secret-pos-c12 {
+  right: 27%;
+  top: 5px;
+}
+
+.secret-pos-c12 > span {
+  opacity: 0.3;
+}
+
+
+/* capsule 13 */
+
+.secret-pos-c13 {
+  left: 2px;
+  top: 72%;
+}
+
+.secret-pos-c13 > span {
+  width: 1px;
+  height: 2px;
+
+  border-radius: 0;
+}
+
+
+/* capsule 14 */
+
+.secret-pos-c14 {
+  right: 2px;
+  top: 67%;
+}
+
+.secret-pos-c14 > span {
+  opacity: 0.27;
+}
+
+
+/* capsule 15 */
+
+.secret-pos-c15 {
+  left: 31%;
+  bottom: 83px;
+}
+
+.secret-pos-c15 > span {
+  width: 3px;
+  height: 1px;
+
+  border-radius: 0;
+
+  opacity: 0.3;
+
+  transform:
+    rotate(-12deg);
+}
+
+
+/* =========================================================
+   3 БУСЬКИ
+
+   Они ещё менее заметные.
+========================================================= */
+
+/* буська №1 */
+
+.secret-pos-k01 {
+  right: 1px;
+  top: 29%;
+}
+
+.secret-pos-k01 > span {
+  width: 1px;
+  height: 1px;
+
+  background:
+    rgba(75, 58, 62, 0.07);
+
+  opacity: 0.38;
+}
+
+
+/* буська №2 */
+
+.secret-pos-k02 {
+  left: 1px;
+  top: 63%;
+}
+
+.secret-pos-k02 > span {
+  width: 2px;
+  height: 1px;
+
+  border-radius: 0;
+
+  background:
+    rgba(75, 58, 62, 0.065);
+
+  opacity: 0.31;
+
+  transform:
+    rotate(-20deg);
+}
+
+
+/* буська №3 */
+
+.secret-pos-k03 {
+  right: 23px;
+  bottom: 91px;
+}
+
+.secret-pos-k03 > span {
+  width: 1px;
+  height: 2px;
+
+  border-radius: 0;
+
+  background:
+    rgba(75, 58, 62, 0.055);
+
+  opacity: 0.31;
+
+  transform:
+    rotate(11deg);
+}
+
+
+/* =========================================================
+   УВЕДОМЛЕНИЕ О НАХОДКЕ
+========================================================= */
+
+.secret-hunt-toast {
+  position: fixed;
+
+  left: 50%;
+  bottom: 105px;
+
+  z-index: 7600;
+
+  width:
+    min(calc(100% - 28px), 390px);
+
+  padding:
+    13px
+    15px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  transform:
+    translateX(-50%);
+
+  border:
+    1px solid
+    rgba(92, 66, 70, 0.1);
+
+  border-radius: 18px;
+
+  color: #3d3537;
+
+  background:
+    rgba(255, 252, 248, 0.97);
+
+  box-shadow:
+    0 17px 45px
+    rgba(59, 40, 45, 0.15);
+
+  backdrop-filter:
+    blur(18px);
+
+  animation:
+    secretHuntToastIn
+    0.38s
+    cubic-bezier(
+      0.2,
+      0.8,
+      0.2,
+      1
+    )
+    both;
+}
+
+.secret-hunt-toast-icon {
+  flex: 0 0 auto;
+
+  width: 32px;
+  height: 32px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(117, 57, 66, 0.06);
+
+  font-size: 16px;
+}
+
+.secret-hunt-toast > div {
+  min-width: 0;
+
+  display: grid;
+
+  gap: 2px;
+}
+
+.secret-hunt-toast b {
+  font-size: 10px;
+  font-weight: 600;
+
+  line-height: 1.35;
+}
+
+.secret-hunt-toast small {
+  color:
+    rgba(61, 53, 55, 0.53);
+
+  font-size: 8px;
+}
+
+
+/* =========================================================
+   ФИНАЛ
+========================================================= */
+
+.secret-hunt-final {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 8200;
+
+  padding: 20px;
+
+  display: grid;
+  place-items: center;
+}
+
+.secret-hunt-final-backdrop {
+  position: absolute;
+
+  inset: 0;
+
+  border: 0;
+
+  background:
+    rgba(50, 38, 42, 0.33);
+
+  backdrop-filter:
+    blur(14px);
+}
+
+.secret-hunt-final-card {
+  position: relative;
+
+  width:
+    min(100%, 350px);
+
+  padding:
+    30px
+    26px
+    23px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(93, 65, 69, 0.11);
+
+  border-radius: 27px;
+
+  color: #362f31;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fffdf9,
+      #f4ede6
+    );
+
+  box-shadow:
+    0 30px 90px
+    rgba(52, 35, 40, 0.22);
+
+  text-align: center;
+
+  animation:
+    secretHuntFinalIn
+    0.45s
+    cubic-bezier(
+      0.2,
+      0.8,
+      0.2,
+      1
+    )
+    both;
+}
+
+.secret-hunt-final-card > small {
+  color:
+    rgba(72, 55, 58, 0.4);
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing:
+    0.17em;
+}
+
+.secret-hunt-final-symbol {
+  margin:
+    19px
+    0
+    12px;
+
+  font-size: 48px;
+}
+
+.secret-hunt-final-card h2 {
+  margin:
+    0
+    0
+    9px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size: 27px;
+  font-weight: 400;
+
+  line-height: 1.08;
+}
+
+.secret-hunt-final-card p {
+  max-width: 250px;
+
+  margin:
+    0
+    auto;
+
+  color:
+    rgba(63, 51, 54, 0.58);
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.secret-hunt-final-counter {
+  width: 106px;
+  height: 106px;
+
+  margin:
+    21px
+    auto
+    19px;
+
+  display: grid;
+  place-items: center;
+  align-content: center;
+
+  border:
+    3px double
+    rgba(124, 51, 60, 0.56);
+
+  border-radius: 50%;
+
+  color:
+    rgba(124, 51, 60, 0.72);
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+
+  font-size: 18px;
+  font-weight: 800;
+
+  transform:
+    rotate(-7deg);
+}
+
+.secret-hunt-final-counter span {
+  display: block;
+
+  margin-top: 3px;
+
+  font-size: 6px;
+
+  letter-spacing:
+    0.12em;
+}
+
+.secret-hunt-final-close {
+  width: 100%;
+
+  min-height: 46px;
+
+  border: 0;
+
+  border-radius: 14px;
+
+  color: #fff9f6;
+
+  background:
+    linear-gradient(
+      145deg,
+      #803b44,
+      #6c3038
+    );
+
+  font-size: 9px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+
+/* =========================================================
+   АНИМАЦИИ
+========================================================= */
+
+@keyframes secretHuntToastIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(14px)
+      scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes secretHuntFinalIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(25px)
+      scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .secret-hunt-toast,
+  .secret-hunt-final-card {
+    animation: none;
+  }
+}
